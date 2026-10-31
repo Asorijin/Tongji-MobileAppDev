@@ -1,0 +1,34 @@
+{
+  "id": "C34",
+  "kind": "multi",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C34_flat.png",
+  "tiltImage": "docs/test-cards/images/C34_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C34_flat.png",
+    "tilt": "docs/test-cards/images/C34_tilt.png",
+    "rotate": "docs/test-cards/images/C34_rotate.png",
+    "shadow": "docs/test-cards/images/C34_shadow.png"
+  },
+  "layoutText": [
+    "MA",
+    "Metro Auto Group",
+    "Thomas Reed",
+    "Sales Director",
+    "Mobile: (555) 034-7777",
+    "Office: (555) 034-8888",
+    "Email: treed@example.com",
+    "Web: www.example-metro.com"
+  ],
+  "ocrText": "MA\nMetro Auto Group\nThomas Reed\nSales Director\nMobile: (555) 034-7777\nOffice: (555) 034-8888\nEmail: treed@example.com\nWeb: www.example-metro.com",
+  "groundTruth": {
+    "name": "Thomas Reed",
+    "company": "Metro Auto Group",
+    "jobTitle": "Sales Director",
+    "mobile": "555 034 7777",
+    "officePhone": "555 034 8888",
+    "email": "treed@example.com",
+    "website": "www.example-metro.com"
+  }
+}

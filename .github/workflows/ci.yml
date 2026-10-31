@@ -1,0 +1,139 @@
+# CI：静态检查（Ubuntu，本地同款脚本）+ iOS 构建与测试（macOS 15 / Xcode 16.4 / iOS 18.5 模拟器）
+#
+# 设计目标（课程约束：开销最小、构建最快、静态校验尽量本地完成）：
+#   - 仅在公开仓库的免费 macOS 额度内运行；推送到 main 与 PR 时触发，同一分支的旧运行自动取消。
+#   - Xcode 16.4 是 macos-15 镜像的默认版本，无需切换工具链，省去 xcode-select 的额外时间。
+#   - iPhone SE (3rd generation) 是最轻量的模拟器，UI 测试串行执行。
+#   - 先 build-for-testing 再 test-without-building，避免测试阶段重复编译。
+#   - XcodeGen 走缓存，未命中时从 GitHub Release 下载预编译二进制（不做 SwiftPM 编译）。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  XCODEGEN_VERSION: 2.46.0
+  XCODE_VERSION: "16.4"
+  DESTINATION: "platform=iOS Simulator,name=iPhone SE (3rd generation),OS=18.5"
+
+jobs:
+  static:
+    name: 静态检查
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # ubuntu-24.04 的系统 Python 受 PEP 668（externally-managed-environment）保护，
+      # 用 setup-python 提供的独立 Python，避免 --break-system-packages 或额外 venv 依赖。
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安装 PyYAML
+        run: python -m pip install --quiet --disable-pip-version-check pyyaml
+      - name: 校验 workflow YAML
+        run: |
+          python - <<'PY'
+          import pathlib, yaml
+          for path in sorted(pathlib.Path(".github/workflows").glob("*.yml")):
+              yaml.safe_load(path.read_text(encoding="utf-8"))
+              print("OK", path)
+          PY
+      - name: 校验合成名片数据集（Ground Truth / 图像完整性 / 字段契约）
+        run: python scripts/verify_test_cards.py
+      - name: 校验 Python 脚本可解析
+        run: python -m py_compile scripts/make_test_cards.py scripts/verify_test_cards.py
+
+  build-and-test:
+    name: iOS 构建与测试（iPhone SE / iOS 18.5）
+    needs: static
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 选择 Xcode ${{ env.XCODE_VERSION }}
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
+          xcodebuild -version
+
+      - name: 缓存 XcodeGen
+        id: xcodegen-cache
+        uses: actions/cache@v4
+        with:
+          path: .tools/xcodegen
+          key: xcodegen-${{ env.XCODEGEN_VERSION }}-macos15
+
+      - name: 安装 XcodeGen ${{ env.XCODEGEN_VERSION }}
+        if: steps.xcodegen-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p .tools && cd .tools
+          curl -fsSL --retry 5 --retry-delay 2 -o xcodegen.zip \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -q xcodegen.zip
+          rm xcodegen.zip
+          test -x xcodegen/bin/xcodegen
+
+      - name: 生成 Xcode 工程
+        run: |
+          set -euo pipefail
+          export PATH="$PWD/.tools/xcodegen/bin:$PATH"
+          xcodegen --version
+          xcodegen generate
+
+      - name: 编译测试（build-for-testing）
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          rm -rf build/TestResults.xcresult
+          xcodebuild build-for-testing \
+            -project CamCardClone.xcodeproj \
+            -scheme CamCardClone \
+            -configuration Debug \
+            -destination "$DESTINATION" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/build.log
+
+      - name: 运行测试（test-without-building）
+        run: |
+          set -euo pipefail
+          xcodebuild test-without-building \
+            -project CamCardClone.xcodeproj \
+            -scheme CamCardClone \
+            -configuration Debug \
+            -destination "$DESTINATION" \
+            -derivedDataPath build/DerivedData \
+            -resultBundlePath build/TestResults.xcresult \
+            -parallel-testing-enabled NO \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/test.log
+
+      - name: 测试摘要
+        if: always()
+        run: |
+          if [ -f build/test.log ]; then
+            grep -E "Test Suite '.*' (started|passed|failed)|Test Case .*(passed|failed)|error:|TEST (SUCCEEDED|FAILED)|BUILD (SUCCEEDED|FAILED)" build/test.log | tail -n 400 || true
+          fi
+          if [ -f build/build.log ] && grep -qE "error:|BUILD FAILED" build/build.log; then
+            grep -E "error:|BUILD FAILED" build/build.log | head -n 100 || true
+          fi
+
+      - name: 失败时上传日志与测试结果
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-and-results
+          path: |
+            build/*.log
+            build/TestResults.xcresult
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,32 @@
+{
+  "id": "C16",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C16_flat.png",
+  "tiltImage": "docs/test-cards/images/C16_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C16_flat.png",
+    "tilt": "docs/test-cards/images/C16_tilt.png",
+    "rotate": "docs/test-cards/images/C16_rotate.png",
+    "shadow": "docs/test-cards/images/C16_shadow.png"
+  },
+  "layoutText": [
+    "GC",
+    "GreenCell Consulting",
+    "Robert Taylor",
+    "Consultant",
+    "Office: +44 20 7946 0102",
+    "Email: r.taylor@example.co.uk",
+    "12 Baker Street, London"
+  ],
+  "ocrText": "GC\nGreenCell Consulting\nRobert Taylor\nConsultant\nOffice: +44 20 7946 0102\nEmail: r.taylor@example.co.uk\n12 Baker Street, London",
+  "groundTruth": {
+    "name": "Robert Taylor",
+    "company": "GreenCell Consulting",
+    "jobTitle": "Consultant",
+    "address": "12 Baker Street, London",
+    "officePhone": "+44 207 946 0102",
+    "email": "r.taylor@example.co.uk"
+  }
+}

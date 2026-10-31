@@ -1,0 +1,31 @@
+{
+  "id": "C39",
+  "kind": "complex",
+  "layout": "dark",
+  "note": "",
+  "image": "docs/test-cards/images/C39_flat.png",
+  "tiltImage": "docs/test-cards/images/C39_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C39_flat.png",
+    "tilt": "docs/test-cards/images/C39_tilt.png",
+    "rotate": "docs/test-cards/images/C39_rotate.png",
+    "shadow": "docs/test-cards/images/C39_shadow.png"
+  },
+  "layoutText": [
+    "BlackRiver Creative Studio",
+    "Sean Parker",
+    "Creative Director",
+    "Mobile: (555) 039-2020",
+    "Email: sean@example.com",
+    "Web: www.example-br.com"
+  ],
+  "ocrText": "BlackRiver Creative Studio\nSean Parker\nCreative Director\nMobile: (555) 039-2020\nEmail: sean@example.com\nWeb: www.example-br.com",
+  "groundTruth": {
+    "name": "Sean Parker",
+    "company": "BlackRiver Creative Studio",
+    "jobTitle": "Creative Director",
+    "mobile": "555 039 2020",
+    "email": "sean@example.com",
+    "website": "www.example-br.com"
+  }
+}

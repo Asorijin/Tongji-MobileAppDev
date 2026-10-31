@@ -1,0 +1,34 @@
+{
+  "id": "C06",
+  "kind": "chinese",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C06_flat.png",
+  "tiltImage": "docs/test-cards/images/C06_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C06_flat.png",
+    "tilt": "docs/test-cards/images/C06_tilt.png",
+    "rotate": "docs/test-cards/images/C06_rotate.png",
+    "shadow": "docs/test-cards/images/C06_shadow.png"
+  },
+  "layoutText": [
+    "HT",
+    "郑建国",
+    "总经理",
+    "恒通建设集团",
+    "手机 138 0000 0006",
+    "邮箱 zhengjg@example.com",
+    "电话 028-8666 0006",
+    "传真 028-8666 0007"
+  ],
+  "ocrText": "HT\n郑建国\n总经理\n恒通建设集团\n手机 138 0000 0006\n邮箱 zhengjg@example.com\n电话 028-8666 0006\n传真 028-8666 0007",
+  "groundTruth": {
+    "name": "郑建国",
+    "company": "恒通建设集团",
+    "jobTitle": "总经理",
+    "mobile": "138 0000 0006",
+    "officePhone": "028 8666 0006",
+    "fax": "028 8666 0007",
+    "email": "zhengjg@example.com"
+  }
+}

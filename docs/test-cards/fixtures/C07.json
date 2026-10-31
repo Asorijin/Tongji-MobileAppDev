@@ -1,0 +1,31 @@
+{
+  "id": "C07",
+  "kind": "chinese",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C07_flat.png",
+  "tiltImage": "docs/test-cards/images/C07_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C07_flat.png",
+    "tilt": "docs/test-cards/images/C07_tilt.png",
+    "rotate": "docs/test-cards/images/C07_rotate.png",
+    "shadow": "docs/test-cards/images/C07_shadow.png"
+  },
+  "layoutText": [
+    "部门 护理部",
+    "明德医院",
+    "电话 021-6222 0007",
+    "陈晨",
+    "地址 上海市徐汇区漕溪北路88号",
+    "护士长"
+  ],
+  "ocrText": "部门 护理部\n明德医院\n电话 021-6222 0007\n陈晨\n地址 上海市徐汇区漕溪北路88号\n护士长",
+  "groundTruth": {
+    "name": "陈晨",
+    "company": "明德医院",
+    "jobTitle": "护士长",
+    "department": "护理部",
+    "address": "上海市徐汇区漕溪北路88号",
+    "officePhone": "021 6222 0007"
+  }
+}

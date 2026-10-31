@@ -1,0 +1,29 @@
+{
+  "id": "C13",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C13_flat.png",
+  "tiltImage": "docs/test-cards/images/C13_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C13_flat.png",
+    "tilt": "docs/test-cards/images/C13_tilt.png",
+    "rotate": "docs/test-cards/images/C13_rotate.png",
+    "shadow": "docs/test-cards/images/C13_shadow.png"
+  },
+  "layoutText": [
+    "BrightPath Media",
+    "Sarah Johnson",
+    "Marketing Manager",
+    "Mobile: (555) 016-3321",
+    "Email: sarah.j@example.com"
+  ],
+  "ocrText": "BrightPath Media\nSarah Johnson\nMarketing Manager\nMobile: (555) 016-3321\nEmail: sarah.j@example.com",
+  "groundTruth": {
+    "name": "Sarah Johnson",
+    "company": "BrightPath Media",
+    "jobTitle": "Marketing Manager",
+    "mobile": "555 016 3321",
+    "email": "sarah.j@example.com"
+  }
+}

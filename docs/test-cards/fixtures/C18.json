@@ -1,0 +1,29 @@
+{
+  "id": "C18",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C18_flat.png",
+  "tiltImage": "docs/test-cards/images/C18_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C18_flat.png",
+    "tilt": "docs/test-cards/images/C18_tilt.png",
+    "rotate": "docs/test-cards/images/C18_rotate.png",
+    "shadow": "docs/test-cards/images/C18_shadow.png"
+  },
+  "layoutText": [
+    "BlueRock Studio",
+    "Kevin Lee",
+    "Architect",
+    "Mobile: (555) 024-9001",
+    "Web: www.example-studio.net"
+  ],
+  "ocrText": "BlueRock Studio\nKevin Lee\nArchitect\nMobile: (555) 024-9001\nWeb: www.example-studio.net",
+  "groundTruth": {
+    "name": "Kevin Lee",
+    "company": "BlueRock Studio",
+    "jobTitle": "Architect",
+    "mobile": "555 024 9001",
+    "website": "www.example-studio.net"
+  }
+}

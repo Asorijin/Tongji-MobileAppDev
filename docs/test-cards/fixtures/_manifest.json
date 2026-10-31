@@ -1,0 +1,453 @@
+[
+  {
+    "id": "C01",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C01_flat.png",
+      "tilt": "docs/test-cards/images/C01_tilt.png",
+      "rotate": "docs/test-cards/images/C01_rotate.png",
+      "shadow": "docs/test-cards/images/C01_shadow.png"
+    }
+  },
+  {
+    "id": "C02",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C02_flat.png",
+      "tilt": "docs/test-cards/images/C02_tilt.png",
+      "rotate": "docs/test-cards/images/C02_rotate.png",
+      "shadow": "docs/test-cards/images/C02_shadow.png"
+    }
+  },
+  {
+    "id": "C03",
+    "kind": "chinese",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C03_flat.png",
+      "tilt": "docs/test-cards/images/C03_tilt.png",
+      "rotate": "docs/test-cards/images/C03_rotate.png",
+      "shadow": "docs/test-cards/images/C03_shadow.png"
+    }
+  },
+  {
+    "id": "C04",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C04_flat.png",
+      "tilt": "docs/test-cards/images/C04_tilt.png",
+      "rotate": "docs/test-cards/images/C04_rotate.png",
+      "shadow": "docs/test-cards/images/C04_shadow.png"
+    }
+  },
+  {
+    "id": "C05",
+    "kind": "chinese",
+    "layout": "vertical",
+    "images": {
+      "flat": "docs/test-cards/images/C05_flat.png",
+      "tilt": "docs/test-cards/images/C05_tilt.png",
+      "rotate": "docs/test-cards/images/C05_rotate.png",
+      "shadow": "docs/test-cards/images/C05_shadow.png"
+    }
+  },
+  {
+    "id": "C06",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C06_flat.png",
+      "tilt": "docs/test-cards/images/C06_tilt.png",
+      "rotate": "docs/test-cards/images/C06_rotate.png",
+      "shadow": "docs/test-cards/images/C06_shadow.png"
+    }
+  },
+  {
+    "id": "C07",
+    "kind": "chinese",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C07_flat.png",
+      "tilt": "docs/test-cards/images/C07_tilt.png",
+      "rotate": "docs/test-cards/images/C07_rotate.png",
+      "shadow": "docs/test-cards/images/C07_shadow.png"
+    }
+  },
+  {
+    "id": "C08",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C08_flat.png",
+      "tilt": "docs/test-cards/images/C08_tilt.png",
+      "rotate": "docs/test-cards/images/C08_rotate.png",
+      "shadow": "docs/test-cards/images/C08_shadow.png"
+    }
+  },
+  {
+    "id": "C09",
+    "kind": "chinese",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C09_flat.png",
+      "tilt": "docs/test-cards/images/C09_tilt.png",
+      "rotate": "docs/test-cards/images/C09_rotate.png",
+      "shadow": "docs/test-cards/images/C09_shadow.png"
+    }
+  },
+  {
+    "id": "C10",
+    "kind": "chinese",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C10_flat.png",
+      "tilt": "docs/test-cards/images/C10_tilt.png",
+      "rotate": "docs/test-cards/images/C10_rotate.png",
+      "shadow": "docs/test-cards/images/C10_shadow.png"
+    }
+  },
+  {
+    "id": "C11",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C11_flat.png",
+      "tilt": "docs/test-cards/images/C11_tilt.png",
+      "rotate": "docs/test-cards/images/C11_rotate.png",
+      "shadow": "docs/test-cards/images/C11_shadow.png"
+    }
+  },
+  {
+    "id": "C12",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C12_flat.png",
+      "tilt": "docs/test-cards/images/C12_tilt.png",
+      "rotate": "docs/test-cards/images/C12_rotate.png",
+      "shadow": "docs/test-cards/images/C12_shadow.png"
+    }
+  },
+  {
+    "id": "C13",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C13_flat.png",
+      "tilt": "docs/test-cards/images/C13_tilt.png",
+      "rotate": "docs/test-cards/images/C13_rotate.png",
+      "shadow": "docs/test-cards/images/C13_shadow.png"
+    }
+  },
+  {
+    "id": "C14",
+    "kind": "english",
+    "layout": "dark",
+    "images": {
+      "flat": "docs/test-cards/images/C14_flat.png",
+      "tilt": "docs/test-cards/images/C14_tilt.png",
+      "rotate": "docs/test-cards/images/C14_rotate.png",
+      "shadow": "docs/test-cards/images/C14_shadow.png"
+    }
+  },
+  {
+    "id": "C15",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C15_flat.png",
+      "tilt": "docs/test-cards/images/C15_tilt.png",
+      "rotate": "docs/test-cards/images/C15_rotate.png",
+      "shadow": "docs/test-cards/images/C15_shadow.png"
+    }
+  },
+  {
+    "id": "C16",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C16_flat.png",
+      "tilt": "docs/test-cards/images/C16_tilt.png",
+      "rotate": "docs/test-cards/images/C16_rotate.png",
+      "shadow": "docs/test-cards/images/C16_shadow.png"
+    }
+  },
+  {
+    "id": "C17",
+    "kind": "english",
+    "layout": "dark",
+    "images": {
+      "flat": "docs/test-cards/images/C17_flat.png",
+      "tilt": "docs/test-cards/images/C17_tilt.png",
+      "rotate": "docs/test-cards/images/C17_rotate.png",
+      "shadow": "docs/test-cards/images/C17_shadow.png"
+    }
+  },
+  {
+    "id": "C18",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C18_flat.png",
+      "tilt": "docs/test-cards/images/C18_tilt.png",
+      "rotate": "docs/test-cards/images/C18_rotate.png",
+      "shadow": "docs/test-cards/images/C18_shadow.png"
+    }
+  },
+  {
+    "id": "C19",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C19_flat.png",
+      "tilt": "docs/test-cards/images/C19_tilt.png",
+      "rotate": "docs/test-cards/images/C19_rotate.png",
+      "shadow": "docs/test-cards/images/C19_shadow.png"
+    }
+  },
+  {
+    "id": "C20",
+    "kind": "english",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C20_flat.png",
+      "tilt": "docs/test-cards/images/C20_tilt.png",
+      "rotate": "docs/test-cards/images/C20_rotate.png",
+      "shadow": "docs/test-cards/images/C20_shadow.png"
+    }
+  },
+  {
+    "id": "C21",
+    "kind": "bilingual",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C21_flat.png",
+      "tilt": "docs/test-cards/images/C21_tilt.png",
+      "rotate": "docs/test-cards/images/C21_rotate.png",
+      "shadow": "docs/test-cards/images/C21_shadow.png"
+    }
+  },
+  {
+    "id": "C22",
+    "kind": "bilingual",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C22_flat.png",
+      "tilt": "docs/test-cards/images/C22_tilt.png",
+      "rotate": "docs/test-cards/images/C22_rotate.png",
+      "shadow": "docs/test-cards/images/C22_shadow.png"
+    }
+  },
+  {
+    "id": "C23",
+    "kind": "bilingual",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C23_flat.png",
+      "tilt": "docs/test-cards/images/C23_tilt.png",
+      "rotate": "docs/test-cards/images/C23_rotate.png",
+      "shadow": "docs/test-cards/images/C23_shadow.png"
+    }
+  },
+  {
+    "id": "C24",
+    "kind": "bilingual",
+    "layout": "vertical",
+    "images": {
+      "flat": "docs/test-cards/images/C24_flat.png",
+      "tilt": "docs/test-cards/images/C24_tilt.png",
+      "rotate": "docs/test-cards/images/C24_rotate.png",
+      "shadow": "docs/test-cards/images/C24_shadow.png"
+    }
+  },
+  {
+    "id": "C25",
+    "kind": "bilingual",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C25_flat.png",
+      "tilt": "docs/test-cards/images/C25_tilt.png",
+      "rotate": "docs/test-cards/images/C25_rotate.png",
+      "shadow": "docs/test-cards/images/C25_shadow.png"
+    }
+  },
+  {
+    "id": "C26",
+    "kind": "bilingual",
+    "layout": "dark",
+    "images": {
+      "flat": "docs/test-cards/images/C26_flat.png",
+      "tilt": "docs/test-cards/images/C26_tilt.png",
+      "rotate": "docs/test-cards/images/C26_rotate.png",
+      "shadow": "docs/test-cards/images/C26_shadow.png"
+    }
+  },
+  {
+    "id": "C27",
+    "kind": "special",
+    "layout": "vertical",
+    "images": {
+      "flat": "docs/test-cards/images/C27_flat.png",
+      "tilt": "docs/test-cards/images/C27_tilt.png",
+      "rotate": "docs/test-cards/images/C27_rotate.png",
+      "shadow": "docs/test-cards/images/C27_shadow.png"
+    }
+  },
+  {
+    "id": "C28",
+    "kind": "special",
+    "layout": "vertical",
+    "images": {
+      "flat": "docs/test-cards/images/C28_flat.png",
+      "tilt": "docs/test-cards/images/C28_tilt.png",
+      "rotate": "docs/test-cards/images/C28_rotate.png",
+      "shadow": "docs/test-cards/images/C28_shadow.png"
+    }
+  },
+  {
+    "id": "C29",
+    "kind": "special",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C29_flat.png",
+      "tilt": "docs/test-cards/images/C29_tilt.png",
+      "rotate": "docs/test-cards/images/C29_rotate.png",
+      "shadow": "docs/test-cards/images/C29_shadow.png"
+    }
+  },
+  {
+    "id": "C30",
+    "kind": "special",
+    "layout": "dark",
+    "images": {
+      "flat": "docs/test-cards/images/C30_flat.png",
+      "tilt": "docs/test-cards/images/C30_tilt.png",
+      "rotate": "docs/test-cards/images/C30_rotate.png",
+      "shadow": "docs/test-cards/images/C30_shadow.png"
+    }
+  },
+  {
+    "id": "C31",
+    "kind": "multi",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C31_flat.png",
+      "tilt": "docs/test-cards/images/C31_tilt.png",
+      "rotate": "docs/test-cards/images/C31_rotate.png",
+      "shadow": "docs/test-cards/images/C31_shadow.png"
+    }
+  },
+  {
+    "id": "C32",
+    "kind": "multi",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C32_flat.png",
+      "tilt": "docs/test-cards/images/C32_tilt.png",
+      "rotate": "docs/test-cards/images/C32_rotate.png",
+      "shadow": "docs/test-cards/images/C32_shadow.png"
+    }
+  },
+  {
+    "id": "C33",
+    "kind": "multi",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C33_flat.png",
+      "tilt": "docs/test-cards/images/C33_tilt.png",
+      "rotate": "docs/test-cards/images/C33_rotate.png",
+      "shadow": "docs/test-cards/images/C33_shadow.png"
+    }
+  },
+  {
+    "id": "C34",
+    "kind": "multi",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C34_flat.png",
+      "tilt": "docs/test-cards/images/C34_tilt.png",
+      "rotate": "docs/test-cards/images/C34_rotate.png",
+      "shadow": "docs/test-cards/images/C34_shadow.png"
+    }
+  },
+  {
+    "id": "C35",
+    "kind": "missing",
+    "layout": "classic",
+    "images": {
+      "flat": "docs/test-cards/images/C35_flat.png",
+      "tilt": "docs/test-cards/images/C35_tilt.png",
+      "rotate": "docs/test-cards/images/C35_rotate.png",
+      "shadow": "docs/test-cards/images/C35_shadow.png"
+    }
+  },
+  {
+    "id": "C36",
+    "kind": "missing",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C36_flat.png",
+      "tilt": "docs/test-cards/images/C36_tilt.png",
+      "rotate": "docs/test-cards/images/C36_rotate.png",
+      "shadow": "docs/test-cards/images/C36_shadow.png"
+    }
+  },
+  {
+    "id": "C37",
+    "kind": "missing",
+    "layout": "vertical",
+    "images": {
+      "flat": "docs/test-cards/images/C37_flat.png",
+      "tilt": "docs/test-cards/images/C37_tilt.png",
+      "rotate": "docs/test-cards/images/C37_rotate.png",
+      "shadow": "docs/test-cards/images/C37_shadow.png"
+    }
+  },
+  {
+    "id": "C38",
+    "kind": "missing",
+    "layout": "english",
+    "images": {
+      "flat": "docs/test-cards/images/C38_flat.png",
+      "tilt": "docs/test-cards/images/C38_tilt.png",
+      "rotate": "docs/test-cards/images/C38_rotate.png",
+      "shadow": "docs/test-cards/images/C38_shadow.png"
+    }
+  },
+  {
+    "id": "C39",
+    "kind": "complex",
+    "layout": "dark",
+    "images": {
+      "flat": "docs/test-cards/images/C39_flat.png",
+      "tilt": "docs/test-cards/images/C39_tilt.png",
+      "rotate": "docs/test-cards/images/C39_rotate.png",
+      "shadow": "docs/test-cards/images/C39_shadow.png"
+    }
+  },
+  {
+    "id": "C40",
+    "kind": "complex",
+    "layout": "sidebar",
+    "images": {
+      "flat": "docs/test-cards/images/C40_flat.png",
+      "tilt": "docs/test-cards/images/C40_tilt.png",
+      "rotate": "docs/test-cards/images/C40_rotate.png",
+      "shadow": "docs/test-cards/images/C40_shadow.png"
+    }
+  },
+  {
+    "id": "C41",
+    "kind": "exception",
+    "layout": "blank",
+    "images": {
+      "flat": "docs/test-cards/images/C41_flat.png",
+      "tilt": "docs/test-cards/images/C41_tilt.png",
+      "rotate": "docs/test-cards/images/C41_rotate.png",
+      "shadow": "docs/test-cards/images/C41_shadow.png"
+    }
+  }
+]

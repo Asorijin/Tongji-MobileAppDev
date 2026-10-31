@@ -1,0 +1,32 @@
+{
+  "id": "C23",
+  "kind": "bilingual",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C23_flat.png",
+  "tiltImage": "docs/test-cards/images/C23_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C23_flat.png",
+    "tilt": "docs/test-cards/images/C23_tilt.png",
+    "rotate": "docs/test-cards/images/C23_rotate.png",
+    "shadow": "docs/test-cards/images/C23_shadow.png"
+  },
+  "layoutText": [
+    "ZX",
+    "刘洋",
+    "Software Engineer",
+    "中兴达科技 Zhongxingda Tech",
+    "手机 139 0000 0023",
+    "邮箱 liuyang@example.com",
+    "网址 www.example-tech.com"
+  ],
+  "ocrText": "ZX\n刘洋\nSoftware Engineer\n中兴达科技 Zhongxingda Tech\n手机 139 0000 0023\n邮箱 liuyang@example.com\n网址 www.example-tech.com",
+  "groundTruth": {
+    "name": "刘洋",
+    "company": "中兴达科技 Zhongxingda Tech",
+    "jobTitle": "Software Engineer",
+    "mobile": "139 0000 0023",
+    "email": "liuyang@example.com",
+    "website": "www.example-tech.com"
+  }
+}

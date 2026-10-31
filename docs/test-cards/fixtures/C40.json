@@ -1,0 +1,33 @@
+{
+  "id": "C40",
+  "kind": "complex",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C40_flat.png",
+  "tiltImage": "docs/test-cards/images/C40_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C40_flat.png",
+    "tilt": "docs/test-cards/images/C40_tilt.png",
+    "rotate": "docs/test-cards/images/C40_rotate.png",
+    "shadow": "docs/test-cards/images/C40_shadow.png"
+  },
+  "layoutText": [
+    "部门 供应链中心",
+    "广诚集团",
+    "手机 136 0000 0040",
+    "邓超",
+    "邮箱 dengchao@example.com",
+    "地址 深圳市南山区科技园路8号",
+    "供应链总监"
+  ],
+  "ocrText": "部门 供应链中心\n广诚集团\n手机 136 0000 0040\n邓超\n邮箱 dengchao@example.com\n地址 深圳市南山区科技园路8号\n供应链总监",
+  "groundTruth": {
+    "name": "邓超",
+    "company": "广诚集团",
+    "jobTitle": "供应链总监",
+    "department": "供应链中心",
+    "address": "深圳市南山区科技园路8号",
+    "mobile": "136 0000 0040",
+    "email": "dengchao@example.com"
+  }
+}

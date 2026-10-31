@@ -1,0 +1,35 @@
+# 本地开发工具与下载物（不进入仓库）
+.tools/
+*.exe
+*.msi
+
+# Xcode
+build/
+*.xcresult
+DerivedData/
+xcuserdata/
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved.bak
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# 课程作业原始文档（不随仓库分发）
+*.docx
+
+# Python（数据集生成与校验）
+.venv/
+__pycache__/
+*.pyc
+
+# XcodeGen 生成物（project.yml 是唯一来源）
+*.xcodeproj/
+CamCardClone/Info.plist

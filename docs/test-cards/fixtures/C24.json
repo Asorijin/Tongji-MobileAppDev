@@ -1,0 +1,32 @@
+{
+  "id": "C24",
+  "kind": "bilingual",
+  "layout": "vertical",
+  "note": "",
+  "image": "docs/test-cards/images/C24_flat.png",
+  "tiltImage": "docs/test-cards/images/C24_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C24_flat.png",
+    "tilt": "docs/test-cards/images/C24_tilt.png",
+    "rotate": "docs/test-cards/images/C24_rotate.png",
+    "shadow": "docs/test-cards/images/C24_shadow.png"
+  },
+  "layoutText": [
+    "张",
+    "国华人力资源 GuoHua HR",
+    "伟",
+    "人力资源部",
+    "HR Director",
+    "手机 139 0000 0024",
+    "邮箱 zhangwei@example.cn"
+  ],
+  "ocrText": "张\n国华人力资源 GuoHua HR\n伟\n人力资源部\nHR Director\n手机 139 0000 0024\n邮箱 zhangwei@example.cn",
+  "groundTruth": {
+    "name": "张伟",
+    "company": "国华人力资源 GuoHua HR",
+    "jobTitle": "HR Director",
+    "department": "人力资源部",
+    "mobile": "139 0000 0024",
+    "email": "zhangwei@example.cn"
+  }
+}

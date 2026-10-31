@@ -1,0 +1,31 @@
+{
+  "id": "C14",
+  "kind": "english",
+  "layout": "dark",
+  "note": "",
+  "image": "docs/test-cards/images/C14_flat.png",
+  "tiltImage": "docs/test-cards/images/C14_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C14_flat.png",
+    "tilt": "docs/test-cards/images/C14_tilt.png",
+    "rotate": "docs/test-cards/images/C14_rotate.png",
+    "shadow": "docs/test-cards/images/C14_shadow.png"
+  },
+  "layoutText": [
+    "Orion Labs",
+    "James Wilson",
+    "Chief Executive Officer",
+    "Mobile: +1 555 018 4410",
+    "Email: jwilson@example.io",
+    "Web: https://www.example-labs.io"
+  ],
+  "ocrText": "Orion Labs\nJames Wilson\nChief Executive Officer\nMobile: +1 555 018 4410\nEmail: jwilson@example.io\nWeb: https://www.example-labs.io",
+  "groundTruth": {
+    "name": "James Wilson",
+    "company": "Orion Labs",
+    "jobTitle": "Chief Executive Officer",
+    "mobile": "+1 555 018 4410",
+    "email": "jwilson@example.io",
+    "website": "https://www.example-labs.io"
+  }
+}

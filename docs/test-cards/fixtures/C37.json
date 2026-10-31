@@ -1,0 +1,28 @@
+{
+  "id": "C37",
+  "kind": "missing",
+  "layout": "vertical",
+  "note": "",
+  "image": "docs/test-cards/images/C37_flat.png",
+  "tiltImage": "docs/test-cards/images/C37_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C37_flat.png",
+    "tilt": "docs/test-cards/images/C37_tilt.png",
+    "rotate": "docs/test-cards/images/C37_rotate.png",
+    "shadow": "docs/test-cards/images/C37_shadow.png"
+  },
+  "layoutText": [
+    "秦",
+    "星旅文化",
+    "岚",
+    "音乐人",
+    "手机 136 0000 0037"
+  ],
+  "ocrText": "秦\n星旅文化\n岚\n音乐人\n手机 136 0000 0037",
+  "groundTruth": {
+    "name": "秦岚",
+    "company": "星旅文化",
+    "jobTitle": "音乐人",
+    "mobile": "136 0000 0037"
+  }
+}

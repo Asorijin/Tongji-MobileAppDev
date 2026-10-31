@@ -1,0 +1,42 @@
+{
+  "id": "C01",
+  "kind": "chinese",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C01_flat.png",
+  "tiltImage": "docs/test-cards/images/C01_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C01_flat.png",
+    "tilt": "docs/test-cards/images/C01_tilt.png",
+    "rotate": "docs/test-cards/images/C01_rotate.png",
+    "shadow": "docs/test-cards/images/C01_shadow.png"
+  },
+  "layoutText": [
+    "TJ",
+    "朱宏明",
+    "教授",
+    "同济大学",
+    "计算机科学与技术学院",
+    "手机 138 0000 0001",
+    "邮箱 zhuhm@example.edu.cn",
+    "电话 021-6598 1234",
+    "网址 www.example.edu.cn",
+    "传真 021-6598 1235",
+    "地址 上海市杨浦区四平路1239号",
+    "邮编 200092"
+  ],
+  "ocrText": "TJ\n朱宏明\n教授\n同济大学\n计算机科学与技术学院\n手机 138 0000 0001\n邮箱 zhuhm@example.edu.cn\n电话 021-6598 1234\n网址 www.example.edu.cn\n传真 021-6598 1235\n地址 上海市杨浦区四平路1239号\n邮编 200092",
+  "groundTruth": {
+    "name": "朱宏明",
+    "company": "同济大学",
+    "jobTitle": "教授",
+    "department": "计算机科学与技术学院",
+    "address": "上海市杨浦区四平路1239号",
+    "postalCode": "200092",
+    "mobile": "138 0000 0001",
+    "officePhone": "021 6598 1234",
+    "fax": "021 6598 1235",
+    "email": "zhuhm@example.edu.cn",
+    "website": "www.example.edu.cn"
+  }
+}

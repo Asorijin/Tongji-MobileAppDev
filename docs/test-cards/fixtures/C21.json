@@ -1,0 +1,34 @@
+{
+  "id": "C21",
+  "kind": "bilingual",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C21_flat.png",
+  "tiltImage": "docs/test-cards/images/C21_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C21_flat.png",
+    "tilt": "docs/test-cards/images/C21_tilt.png",
+    "rotate": "docs/test-cards/images/C21_rotate.png",
+    "shadow": "docs/test-cards/images/C21_shadow.png"
+  },
+  "layoutText": [
+    "TJ",
+    "李娜",
+    "Associate Professor",
+    "Tongji University",
+    "School of Software Engineering",
+    "手机 139 0000 0021",
+    "邮箱 lina@example.edu.cn",
+    "电话 +86 (21) 6958 9000"
+  ],
+  "ocrText": "TJ\n李娜\nAssociate Professor\nTongji University\nSchool of Software Engineering\n手机 139 0000 0021\n邮箱 lina@example.edu.cn\n电话 +86 (21) 6958 9000",
+  "groundTruth": {
+    "name": "李娜",
+    "company": "Tongji University",
+    "jobTitle": "Associate Professor",
+    "department": "School of Software Engineering",
+    "mobile": "139 0000 0021",
+    "officePhone": "021 6958 9000",
+    "email": "lina@example.edu.cn"
+  }
+}

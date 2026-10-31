@@ -1,0 +1,330 @@
+{
+  "C01": {
+    "name": "朱宏明",
+    "company": "同济大学",
+    "jobTitle": "教授",
+    "department": "计算机科学与技术学院",
+    "address": "上海市杨浦区四平路1239号",
+    "postalCode": "200092",
+    "mobile": "138 0000 0001",
+    "officePhone": "021 6598 1234",
+    "fax": "021 6598 1235",
+    "email": "zhuhm@example.edu.cn",
+    "website": "www.example.edu.cn"
+  },
+  "C02": {
+    "name": "赵敏",
+    "company": "星辰科技有限公司",
+    "jobTitle": "产品经理",
+    "address": "北京市海淀区中关村大街1号",
+    "mobile": "138 0000 0002",
+    "officePhone": "010 5888 0002",
+    "email": "zhaomin@example.com"
+  },
+  "C03": {
+    "name": "孙立",
+    "company": "华宇信息集团",
+    "jobTitle": "技术总监",
+    "department": "研发中心",
+    "address": "杭州市西湖区文三路90号",
+    "mobile": "138 0000 0003",
+    "email": "sunli@example.com.cn"
+  },
+  "C04": {
+    "name": "周伟",
+    "company": "南风工作室",
+    "jobTitle": "设计师",
+    "mobile": "138 0000 0004",
+    "email": "zhouwei@example.cn"
+  },
+  "C05": {
+    "name": "吴芳",
+    "company": "启元研究院",
+    "jobTitle": "副研究员",
+    "department": "材料研究部",
+    "mobile": "138 0000 0005",
+    "email": "wufang@example.org",
+    "website": "www.example.org"
+  },
+  "C06": {
+    "name": "郑建国",
+    "company": "恒通建设集团",
+    "jobTitle": "总经理",
+    "mobile": "138 0000 0006",
+    "officePhone": "028 8666 0006",
+    "fax": "028 8666 0007",
+    "email": "zhengjg@example.com"
+  },
+  "C07": {
+    "name": "陈晨",
+    "company": "明德医院",
+    "jobTitle": "护士长",
+    "department": "护理部",
+    "address": "上海市徐汇区漕溪北路88号",
+    "officePhone": "021 6222 0007"
+  },
+  "C08": {
+    "name": "林晓",
+    "company": "人民城出版社",
+    "jobTitle": "编辑",
+    "officePhone": "010 6555 0008",
+    "email": "linxiao@example.net"
+  },
+  "C09": {
+    "name": "黄河",
+    "company": "盛信律师事务所",
+    "jobTitle": "律师",
+    "address": "广州市天河区珠江新城5号",
+    "mobile": "138 0000 0009",
+    "email": "huanghe@example.com",
+    "website": "www.example-law.cn"
+  },
+  "C10": {
+    "name": "马丽",
+    "company": "康健医疗集团",
+    "jobTitle": "财务主管",
+    "department": "财务部",
+    "officePhone": "0755 8333 0010",
+    "fax": "0755 8333 0011",
+    "email": "mali@example.com"
+  },
+  "C11": {
+    "name": "David Chen",
+    "company": "ABC Technologies Inc.",
+    "jobTitle": "Technical Director",
+    "address": "500 Market Street, San Francisco, CA",
+    "mobile": "+1 555 010 2233",
+    "officePhone": "555 010 8899",
+    "email": "david.chen@example.com"
+  },
+  "C12": {
+    "name": "Michael Brown",
+    "company": "Northwind Systems",
+    "jobTitle": "Senior Software Engineer",
+    "officePhone": "555 014 7788",
+    "email": "m.brown@example.org",
+    "website": "www.example-systems.com"
+  },
+  "C13": {
+    "name": "Sarah Johnson",
+    "company": "BrightPath Media",
+    "jobTitle": "Marketing Manager",
+    "mobile": "555 016 3321",
+    "email": "sarah.j@example.com"
+  },
+  "C14": {
+    "name": "James Wilson",
+    "company": "Orion Labs",
+    "jobTitle": "Chief Executive Officer",
+    "mobile": "+1 555 018 4410",
+    "email": "jwilson@example.io",
+    "website": "https://www.example-labs.io"
+  },
+  "C15": {
+    "name": "Emily Zhang",
+    "company": "Nova Robotics Lab",
+    "jobTitle": "Product Manager",
+    "mobile": "555 020 1188",
+    "officePhone": "555 020 1199",
+    "email": "emily.zhang@example.com"
+  },
+  "C16": {
+    "name": "Robert Taylor",
+    "company": "GreenCell Consulting",
+    "jobTitle": "Consultant",
+    "address": "12 Baker Street, London",
+    "officePhone": "+44 207 946 0102",
+    "email": "r.taylor@example.co.uk"
+  },
+  "C17": {
+    "name": "Anna Miller",
+    "company": "Summit Financial Group",
+    "jobTitle": "Data Scientist",
+    "address": "88 Pine Avenue, New York, NY",
+    "mobile": "555 022 6677",
+    "email": "anna.m@example.com"
+  },
+  "C18": {
+    "name": "Kevin Lee",
+    "company": "BlueRock Studio",
+    "jobTitle": "Architect",
+    "mobile": "555 024 9001",
+    "website": "www.example-studio.net"
+  },
+  "C19": {
+    "name": "Linda Davis",
+    "company": "University of California, Berkeley",
+    "jobTitle": "Professor",
+    "address": "1 University Drive, Berkeley, CA",
+    "officePhone": "555 026 3344",
+    "email": "l.davis@example.edu"
+  },
+  "C20": {
+    "name": "Peter Harris",
+    "company": "LogiMax Group",
+    "jobTitle": "Operations Lead",
+    "mobile": "555 028 5533",
+    "officePhone": "555 028 5522",
+    "fax": "555 028 5544",
+    "email": "pharris@example.com"
+  },
+  "C21": {
+    "name": "李娜",
+    "company": "Tongji University",
+    "jobTitle": "Associate Professor",
+    "department": "School of Software Engineering",
+    "mobile": "139 0000 0021",
+    "officePhone": "021 6958 9000",
+    "email": "lina@example.edu.cn"
+  },
+  "C22": {
+    "name": "王强",
+    "company": "华建集团 ChinaBuild Group",
+    "jobTitle": "Project Manager",
+    "department": "工程管理部",
+    "mobile": "139 0000 0022",
+    "officePhone": "021 5888 1234",
+    "fax": "021 5888 5678",
+    "email": "wangqiang@example.com"
+  },
+  "C23": {
+    "name": "刘洋",
+    "company": "中兴达科技 Zhongxingda Tech",
+    "jobTitle": "Software Engineer",
+    "mobile": "139 0000 0023",
+    "email": "liuyang@example.com",
+    "website": "www.example-tech.com"
+  },
+  "C24": {
+    "name": "张伟",
+    "company": "国华人力资源 GuoHua HR",
+    "jobTitle": "HR Director",
+    "department": "人力资源部",
+    "mobile": "139 0000 0024",
+    "email": "zhangwei@example.cn"
+  },
+  "C25": {
+    "name": "陈静",
+    "company": "上海生命科学研究院 SIBCB",
+    "jobTitle": "Research Scientist",
+    "address": "上海市岳阳路320号",
+    "mobile": "139 0000 0025",
+    "email": "chenjing@example.org"
+  },
+  "C26": {
+    "name": "杨帆",
+    "company": "天安咨询 TianAn Consulting",
+    "jobTitle": "Business Analyst",
+    "mobile": "139 0000 0026",
+    "email": "yangfan@example.com",
+    "website": "www.example-ta.cn"
+  },
+  "C27": {
+    "name": "高远",
+    "company": "蓝图设计院",
+    "jobTitle": "建筑师",
+    "mobile": "137 0000 0027",
+    "email": "gaoyuan@example.com"
+  },
+  "C28": {
+    "name": "许晴",
+    "company": "云和科技",
+    "jobTitle": "研究员",
+    "department": "人工智能部",
+    "mobile": "137 0000 0028",
+    "website": "www.example-yh.com"
+  },
+  "C29": {
+    "name": "何军",
+    "company": "青创投资",
+    "jobTitle": "销售总监",
+    "department": "投资部",
+    "mobile": "137 0000 0029",
+    "officePhone": "0571 8777 0029",
+    "email": "hejun@example.com"
+  },
+  "C30": {
+    "name": "Alex Kim",
+    "company": "Vertex Cloud Systems",
+    "jobTitle": "Engineering Manager",
+    "mobile": "+82 100 000 0030",
+    "email": "alex.kim@example.com",
+    "website": "www.example-vertex.com"
+  },
+  "C31": {
+    "name": "罗成",
+    "company": "九洲贸易有限公司",
+    "jobTitle": "项目经理",
+    "address": "广州市越秀区中山路100号",
+    "mobile": "136 0000 0031",
+    "officePhone": "020 8777 0031",
+    "fax": "020 8777 0032",
+    "email": "luocheng@example.com"
+  },
+  "C32": {
+    "name": "Rachel Green",
+    "company": "Tidewater Partners",
+    "jobTitle": "Account Executive",
+    "address": "77 Harbor Lane, Boston, MA",
+    "mobile": "555 032 1111",
+    "officePhone": "555 032 2222",
+    "email": "rachel@example.com"
+  },
+  "C33": {
+    "name": "唐悦",
+    "company": "万丰物流",
+    "jobTitle": "客服经理",
+    "department": "客户服务部",
+    "officePhone": "021 6444 0033",
+    "fax": "021 6444 0034",
+    "email": "tangyue@example.com"
+  },
+  "C34": {
+    "name": "Thomas Reed",
+    "company": "Metro Auto Group",
+    "jobTitle": "Sales Director",
+    "mobile": "555 034 7777",
+    "officePhone": "555 034 8888",
+    "email": "treed@example.com",
+    "website": "www.example-metro.com"
+  },
+  "C35": {
+    "name": "冯雪",
+    "company": "星火翻译工作室",
+    "jobTitle": "自由译者"
+  },
+  "C36": {
+    "name": "Oliver Stone",
+    "company": "Independent Writers Studio",
+    "jobTitle": "Writer",
+    "email": "oliver@example.com"
+  },
+  "C37": {
+    "name": "秦岚",
+    "company": "星旅文化",
+    "jobTitle": "音乐人",
+    "mobile": "136 0000 0037"
+  },
+  "C38": {
+    "name": "Grace Kim",
+    "company": "Example University",
+    "jobTitle": "Student"
+  },
+  "C39": {
+    "name": "Sean Parker",
+    "company": "BlackRiver Creative Studio",
+    "jobTitle": "Creative Director",
+    "mobile": "555 039 2020",
+    "email": "sean@example.com",
+    "website": "www.example-br.com"
+  },
+  "C40": {
+    "name": "邓超",
+    "company": "广诚集团",
+    "jobTitle": "供应链总监",
+    "department": "供应链中心",
+    "address": "深圳市南山区科技园路8号",
+    "mobile": "136 0000 0040",
+    "email": "dengchao@example.com"
+  }
+}

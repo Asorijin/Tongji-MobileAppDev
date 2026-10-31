@@ -1,0 +1,30 @@
+{
+  "id": "C08",
+  "kind": "chinese",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C08_flat.png",
+  "tiltImage": "docs/test-cards/images/C08_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C08_flat.png",
+    "tilt": "docs/test-cards/images/C08_tilt.png",
+    "rotate": "docs/test-cards/images/C08_rotate.png",
+    "shadow": "docs/test-cards/images/C08_shadow.png"
+  },
+  "layoutText": [
+    "RC",
+    "林晓",
+    "编辑",
+    "人民城出版社",
+    "电话 010-6555 0008",
+    "邮箱 linxiao@example.net"
+  ],
+  "ocrText": "RC\n林晓\n编辑\n人民城出版社\n电话 010-6555 0008\n邮箱 linxiao@example.net",
+  "groundTruth": {
+    "name": "林晓",
+    "company": "人民城出版社",
+    "jobTitle": "编辑",
+    "officePhone": "010 6555 0008",
+    "email": "linxiao@example.net"
+  }
+}

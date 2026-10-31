@@ -1,0 +1,33 @@
+{
+  "id": "C10",
+  "kind": "chinese",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C10_flat.png",
+  "tiltImage": "docs/test-cards/images/C10_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C10_flat.png",
+    "tilt": "docs/test-cards/images/C10_tilt.png",
+    "rotate": "docs/test-cards/images/C10_rotate.png",
+    "shadow": "docs/test-cards/images/C10_shadow.png"
+  },
+  "layoutText": [
+    "部门 财务部",
+    "康健医疗集团",
+    "电话 0755-8333 0010",
+    "马丽",
+    "传真 0755-8333 0011",
+    "邮箱 mali@example.com",
+    "财务主管"
+  ],
+  "ocrText": "部门 财务部\n康健医疗集团\n电话 0755-8333 0010\n马丽\n传真 0755-8333 0011\n邮箱 mali@example.com\n财务主管",
+  "groundTruth": {
+    "name": "马丽",
+    "company": "康健医疗集团",
+    "jobTitle": "财务主管",
+    "department": "财务部",
+    "officePhone": "0755 8333 0010",
+    "fax": "0755 8333 0011",
+    "email": "mali@example.com"
+  }
+}

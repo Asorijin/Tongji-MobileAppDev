@@ -1,0 +1,25 @@
+{
+  "id": "C38",
+  "kind": "missing",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C38_flat.png",
+  "tiltImage": "docs/test-cards/images/C38_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C38_flat.png",
+    "tilt": "docs/test-cards/images/C38_tilt.png",
+    "rotate": "docs/test-cards/images/C38_rotate.png",
+    "shadow": "docs/test-cards/images/C38_shadow.png"
+  },
+  "layoutText": [
+    "Example University",
+    "Grace Kim",
+    "Student"
+  ],
+  "ocrText": "Example University\nGrace Kim\nStudent",
+  "groundTruth": {
+    "name": "Grace Kim",
+    "company": "Example University",
+    "jobTitle": "Student"
+  }
+}

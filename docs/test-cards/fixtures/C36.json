@@ -1,0 +1,27 @@
+{
+  "id": "C36",
+  "kind": "missing",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C36_flat.png",
+  "tiltImage": "docs/test-cards/images/C36_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C36_flat.png",
+    "tilt": "docs/test-cards/images/C36_tilt.png",
+    "rotate": "docs/test-cards/images/C36_rotate.png",
+    "shadow": "docs/test-cards/images/C36_shadow.png"
+  },
+  "layoutText": [
+    "Independent Writers Studio",
+    "Oliver Stone",
+    "Writer",
+    "Email: oliver@example.com"
+  ],
+  "ocrText": "Independent Writers Studio\nOliver Stone\nWriter\nEmail: oliver@example.com",
+  "groundTruth": {
+    "name": "Oliver Stone",
+    "company": "Independent Writers Studio",
+    "jobTitle": "Writer",
+    "email": "oliver@example.com"
+  }
+}

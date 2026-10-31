@@ -1,0 +1,31 @@
+{
+  "id": "C17",
+  "kind": "english",
+  "layout": "dark",
+  "note": "",
+  "image": "docs/test-cards/images/C17_flat.png",
+  "tiltImage": "docs/test-cards/images/C17_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C17_flat.png",
+    "tilt": "docs/test-cards/images/C17_tilt.png",
+    "rotate": "docs/test-cards/images/C17_rotate.png",
+    "shadow": "docs/test-cards/images/C17_shadow.png"
+  },
+  "layoutText": [
+    "Summit Financial Group",
+    "Anna Miller",
+    "Data Scientist",
+    "Mobile: (555) 022-6677",
+    "Email: anna.m@example.com",
+    "88 Pine Avenue, New York, NY"
+  ],
+  "ocrText": "Summit Financial Group\nAnna Miller\nData Scientist\nMobile: (555) 022-6677\nEmail: anna.m@example.com\n88 Pine Avenue, New York, NY",
+  "groundTruth": {
+    "name": "Anna Miller",
+    "company": "Summit Financial Group",
+    "jobTitle": "Data Scientist",
+    "address": "88 Pine Avenue, New York, NY",
+    "mobile": "555 022 6677",
+    "email": "anna.m@example.com"
+  }
+}

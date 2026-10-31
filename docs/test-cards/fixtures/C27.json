@@ -1,0 +1,30 @@
+{
+  "id": "C27",
+  "kind": "special",
+  "layout": "vertical",
+  "note": "",
+  "image": "docs/test-cards/images/C27_flat.png",
+  "tiltImage": "docs/test-cards/images/C27_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C27_flat.png",
+    "tilt": "docs/test-cards/images/C27_tilt.png",
+    "rotate": "docs/test-cards/images/C27_rotate.png",
+    "shadow": "docs/test-cards/images/C27_shadow.png"
+  },
+  "layoutText": [
+    "高",
+    "蓝图设计院",
+    "远",
+    "建筑师",
+    "手机 137 0000 0027",
+    "邮箱 gaoyuan@example.com"
+  ],
+  "ocrText": "高\n蓝图设计院\n远\n建筑师\n手机 137 0000 0027\n邮箱 gaoyuan@example.com",
+  "groundTruth": {
+    "name": "高远",
+    "company": "蓝图设计院",
+    "jobTitle": "建筑师",
+    "mobile": "137 0000 0027",
+    "email": "gaoyuan@example.com"
+  }
+}

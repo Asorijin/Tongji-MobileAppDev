@@ -1,0 +1,31 @@
+{
+  "id": "C26",
+  "kind": "bilingual",
+  "layout": "dark",
+  "note": "",
+  "image": "docs/test-cards/images/C26_flat.png",
+  "tiltImage": "docs/test-cards/images/C26_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C26_flat.png",
+    "tilt": "docs/test-cards/images/C26_tilt.png",
+    "rotate": "docs/test-cards/images/C26_rotate.png",
+    "shadow": "docs/test-cards/images/C26_shadow.png"
+  },
+  "layoutText": [
+    "天安咨询 TianAn Consulting",
+    "杨帆",
+    "Business Analyst",
+    "Mobile: +86 139 0000 0026",
+    "Email: yangfan@example.com",
+    "Web: www.example-ta.cn"
+  ],
+  "ocrText": "天安咨询 TianAn Consulting\n杨帆\nBusiness Analyst\nMobile: +86 139 0000 0026\nEmail: yangfan@example.com\nWeb: www.example-ta.cn",
+  "groundTruth": {
+    "name": "杨帆",
+    "company": "天安咨询 TianAn Consulting",
+    "jobTitle": "Business Analyst",
+    "mobile": "139 0000 0026",
+    "email": "yangfan@example.com",
+    "website": "www.example-ta.cn"
+  }
+}

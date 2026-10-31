@@ -1,0 +1,36 @@
+{
+  "id": "C31",
+  "kind": "multi",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C31_flat.png",
+  "tiltImage": "docs/test-cards/images/C31_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C31_flat.png",
+    "tilt": "docs/test-cards/images/C31_tilt.png",
+    "rotate": "docs/test-cards/images/C31_rotate.png",
+    "shadow": "docs/test-cards/images/C31_shadow.png"
+  },
+  "layoutText": [
+    "JZ",
+    "罗成",
+    "项目经理",
+    "九洲贸易有限公司",
+    "手机 136 0000 0031",
+    "邮箱 luocheng@example.com",
+    "电话 020-8777 0031",
+    "地址 广州市越秀区中山路100号",
+    "传真 020-8777 0032"
+  ],
+  "ocrText": "JZ\n罗成\n项目经理\n九洲贸易有限公司\n手机 136 0000 0031\n邮箱 luocheng@example.com\n电话 020-8777 0031\n地址 广州市越秀区中山路100号\n传真 020-8777 0032",
+  "groundTruth": {
+    "name": "罗成",
+    "company": "九洲贸易有限公司",
+    "jobTitle": "项目经理",
+    "address": "广州市越秀区中山路100号",
+    "mobile": "136 0000 0031",
+    "officePhone": "020 8777 0031",
+    "fax": "020 8777 0032",
+    "email": "luocheng@example.com"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "C20",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C20_flat.png",
+  "tiltImage": "docs/test-cards/images/C20_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C20_flat.png",
+    "tilt": "docs/test-cards/images/C20_tilt.png",
+    "rotate": "docs/test-cards/images/C20_rotate.png",
+    "shadow": "docs/test-cards/images/C20_shadow.png"
+  },
+  "layoutText": [
+    "LM",
+    "LogiMax Group",
+    "Peter Harris",
+    "Operations Lead",
+    "Mobile: (555) 028-5533",
+    "Office: 555-028-5522",
+    "Fax: 555-028-5544",
+    "Email: pharris@example.com"
+  ],
+  "ocrText": "LM\nLogiMax Group\nPeter Harris\nOperations Lead\nMobile: (555) 028-5533\nOffice: 555-028-5522\nFax: 555-028-5544\nEmail: pharris@example.com",
+  "groundTruth": {
+    "name": "Peter Harris",
+    "company": "LogiMax Group",
+    "jobTitle": "Operations Lead",
+    "mobile": "555 028 5533",
+    "officePhone": "555 028 5522",
+    "fax": "555 028 5544",
+    "email": "pharris@example.com"
+  }
+}

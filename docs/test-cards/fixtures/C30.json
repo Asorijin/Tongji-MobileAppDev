@@ -1,0 +1,31 @@
+{
+  "id": "C30",
+  "kind": "special",
+  "layout": "dark",
+  "note": "",
+  "image": "docs/test-cards/images/C30_flat.png",
+  "tiltImage": "docs/test-cards/images/C30_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C30_flat.png",
+    "tilt": "docs/test-cards/images/C30_tilt.png",
+    "rotate": "docs/test-cards/images/C30_rotate.png",
+    "shadow": "docs/test-cards/images/C30_shadow.png"
+  },
+  "layoutText": [
+    "Vertex Cloud Systems",
+    "Alex Kim",
+    "Engineering Manager",
+    "Mobile: +82 10 0000 0030",
+    "Email: alex.kim@example.com",
+    "Web: www.example-vertex.com"
+  ],
+  "ocrText": "Vertex Cloud Systems\nAlex Kim\nEngineering Manager\nMobile: +82 10 0000 0030\nEmail: alex.kim@example.com\nWeb: www.example-vertex.com",
+  "groundTruth": {
+    "name": "Alex Kim",
+    "company": "Vertex Cloud Systems",
+    "jobTitle": "Engineering Manager",
+    "mobile": "+82 100 000 0030",
+    "email": "alex.kim@example.com",
+    "website": "www.example-vertex.com"
+  }
+}

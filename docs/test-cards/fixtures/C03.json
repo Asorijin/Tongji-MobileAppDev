@@ -1,0 +1,33 @@
+{
+  "id": "C03",
+  "kind": "chinese",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C03_flat.png",
+  "tiltImage": "docs/test-cards/images/C03_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C03_flat.png",
+    "tilt": "docs/test-cards/images/C03_tilt.png",
+    "rotate": "docs/test-cards/images/C03_rotate.png",
+    "shadow": "docs/test-cards/images/C03_shadow.png"
+  },
+  "layoutText": [
+    "部门 研发中心",
+    "华宇信息集团",
+    "手机 138 0000 0003",
+    "孙立",
+    "邮箱 sunli@example.com.cn",
+    "地址 杭州市西湖区文三路90号",
+    "技术总监"
+  ],
+  "ocrText": "部门 研发中心\n华宇信息集团\n手机 138 0000 0003\n孙立\n邮箱 sunli@example.com.cn\n地址 杭州市西湖区文三路90号\n技术总监",
+  "groundTruth": {
+    "name": "孙立",
+    "company": "华宇信息集团",
+    "jobTitle": "技术总监",
+    "department": "研发中心",
+    "address": "杭州市西湖区文三路90号",
+    "mobile": "138 0000 0003",
+    "email": "sunli@example.com.cn"
+  }
+}

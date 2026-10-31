@@ -1,0 +1,30 @@
+{
+  "id": "C04",
+  "kind": "chinese",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C04_flat.png",
+  "tiltImage": "docs/test-cards/images/C04_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C04_flat.png",
+    "tilt": "docs/test-cards/images/C04_tilt.png",
+    "rotate": "docs/test-cards/images/C04_rotate.png",
+    "shadow": "docs/test-cards/images/C04_shadow.png"
+  },
+  "layoutText": [
+    "NF",
+    "周伟",
+    "设计师",
+    "南风工作室",
+    "手机 138 0000 0004",
+    "邮箱 zhouwei@example.cn"
+  ],
+  "ocrText": "NF\n周伟\n设计师\n南风工作室\n手机 138 0000 0004\n邮箱 zhouwei@example.cn",
+  "groundTruth": {
+    "name": "周伟",
+    "company": "南风工作室",
+    "jobTitle": "设计师",
+    "mobile": "138 0000 0004",
+    "email": "zhouwei@example.cn"
+  }
+}

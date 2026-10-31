@@ -1,0 +1,33 @@
+{
+  "id": "C33",
+  "kind": "multi",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C33_flat.png",
+  "tiltImage": "docs/test-cards/images/C33_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C33_flat.png",
+    "tilt": "docs/test-cards/images/C33_tilt.png",
+    "rotate": "docs/test-cards/images/C33_rotate.png",
+    "shadow": "docs/test-cards/images/C33_shadow.png"
+  },
+  "layoutText": [
+    "部门 客户服务部",
+    "万丰物流",
+    "电话 021-6444 0033",
+    "唐悦",
+    "传真 021-6444 0034",
+    "邮箱 tangyue@example.com",
+    "客服经理"
+  ],
+  "ocrText": "部门 客户服务部\n万丰物流\n电话 021-6444 0033\n唐悦\n传真 021-6444 0034\n邮箱 tangyue@example.com\n客服经理",
+  "groundTruth": {
+    "name": "唐悦",
+    "company": "万丰物流",
+    "jobTitle": "客服经理",
+    "department": "客户服务部",
+    "officePhone": "021 6444 0033",
+    "fax": "021 6444 0034",
+    "email": "tangyue@example.com"
+  }
+}

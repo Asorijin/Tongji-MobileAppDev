@@ -1,0 +1,34 @@
+{
+  "id": "C02",
+  "kind": "chinese",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C02_flat.png",
+  "tiltImage": "docs/test-cards/images/C02_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C02_flat.png",
+    "tilt": "docs/test-cards/images/C02_tilt.png",
+    "rotate": "docs/test-cards/images/C02_rotate.png",
+    "shadow": "docs/test-cards/images/C02_shadow.png"
+  },
+  "layoutText": [
+    "XC",
+    "赵敏",
+    "产品经理",
+    "星辰科技有限公司",
+    "手机 138 0000 0002",
+    "邮箱 zhaomin@example.com",
+    "电话 010-5888 0002",
+    "地址 北京市海淀区中关村大街1号"
+  ],
+  "ocrText": "XC\n赵敏\n产品经理\n星辰科技有限公司\n手机 138 0000 0002\n邮箱 zhaomin@example.com\n电话 010-5888 0002\n地址 北京市海淀区中关村大街1号",
+  "groundTruth": {
+    "name": "赵敏",
+    "company": "星辰科技有限公司",
+    "jobTitle": "产品经理",
+    "address": "北京市海淀区中关村大街1号",
+    "mobile": "138 0000 0002",
+    "officePhone": "010 5888 0002",
+    "email": "zhaomin@example.com"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "C28",
+  "kind": "special",
+  "layout": "vertical",
+  "note": "",
+  "image": "docs/test-cards/images/C28_flat.png",
+  "tiltImage": "docs/test-cards/images/C28_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C28_flat.png",
+    "tilt": "docs/test-cards/images/C28_tilt.png",
+    "rotate": "docs/test-cards/images/C28_rotate.png",
+    "shadow": "docs/test-cards/images/C28_shadow.png"
+  },
+  "layoutText": [
+    "许",
+    "云和科技",
+    "晴",
+    "人工智能部",
+    "研究员",
+    "手机 137 0000 0028",
+    "网址 www.example-yh.com"
+  ],
+  "ocrText": "许\n云和科技\n晴\n人工智能部\n研究员\n手机 137 0000 0028\n网址 www.example-yh.com",
+  "groundTruth": {
+    "name": "许晴",
+    "company": "云和科技",
+    "jobTitle": "研究员",
+    "department": "人工智能部",
+    "mobile": "137 0000 0028",
+    "website": "www.example-yh.com"
+  }
+}

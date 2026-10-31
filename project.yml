@@ -1,0 +1,122 @@
+name: CamCardClone
+options:
+  bundleIdPrefix: com.tongji.mobileappdev
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  xcodeVersion: "16.4"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    SUPPORTS_MACCATALYST: NO
+    CODE_SIGNING_ALLOWED: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_STRICT_CONCURRENCY: minimal
+    CLANG_ENABLE_MODULES: YES
+
+targets:
+  CamCardClone:
+    type: application
+    platform: iOS
+    sources:
+      - path: CamCardClone
+    info:
+      path: CamCardClone/Info.plist
+      properties:
+        CFBundleDisplayName: 名片全能王复刻
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIDeviceFamily: [1]
+        ITSAppUsesNonExemptEncryption: false
+        NSCameraUsageDescription: 用于拍摄名片并进行文字识别
+        NSPhotoLibraryUsageDescription: 用于从照片库导入名片图片
+        NSPhotoLibraryAddUsageDescription: 用于保存名片图片
+        NSContactsUsageDescription: 用于导出名片到系统联系人
+    # UI 测试注入用：41 张合成名片的 flat 变体 + 3 个姿态变体用于校正用例。
+    # 全部为虚构数据；仅在 Debug 构建时复制进 App 资源目录。
+    preBuildScripts:
+      - name: Bundle test-card fixtures (Debug only)
+        script: |
+          set -e
+          if [ "$CONFIGURATION" != "Debug" ]; then exit 0; fi
+          DEST="$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/TestCardFixtures"
+          mkdir -p "$DEST"
+          cp "$SRCROOT"/docs/test-cards/images/C*_flat.png "$DEST"/
+          cp "$SRCROOT"/docs/test-cards/images/C03_tilt.png "$DEST"/
+          cp "$SRCROOT"/docs/test-cards/images/C12_rotate.png "$DEST"/
+          cp "$SRCROOT"/docs/test-cards/images/C18_shadow.png "$DEST"/
+        basedOnDependencyAnalysis: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tongji.mobileappdev.camcardclone
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "0.1.0"
+        # 复制脚本从仓库读取 docs/test-cards（未在 build phase 里声明为输入文件），
+        # 关闭 User Script Sandboxing，避免 CI 上 cp 被拦截。
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+      configs:
+        Debug:
+          ENABLE_TESTABILITY: YES
+
+  CamCardCloneTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CamCardCloneTests
+    dependencies:
+      - target: CamCardClone
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.tongji.mobileappdev.camcardclone.tests
+
+  # 同一份数据层用例既在 Windows 的 `swift test` 中运行，也在 CI 的 iOS 模拟器中运行。
+  CamCardDataTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CamCardDataTests
+    dependencies:
+      - target: CamCardClone
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.tongji.mobileappdev.camcardclone.datatests
+
+  CamCardCloneUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: CamCardCloneUITests
+    dependencies:
+      - target: CamCardClone
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.tongji.mobileappdev.camcardclone.uitests
+        TEST_TARGET_NAME: CamCardClone
+
+schemes:
+  CamCardClone:
+    build:
+      targets:
+        CamCardClone: all
+        CamCardCloneTests: [test]
+        CamCardDataTests: [test]
+        CamCardCloneUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - name: CamCardCloneTests
+          parallelizable: false
+        - name: CamCardDataTests
+          parallelizable: false
+        - name: CamCardCloneUITests
+          parallelizable: false

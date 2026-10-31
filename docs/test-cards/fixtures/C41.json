@@ -1,0 +1,17 @@
+{
+  "id": "C41",
+  "kind": "exception",
+  "layout": "blank",
+  "note": "空白卡片：无任何可识别文字，用于 T20 无法识别 → 手动录入路径",
+  "image": "docs/test-cards/images/C41_flat.png",
+  "tiltImage": "docs/test-cards/images/C41_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C41_flat.png",
+    "tilt": "docs/test-cards/images/C41_tilt.png",
+    "rotate": "docs/test-cards/images/C41_rotate.png",
+    "shadow": "docs/test-cards/images/C41_shadow.png"
+  },
+  "layoutText": [],
+  "ocrText": "",
+  "groundTruth": {}
+}

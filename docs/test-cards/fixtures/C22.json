@@ -1,0 +1,35 @@
+{
+  "id": "C22",
+  "kind": "bilingual",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C22_flat.png",
+  "tiltImage": "docs/test-cards/images/C22_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C22_flat.png",
+    "tilt": "docs/test-cards/images/C22_tilt.png",
+    "rotate": "docs/test-cards/images/C22_rotate.png",
+    "shadow": "docs/test-cards/images/C22_shadow.png"
+  },
+  "layoutText": [
+    "部门 工程管理部",
+    "华建集团 ChinaBuild Group",
+    "手机 139 0000 0022",
+    "王强",
+    "电话 021-5888 1234",
+    "传真 021-5888 5678",
+    "Project Manager",
+    "邮箱 wangqiang@example.com"
+  ],
+  "ocrText": "部门 工程管理部\n华建集团 ChinaBuild Group\n手机 139 0000 0022\n王强\n电话 021-5888 1234\n传真 021-5888 5678\nProject Manager\n邮箱 wangqiang@example.com",
+  "groundTruth": {
+    "name": "王强",
+    "company": "华建集团 ChinaBuild Group",
+    "jobTitle": "Project Manager",
+    "department": "工程管理部",
+    "mobile": "139 0000 0022",
+    "officePhone": "021 5888 1234",
+    "fax": "021 5888 5678",
+    "email": "wangqiang@example.com"
+  }
+}

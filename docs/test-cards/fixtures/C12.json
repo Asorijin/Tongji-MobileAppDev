@@ -1,0 +1,32 @@
+{
+  "id": "C12",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C12_flat.png",
+  "tiltImage": "docs/test-cards/images/C12_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C12_flat.png",
+    "tilt": "docs/test-cards/images/C12_tilt.png",
+    "rotate": "docs/test-cards/images/C12_rotate.png",
+    "shadow": "docs/test-cards/images/C12_shadow.png"
+  },
+  "layoutText": [
+    "NW",
+    "Northwind Systems",
+    "Michael Brown",
+    "Senior Software Engineer",
+    "Office: 555-014-7788",
+    "Email: m.brown@example.org",
+    "Web: www.example-systems.com"
+  ],
+  "ocrText": "NW\nNorthwind Systems\nMichael Brown\nSenior Software Engineer\nOffice: 555-014-7788\nEmail: m.brown@example.org\nWeb: www.example-systems.com",
+  "groundTruth": {
+    "name": "Michael Brown",
+    "company": "Northwind Systems",
+    "jobTitle": "Senior Software Engineer",
+    "officePhone": "555 014 7788",
+    "email": "m.brown@example.org",
+    "website": "www.example-systems.com"
+  }
+}

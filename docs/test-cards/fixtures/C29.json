@@ -1,0 +1,33 @@
+{
+  "id": "C29",
+  "kind": "special",
+  "layout": "sidebar",
+  "note": "",
+  "image": "docs/test-cards/images/C29_flat.png",
+  "tiltImage": "docs/test-cards/images/C29_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C29_flat.png",
+    "tilt": "docs/test-cards/images/C29_tilt.png",
+    "rotate": "docs/test-cards/images/C29_rotate.png",
+    "shadow": "docs/test-cards/images/C29_shadow.png"
+  },
+  "layoutText": [
+    "部门 投资部",
+    "青创投资",
+    "手机 137 0000 0029",
+    "何军",
+    "电话 0571-8777 0029",
+    "邮箱 hejun@example.com",
+    "销售总监"
+  ],
+  "ocrText": "部门 投资部\n青创投资\n手机 137 0000 0029\n何军\n电话 0571-8777 0029\n邮箱 hejun@example.com\n销售总监",
+  "groundTruth": {
+    "name": "何军",
+    "company": "青创投资",
+    "jobTitle": "销售总监",
+    "department": "投资部",
+    "mobile": "137 0000 0029",
+    "officePhone": "0571 8777 0029",
+    "email": "hejun@example.com"
+  }
+}

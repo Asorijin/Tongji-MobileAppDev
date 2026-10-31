@@ -1,0 +1,26 @@
+{
+  "id": "C35",
+  "kind": "missing",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C35_flat.png",
+  "tiltImage": "docs/test-cards/images/C35_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C35_flat.png",
+    "tilt": "docs/test-cards/images/C35_tilt.png",
+    "rotate": "docs/test-cards/images/C35_rotate.png",
+    "shadow": "docs/test-cards/images/C35_shadow.png"
+  },
+  "layoutText": [
+    "CO",
+    "冯雪",
+    "自由译者",
+    "星火翻译工作室"
+  ],
+  "ocrText": "CO\n冯雪\n自由译者\n星火翻译工作室",
+  "groundTruth": {
+    "name": "冯雪",
+    "company": "星火翻译工作室",
+    "jobTitle": "自由译者"
+  }
+}

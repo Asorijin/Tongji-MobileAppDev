@@ -1,0 +1,32 @@
+{
+  "id": "C19",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C19_flat.png",
+  "tiltImage": "docs/test-cards/images/C19_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C19_flat.png",
+    "tilt": "docs/test-cards/images/C19_tilt.png",
+    "rotate": "docs/test-cards/images/C19_rotate.png",
+    "shadow": "docs/test-cards/images/C19_shadow.png"
+  },
+  "layoutText": [
+    "UC",
+    "University of California, Berkeley",
+    "Linda Davis",
+    "Professor",
+    "Office: 555-026-3344",
+    "Email: l.davis@example.edu",
+    "1 University Drive, Berkeley, CA"
+  ],
+  "ocrText": "UC\nUniversity of California, Berkeley\nLinda Davis\nProfessor\nOffice: 555-026-3344\nEmail: l.davis@example.edu\n1 University Drive, Berkeley, CA",
+  "groundTruth": {
+    "name": "Linda Davis",
+    "company": "University of California, Berkeley",
+    "jobTitle": "Professor",
+    "address": "1 University Drive, Berkeley, CA",
+    "officePhone": "555 026 3344",
+    "email": "l.davis@example.edu"
+  }
+}

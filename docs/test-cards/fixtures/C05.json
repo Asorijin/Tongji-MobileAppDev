@@ -1,0 +1,34 @@
+{
+  "id": "C05",
+  "kind": "chinese",
+  "layout": "vertical",
+  "note": "",
+  "image": "docs/test-cards/images/C05_flat.png",
+  "tiltImage": "docs/test-cards/images/C05_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C05_flat.png",
+    "tilt": "docs/test-cards/images/C05_tilt.png",
+    "rotate": "docs/test-cards/images/C05_rotate.png",
+    "shadow": "docs/test-cards/images/C05_shadow.png"
+  },
+  "layoutText": [
+    "吴",
+    "启元研究院",
+    "芳",
+    "材料研究部",
+    "副研究员",
+    "手机 138 0000 0005",
+    "邮箱 wufang@example.org",
+    "网址 www.example.org"
+  ],
+  "ocrText": "吴\n启元研究院\n芳\n材料研究部\n副研究员\n手机 138 0000 0005\n邮箱 wufang@example.org\n网址 www.example.org",
+  "groundTruth": {
+    "name": "吴芳",
+    "company": "启元研究院",
+    "jobTitle": "副研究员",
+    "department": "材料研究部",
+    "mobile": "138 0000 0005",
+    "email": "wufang@example.org",
+    "website": "www.example.org"
+  }
+}

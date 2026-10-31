@@ -1,0 +1,32 @@
+{
+  "id": "C15",
+  "kind": "english",
+  "layout": "english",
+  "note": "",
+  "image": "docs/test-cards/images/C15_flat.png",
+  "tiltImage": "docs/test-cards/images/C15_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C15_flat.png",
+    "tilt": "docs/test-cards/images/C15_tilt.png",
+    "rotate": "docs/test-cards/images/C15_rotate.png",
+    "shadow": "docs/test-cards/images/C15_shadow.png"
+  },
+  "layoutText": [
+    "PM",
+    "Nova Robotics Lab",
+    "Emily Zhang",
+    "Product Manager",
+    "Mobile: (555) 020-1188",
+    "Office: (555) 020-1199",
+    "Email: emily.zhang@example.com"
+  ],
+  "ocrText": "PM\nNova Robotics Lab\nEmily Zhang\nProduct Manager\nMobile: (555) 020-1188\nOffice: (555) 020-1199\nEmail: emily.zhang@example.com",
+  "groundTruth": {
+    "name": "Emily Zhang",
+    "company": "Nova Robotics Lab",
+    "jobTitle": "Product Manager",
+    "mobile": "555 020 1188",
+    "officePhone": "555 020 1199",
+    "email": "emily.zhang@example.com"
+  }
+}

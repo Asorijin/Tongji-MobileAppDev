@@ -1,0 +1,32 @@
+{
+  "id": "C25",
+  "kind": "bilingual",
+  "layout": "classic",
+  "note": "",
+  "image": "docs/test-cards/images/C25_flat.png",
+  "tiltImage": "docs/test-cards/images/C25_tilt.png",
+  "images": {
+    "flat": "docs/test-cards/images/C25_flat.png",
+    "tilt": "docs/test-cards/images/C25_tilt.png",
+    "rotate": "docs/test-cards/images/C25_rotate.png",
+    "shadow": "docs/test-cards/images/C25_shadow.png"
+  },
+  "layoutText": [
+    "SH",
+    "陈静",
+    "Research Scientist",
+    "上海生命科学研究院 SIBCB",
+    "手机 139 0000 0025",
+    "邮箱 chenjing@example.org",
+    "地址 上海市岳阳路320号"
+  ],
+  "ocrText": "SH\n陈静\nResearch Scientist\n上海生命科学研究院 SIBCB\n手机 139 0000 0025\n邮箱 chenjing@example.org\n地址 上海市岳阳路320号",
+  "groundTruth": {
+    "name": "陈静",
+    "company": "上海生命科学研究院 SIBCB",
+    "jobTitle": "Research Scientist",
+    "address": "上海市岳阳路320号",
+    "mobile": "139 0000 0025",
+    "email": "chenjing@example.org"
+  }
+}
