@@ -80,7 +80,8 @@ python scripts/verify_test_cards.py
 
 ## CI
 
-- `static`（Ubuntu）：workflow YAML 语法、数据集完整性（41 张 × 4 变体、Ground Truth 契约）、Python 脚本可解析。
+- `static`（Ubuntu）：workflow YAML 语法、actionlint 语义检查（GitHub Actions 表达式与上下文）、
+  数据集完整性（41 张 × 4 变体、Ground Truth 契约）、Python 脚本可解析。
 - `build-and-test`（macOS 15）：`simctl` 创建 iPhone SE (3rd generation) / iOS 18.5 模拟器（规避镜像预置设备偶发未注册，
   `actions/runner-images#12948`）→ XcodeGen 生成工程 → `build-for-testing` → `test-without-building`（按模拟器 UDID 选取目标）。
 - B 层准确率报告：单独以 `-only-testing:CamCardCloneTests/VisionAccuracyTests` 运行（复用同一构建产物），

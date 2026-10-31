@@ -251,6 +251,8 @@ bash scripts/run-tests.sh          # 或 make test
 
 - CI 的 `build-and-test`（macOS 15）先用 `simctl` 创建 iPhone SE 3rd gen / iOS 18.5 模拟器
   （规避镜像预置设备偶发未注册，`actions/runner-images#12948`），再运行 XCTest + XCUITest 全量。
+- CI 的 `static`（Ubuntu）在 YAML 解析之后运行 actionlint，校验 GitHub Actions 表达式与语义
+  （YAML 语法正确但表达式上下文非法时，workflow 会在启动 job 前被拒绝且没有日志，见运行 4）。
 - UI 测试使用固定示例数据（`-seedSampleCards`）与合成名片注入（`-scanFixture`），不依赖网络与真实个人信息。
 - 失败时 CI 上传 `build/*.log` 与 `TestResults.xcresult`，可直接定位失败用例。
 
@@ -269,6 +271,7 @@ bash scripts/run-tests.sh          # 或 make test
 | 2026-11-01 | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | 🔶 XCTest 42+12 通过；XCUITest 7/12 通过（5 例失败） | 失败原因：XCUITest 点击工具栏菜单的 AX scroll-to-visible 错误（非功能缺陷）；修复见 `ai-collaboration-log.md` §2.11，等待重跑 |
 | 2026-11-01 | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ✅ 通过 | 提交 `e4c805c` |
 | 2026-11-01 | GitHub Actions（macOS 15 / Xcode 16.4） | CI `build-and-test`（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ❌ `build-for-testing` 失败（环境，未编译） | 镜像未注册预置模拟器，报找不到 iPhone SE / iOS 18.5 目的地；运行 1、2 同镜像正常。修复：CI 用 `simctl` 显式创建模拟器并按 UDID 选取（`ai-collaboration-log.md` §2.12），等待重跑 |
-| 2026-11-01 | 同上 | 同上（`VisionAccuracyTests` / `ocr-accuracy-report`） | 待运行 | 运行 2 提交不含 B 层步骤；运行 3 构建前失败，B 层未执行 |
+| 2026-11-01 | GitHub Actions | CI 全部 job（[运行 4](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231848508)） | ❌ 未启动任何 job | job 名称使用 `${{ env.* }}`，GitHub 在接受 workflow 时拒绝（job 数 0）。本地 actionlint 复现；修复见 `ai-collaboration-log.md` §2.13（static job 现含 actionlint） |
+| 2026-11-01 | 同上 | 同上（`VisionAccuracyTests` / `ocr-accuracy-report`） | 待运行 | 运行 2 提交不含 B 层步骤；运行 3 构建前失败；运行 4 未启动 job |
 
 > 原则：本表只写真实运行过的结果。未运行的一律写「待运行」，不用「预计通过」代替。
