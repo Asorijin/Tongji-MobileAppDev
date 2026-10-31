@@ -53,7 +53,9 @@ public struct BusinessCardFieldParser {
         // Pass 2：显式标签，如 "姓名：朱宏明"、"Name: David Chen"。
         let labels = explicitLabels()
         for (index, line) in lines.enumerated() where !consumed.contains(index) {
-            if let (target, value) = matchLabel(line: line, labels: labels) {
+            // OCR 会把标签与值连成一行（"地址北京市…"），带标签前缀的行必须先
+            // 按标签切分；否则整个字符串会被当成字段值（运行 5 C02 / C03）。
+            if let (target, value) = matchLabel(line: line, labels: labels) ?? matchGluedLabel(line: line, labels: labels) {
                 let absent = isAbsentPlaceholder(value)
                 switch target {
                 case .name: if fields.name == nil, !absent { fields.name = value }
@@ -154,6 +156,30 @@ public struct BusinessCardFieldParser {
                     return (entry.target, value)
                 }
             }
+        }
+        return nil
+    }
+
+    /// 无分隔符的"标签+值"合并行（"地址北京市海淀区…"、"部门研发中心"）。
+    ///
+    /// 只接受以该字段专属标签开头、且剩余部分本身可判定为该字段的行；
+    /// 姓名/公司等易与正文混淆的字段不参与，避免误切普通文本。
+    private func matchGluedLabel(line: String, labels: [(label: String, target: LabelTarget)]) -> (LabelTarget, String)? {
+        let lower = line.lowercased()
+        for entry in labels {
+            let target: (String) -> Bool
+            switch entry.target {
+            case .department:
+                target = isDepartment
+            case .address:
+                target = isAddressLike
+            default:
+                continue
+            }
+            guard lower.hasPrefix(entry.label), line.count > entry.label.count else { continue }
+            let remainder = TextNormalizer.sanitized(String(line.dropFirst(entry.label.count)))
+            guard let value = remainder, target(value) else { continue }
+            return (entry.target, value)
         }
         return nil
     }

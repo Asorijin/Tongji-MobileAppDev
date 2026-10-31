@@ -46,6 +46,34 @@ final class CardListUITests: XCTestCase {
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
     }
 
+    /// 清空输入框并写入新值。
+    ///
+    /// iOS 18 模拟器上 TextField 获得键盘焦点后再次 `.tap()` 会先做 AX
+    /// scroll-to-visible 并失败（运行 5 中姓名输入框的 value 变成新旧文本拼接）。
+    /// 这里改为拖动选择再输入：选中后键入会替换选区。
+    /// 字符较少时从左向右拖过行尾即选中整段；字符较多时只会停在段落起点，
+    /// 因此第二次换方向从右向左拖；两种情况都先读回 value 确认，最后用断言兜底。
+    private func replaceText(in field: XCUIElement, original: String, with newValue: String) {
+        field.tap()
+        field.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
+            .press(forDuration: 1.0, thenDragTo: field.coordinate(withNormalizedOffset: CGVector(dx: -0.6, dy: 0.5)))
+        if field.value as? String == original {
+            field.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5))
+                .press(forDuration: 1.0, thenDragTo: field.coordinate(withNormalizedOffset: CGVector(dx: 1.6, dy: 0.5)))
+        }
+        field.typeText(newValue)
+        XCTAssertNotEqual(field.value as? String, original, "输入框内容应已被整体替换")
+    }
+
+    /// 把编辑表单滚动到指定元素可见（标签区在小屏上位于首屏之下）。
+    private func scrollToVisible(_ target: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) {
+        var swipes = 0
+        while !(target.exists && target.isHittable), swipes < maxSwipes {
+            app.swipeUp()
+            swipes += 1
+        }
+    }
+
     /// 打开详情页右上角的菜单并等待展开。
     ///
     /// iOS 18 模拟器上对 SwiftUI `Menu` 直接 `.tap()` 会先执行 AX scroll-to-visible，
@@ -115,8 +143,7 @@ final class CardListUITests: XCTestCase {
 
         let name = app.textFields["field-name"]
         XCTAssertTrue(exists(name))
-        clearText(in: name)
-        name.typeText("David Chen Jr.")
+        replaceText(in: name, original: "David Chen", with: "David Chen Jr.")
         app.buttons["edit-save"].tap()
 
         XCTAssertTrue(waitForLabel(element(app, "detail-name"), "David Chen Jr."), "详情页应显示修改后的姓名")
@@ -179,7 +206,12 @@ final class CardListUITests: XCTestCase {
         openCardMenu(app)
         app.buttons["编辑"].tap()
         XCTAssertTrue(exists(app.textFields["field-name"]))
-        app.buttons["Conference"].tap()
+        // 标签区位于编辑表单最下方，小屏（iPhone SE 375×667）首屏看不到；
+        // XCUITest 的 .tap() 不会先滚动到可见，必须先滑到该按钮。
+        let conference = app.buttons["Conference"]
+        scrollToVisible(conference, in: app)
+        XCTAssertTrue(exists(conference), "编辑表单应出现标签按钮。Debug 描述：\(app.debugDescription)")
+        conference.tap()
         app.buttons["edit-save"].tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
         app.navigationBars["名片详情"].buttons.firstMatch.tap()
@@ -239,8 +271,7 @@ final class CardListUITests: XCTestCase {
         app.buttons["编辑"].tap()
         let name = app.textFields["field-name"]
         XCTAssertTrue(exists(name))
-        clearText(in: name)
-        name.typeText("David Chen Sr.")
+        replaceText(in: name, original: "David Chen", with: "David Chen Sr.")
         app.buttons["edit-save"].tap()
         XCTAssertTrue(waitForLabel(element(app, "detail-name"), "David Chen Sr."))
         app.terminate()

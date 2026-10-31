@@ -191,6 +191,36 @@ final class FieldParserTests: XCTestCase {
         XCTAssertEqual(fields.mobiles, ["138 0000 0005"])
     }
 
+    /// OCR 把标签与值识别成一行（运行 5 中 C02 的 "地址北京市…"、C03 的 "部门研发中心"）。
+    func testGluedDepartmentLabelIsSplitFromValue() {
+        // 文本取自运行 5 的 Vision OCR 原始输出（C03）。
+        let fields = parser.parse("华宇信息集团\n孙立\n技术总监\n部门研发中心\n手机 138 0000 0003\n邮箱 sunli@example.com.cn\n地址 杭州市西湖区文三路90号")
+        XCTAssertEqual(fields.department, "研发中心", "无分隔符的「部门」前缀应被切掉")
+        XCTAssertEqual(fields.name, "孙立")
+        XCTAssertEqual(fields.company, "华宇信息集团")
+        XCTAssertEqual(fields.address, "杭州市西湖区文三路90号")
+        XCTAssertTrue(fields.unclassifiedLines.isEmpty)
+    }
+
+    func testGluedAddressLabelIsSplitFromValue() {
+        // 文本取自运行 5 的 Vision OCR 原始输出（C02）。
+        let fields = parser.parse("XC\n赵敏\n产品经理\n星辰科技有限公司\n手机 138 0000 0002\n电话 010-5888 0002\n邮箱 zhaomin@example.com\n地址北京市海淀区中关村大街1号")
+        XCTAssertEqual(fields.address, "北京市海淀区中关村大街1号", "无分隔符的「地址」前缀应被切掉")
+        XCTAssertEqual(fields.mobiles, ["138 0000 0002"])
+        XCTAssertEqual(fields.officePhones, ["010 5888 0002"])
+        XCTAssertTrue(fields.unclassifiedLines.isEmpty)
+    }
+
+    /// 合并标签规则只接受"剩余部分本身可判定为该字段"的行，不做激进切分。
+    func testGluedLabelRuleDoesNotOverSplit() {
+        let unclearAddress = parser.parse("姓名：周伟\n公司：云和科技\n地址不详")
+        XCTAssertNil(unclearAddress.address, "「地址不详」剩余部分不是地址，不切分也不当作地址")
+        XCTAssertEqual(unclearAddress.name, "周伟")
+        XCTAssertEqual(unclearAddress.company, "云和科技")
+        let emptyRemainder = parser.parse("姓名：王五\n部门")
+        XCTAssertNil(emptyRemainder.department, "标签后无值不能当作字段值")
+    }
+
     func testStudioSuffixCompanyIsNotAddress() {
         let fields = parser.parse("周伟\n设计师\n南风工作室")
         XCTAssertEqual(fields.name, "周伟")
