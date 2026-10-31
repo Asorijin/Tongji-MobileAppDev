@@ -29,7 +29,6 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-        UIDeviceFamily: [1]
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: 用于拍摄名片并进行文字识别
         NSPhotoLibraryUsageDescription: 用于从照片库导入名片图片

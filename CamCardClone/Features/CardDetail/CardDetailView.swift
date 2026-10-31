@@ -146,7 +146,7 @@ struct CardDetailView: View {
                 .listRowBackground(Color.clear)
             }
 
-            if let imageData = environment.store.images.data(for: card.processedImagePath),
+            if let imageData = environment.store.images.data(forRelativePath: card.processedImagePath),
                let uiImage = UIImage(data: imageData) {
                 Section("名片图像") {
                     Image(uiImage: uiImage)

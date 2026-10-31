@@ -64,6 +64,9 @@ final class AppEnvironment: ObservableObject {
 /// 固定示例名片：数据全部为虚构信息，与 docs/test-cards 的合成名片一致的字段结构。
 /// 只在 UI 测试（-seedSampleCards）中使用，不进入 Release 构建。
 enum SampleCards {
+    /// CardStore 是 @MainActor 隔离的；Makefile/CI 生成的 App 模块以并发检查编译，
+    /// 这里显式标注主线程隔离，与调用方 AppEnvironment.makeForLaunch 一致。
+    @MainActor
     static func install(into store: CardStore) {
         let colleague = store.createTag(named: "同事")
         let client = store.createTag(named: "客户")
