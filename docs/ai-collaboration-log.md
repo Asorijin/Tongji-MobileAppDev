@@ -231,8 +231,9 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 > 可以抽成纯逻辑的部分必须补单元测试；其余改动只能由首次 CI 运行验证，不得提前标「通过」。
 
 **TRAE 修改范围**：
-- `CardDetailView`：两个 `.sheet` 合并为单一 `ActiveSheet` 枚举；删除确认与导出失败合并为单一 alert，
-  标题与按钮文案保持规格不变（「删除这张名片？」/ 删除 / 取消）。
+- `CardDetailView`：两个 `.sheet` 合并为单一 `ActiveSheet` 枚举；删除确认与导出失败合并为单一
+  `.alert(alertTitle, isPresented:)`——标题由 `alertTitle` 在渲染时计算（"删除这张名片？" / "导出失败"），
+  消息由 `alertMessage` 提供（"删除后无法恢复" / 导出错误描述），按钮文案保持规格不变（删除 / 取消 / 好）。
 - `ScannerView`：sheet 的关闭判断抽成 `Domain/Scanning/ScannerDismissal.swift` 纯逻辑，
   新增 `ScannerDismissalTests`（4 例）。
 - `AppEnvironment`：订阅 `store.objectWillChange` 并转发给观察它的视图。
@@ -246,12 +247,68 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 **人工验证**：
 - 逐条对照 T01/T11/T13/T14/T16/T17/T19/T20 的断言，确认是为修复行为缺陷而改，
   不是为了「让测试变绿」削弱被测 UI；
-- 确认合并后的删除弹窗仍是「确认后才删除」，且 `app.alerts["删除这张名片？"]` 仍能匹配；
+- 确认合并后的删除弹窗仍是「确认后才删除」；iOS 16 的 `.alert(_:isPresented:)` 标题取自渲染时计算的
+  `alertTitle`，因此在 UI 测试中用 `app.alerts.firstMatch` 定位弹窗，并以「删除（destructive）/ 取消」两个按钮
+  作为「确认弹窗已出现」的判据，再点击删除——按钮角色与文案都能由自动化验证，标题文本不做脆弱匹配；
 - 确认 `ScannerDismissal` 的三种组合都有断言，包括「识别失败且未打开表单时保留扫描页」。
 
 **回归**：`swift test` 由 44 例增至 **48/48 通过**（新增扫描关闭规则 4 例）；
 `python scripts/verify_test_cards.py` 仍为 41 张 / 164 图像。
 展示层与 CI 配置的修改没有本地运行环境，状态仍是 ⏳，只由首次 CI 运行给出结论。
+
+---
+
+### 2.10 Vision 端到端准确率报告（Week 3）
+
+**Prompt**
+> 作业 §5 要求概率性 OCR 效果用 30–50 张合成名片 + Ground Truth 做端到端评价。请在现有 VisionOCRService
+> 与 BusinessCardFieldParser 之上新增一个只在模拟器运行的测试 VisionAccuracyTests：对 docs/test-cards/images
+> 的 40 张 flat 图像执行真实 Vision 识别，保存原始 OCR 文本、解析字段、Ground Truth 与逐字段判定，
+> 产出 build/ocr-accuracy-report.md 与 .json；聚合字段级准确率、有值召回、缺失字段精度、虚构数、名片级全对率。
+> 不得修改 OCRService、解析器与数据模型；不得在测试里为准确率设置通过阈值（概率性结果原样记录），
+> 只对「40 张全部识别完成」与「虚构 = 0」（§8 硬约束）做断言。CI 中用 -only-testing 单独运行并上传工件，
+> 主测试运行中用 -skip-testing 跳过它，避免重复执行。
+
+**TRAE 修改范围**：`CamCardCloneTests/VisionAccuracyTests.swift`（新增）、
+`.github/workflows/ci.yml`（B 层步骤 + Step Summary + 工件）、`scripts/run-tests.sh`（本地同款步骤）、
+`docs/ocr-accuracy.md` §4.2 的实现状态说明、`docs/test-suite.md` 的用例索引。
+
+**人工验证**：
+- 确认报告结构覆盖 §4.2 的五步流程（原始文本、解析字段、Ground Truth、逐字段判定、人工归因入口）；
+- 确认测试只读 Ground Truth，不写回、不调用任何「补全」逻辑；
+- 确认准确率指标只记录、不设通过阈值——概率性结果不能靠调断言来「变绿」；
+- 对照 `layoutText` 与 `rawOCRText` 区分「OCR 识别错误」与「规则归类错误」。
+
+**回归**：Windows `swift test` 仍 48/48（该文件在非 Apple 平台按条件编译为空）；
+真实数字以 CI 运行产物（`ocr-accuracy-report` 工件）为准，未运行前 `docs/ocr-accuracy.md` §5.2 保持「待运行」。
+
+---
+
+### 2.11 首轮 CI 结果驱动的测试修复（Week 6）
+
+**Prompt**
+> 首次 CI 运行（运行 2）显示：静态检查通过、编译通过，XCTest 42 + 12 全部通过，异常路径 UI 4 例全部通过；
+> 但 `CardListUITests` 8 例中 5 例失败，失败点全部在点击详情页工具栏菜单 `detail-menu`：
+> XCUITest 先执行 AX scroll-to-visible，报 `kAXErrorCannotComplete`，计算出的点击点为 {-1, -1}。
+> 只改测试，不改被测 UI：不改菜单结构、不增删无障碍标识符、不删除或放宽任何场景断言。
+> 另外：为 B 层评价补充 Ground Truth 字段计数契约断言（有值 248、空 192），
+> 数据集变化导致评价分母漂移时必须显式失败；并补充 T12「识别 → 确认 → 保存 → 出现在列表」的端到端用例。
+
+**TRAE 修改范围**：
+- `CardListUITests`：新增 `openCardMenu(_:)` 辅助函数，用
+  `coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()` 绕过 AX 滚动步骤，
+  并等待菜单项「编辑」出现；5 个受影响用例的后续断言保持原样。
+- `VisionAccuracyTests`：新增 `presentChecks == 248`、`absentChecks == 192` 两条结构断言。
+- `ExceptionPathUITests`：新增 `testSaveAfterRecognitionAddsCard`（T12：`-scanFixture C01` → 确认表单
+  → 保存 → 列表出现 `card-row-朱宏明` → 详情显示姓名）。
+
+**人工验证**：
+- 确认 `openCardMenu` 只改变「怎么点到菜单」，没有改变「点到了什么、之后断言什么」；菜单本身仍由用户可点击验证；
+- 确认 B 层新增断言只校验评价结构（分母），没有为准确率设置及格线；
+- 确认保存用例断言的是真实 OCR 结果进入表单并落库，没有用测试分支绕过识别链路。
+
+**回归**：Windows `swift test` 仍 48/48；UI 修复与 B 层报告的真实结果以第三轮 CI 运行为准，
+在运行完成前本文与 `docs/test-suite.md` 均不写「通过」。
 
 ---
 
@@ -268,6 +325,8 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2.7 列表/详情/标签/导出 | Features/*、Services/Export、Tests | UI/Services | 否 |
 | 2.8 UI 测试/CI | UITests、project.yml、ci.yml | 测试/CI | 否 |
 | 2.9 预检修正 | ScannerDismissal、Detail/Scanner UI、UITests、ci.yml | UI/测试/CI | 否（仅模块内修正） |
+| 2.10 准确率报告 | VisionAccuracyTests、ci.yml、run-tests.sh、ocr 文档 | 测试/CI/文档 | 否（只读调用既有接口） |
+| 2.11 CI 结果修复 | CardListUITests、ExceptionPathUITests、VisionAccuracyTests | 测试 | 否（只改测试，不动被测 UI） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -282,9 +341,10 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 电话展示格式 | Swift 实现 vs Ground Truth vs Python 生成器三方对照 | 通过：同一契约 |
 | 数据集虚构性 | 全量扫描姓名/公司/号码/邮箱域名 | 通过：无真实个人信息 |
 | vCard 映射 | 逐行对照 `docs/data-model.md` §5 | 通过 |
-| 取消不落库 / 手动录入取消返回名片夹 | `ScannerDismissalTests`（✅）+ UI 测试 | 规则单测通过；UI 端到端待 CI |
-| 识别失败可手动录入 | UI 测试 + 代码审查 | 自动化路径已覆盖（待 CI 确认） |
-| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；（UI 待 CI） |
+| 取消不落库 / 手动录入取消返回名片夹 | `ScannerDismissalTests`（✅）+ `ExceptionPathUITests` | 规则单测通过；UI 端到端在 CI 运行 2 真实通过（4/4 异常路径用例） |
+| 识别失败可手动录入 | UI 测试 + 代码审查 | CI 运行 2 中 `testUnrecognizableImageOffersManualFallback` 真实通过 |
+| 识别 → 确认 → 保存 → 列表出现 | `ExceptionPathUITests.testSaveAfterRecognitionAddsCard` | 用例于 2.11 新增，等待下一轮 CI 真实运行 |
+| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；UI 用例在运行 2 因工具栏菜单点击问题失败，修复后待重跑（§8） |
 
 > 「待 CI 确认」表示用例已写好且本地静态审查通过，但尚未在模拟器/CI 上真实运行过。
 > 这一类项目不标记为通过。
@@ -329,7 +389,8 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2026-10-31 | 领域 32 + 数据 12 | `swift test`（Windows，Swift 6.4.2） | 44/44 通过 | 不含 Vision/UIKit 用例 |
 | 2026-11-01 | 领域 32 + 扫描流程 4 + 数据 12 | `swift test`（Windows，Swift 6.4.2） | 48/48 通过 | 2.9 新增 `ScannerDismissalTests`；仍不含 Vision/UIKit 用例 |
 | 2026-10-31 | 数据集 | `python scripts/verify_test_cards.py` | 通过（41 张 / 164 图像） | — |
-| （首次 CI 后补充） | XCTest + XCUITest 全量 | GitHub Actions `build-and-test` | 待运行 | 记录运行链接与用例数 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | XCTest 42 + 12 通过；UI 7/12 通过（5 例失败） | 失败全部是 XCUITest 点击工具栏 `Menu` 的 AX 错误，修复见 §2.11；修复后待重跑 |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件 | 待运行 | 运行 2 的提交不含 B 层步骤，工件未生成；随下一轮执行 |
 | （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 待运行 | 只记录真实结果 |
 
 ---
@@ -340,3 +401,24 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
   最后才改解析器——不要在 Prompt 里直接说「优化一下解析」。
 - 修改无障碍标识符等于修改规格：同步更新 `docs/spec.md` §3、UI 测试与本文档。
 - CI 失败时先看日志再改代码；不要为了「变绿」放宽断言。
+
+---
+
+## 8. CI 建设记录（真实运行）
+
+> 只记录 GitHub Actions 的实际运行结果；每轮附运行链接、失败原因与修复提交。
+
+| 轮次 | 运行 | static | build-and-test | 说明 |
+| --- | --- | --- | --- | --- |
+| 1 | [41229496692](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229496692)（commit `ecb5056`） | ✅ 通过 | ❌ `build-for-testing` 失败 | 4 个编译错误：`SampleCards.install` 在非隔离上下文调用 `CardStore` 的 `@MainActor` 方法（3 处）；`CardDetailView` 误用 `ImageStore.data(for:)` 参数标签（应为 `forRelativePath:`）。修复提交 `96ab470` |
+| 2 | [41229690851](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)（commit `96ab470`） | ✅ 通过 | ❌ `test-without-building` 失败 | 编译通过。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 4/4、`CardListUITests` 3/8。5 个失败点全部是对详情页工具栏菜单 `detail-menu` 调用 `.tap()` 时 XCUITest 的 AX scroll-to-visible 报 `kAXErrorCannotComplete`（点击点 {-1, -1}），被测功能本身正常；修复提交为 §2.11 的 `openCardMenu` 坐标点击。本轮提交不含 B 层步骤（当时未提交），故无准确率工件 |
+| 3 | （待运行） | 待运行 | 待运行 | 提交 §2.11 的修复 + B 层 CI 步骤；预期验证 UI 修复，并首次产出 `ocr-accuracy-report` 工件。运行完成前不写结论 |
+
+记要：
+
+- 首个公开仓库 `Asorijin/Tongji-MobileAppDev` 为唯一远端；本机 SSH 22 端口在当前网络被拦截，
+  改用 GitHub 官方 443 端口通道（`ssh://git@ssh.github.com:443/...`），属于网络环境问题，与仓库配置无关。
+- 首轮暴露的 4 个错误全部位于 **Windows 本地无法类型检查的文件**
+  （`CamCardCloneApp.swift` 的 DEBUG 示例数据、`CardDetailView` 的 UIKit 图像加载）。
+  本地 `swiftc -frontend -parse` 只能验证语法，不能替代 Xcode 编译——这正是 CI 的价值，
+  也解释了为什么本地通过不等于 CI 通过。

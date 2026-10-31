@@ -69,6 +69,7 @@ xcodebuild test-without-building \
   -derivedDataPath "$DERIVED_DATA" \
   -resultBundlePath "$RESULT_BUNDLE" \
   -parallel-testing-enabled NO \
+  -skip-testing:CamCardCloneTests/VisionAccuracyTests \
   CODE_SIGNING_ALLOWED=NO \
   | tee build/test.log
 status=${PIPESTATUS[0]}
@@ -77,4 +78,32 @@ set -e
 echo "==> 摘要"
 grep -E "Test Suite '.*' (passed|failed)|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED)" build/test.log | tail -n 30 || true
 
-exit "$status"
+# B 层（Week 3 概率性评价）：Vision 真实识别 → 解析器 → Ground Truth，产出 build/ocr-accuracy-report.{md,json}。
+# 与 CI 的「OCR 端到端准确率报告」步骤一致（同样 -only-testing，复用已编译产物）。
+echo "==> OCR 端到端准确率报告（B 层）"
+set +e
+rm -rf build/AccuracyResults.xcresult
+xcodebuild test-without-building \
+  -project CamCardClone.xcodeproj \
+  -scheme CamCardClone \
+  -configuration Debug \
+  -destination "$DESTINATION" \
+  -derivedDataPath "$DERIVED_DATA" \
+  -only-testing:CamCardCloneTests/VisionAccuracyTests \
+  -resultBundlePath build/AccuracyResults.xcresult \
+  -parallel-testing-enabled NO \
+  CODE_SIGNING_ALLOWED=NO \
+  | tee build/accuracy.log
+accuracy_status=${PIPESTATUS[0]}
+set -e
+
+grep -E "OCR-ACCURACY" build/accuracy.log || true
+if [ -f build/ocr-accuracy-report.md ]; then
+  echo "==> 准确率汇总"
+  awk '/^## 汇总/{flag=1;next}/^## /{flag=0}flag' build/ocr-accuracy-report.md
+  echo "完整报告：build/ocr-accuracy-report.md（逐张结果、错误明细、原始 OCR 文本）"
+  echo "机读报告：build/ocr-accuracy-report.json"
+fi
+
+if [ "$status" -ne 0 ]; then exit "$status"; fi
+exit "$accuracy_status"

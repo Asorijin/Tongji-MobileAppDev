@@ -59,11 +59,12 @@
 
 ```bash
 brew install xcodegen          # 或使用本机自备的 XcodeGen 2.46.0（与 CI 相同）
-make test                      # 数据集校验 + build-for-testing + 全部 XCTest/XCUITest
+make test                      # 数据集校验 + build-for-testing + 全部 XCTest/XCUITest + B 层准确率报告
 make verify                    # 同上，但从 build/ 清空开始（等价 CI）
 ```
 
 模拟器为 iPhone SE (3rd generation) / iOS 18.5；无需签名（`CODE_SIGNING_ALLOWED=NO`）。
+B 层报告输出到 `build/ocr-accuracy-report.md` / `.json`（逐张原始 OCR 文本、解析字段、判定与汇总）。
 
 ### 只有 Windows / Linux（无 Xcode）
 
@@ -79,6 +80,8 @@ python scripts/verify_test_cards.py
 
 - `static`（Ubuntu）：workflow YAML 语法、数据集完整性（41 张 × 4 变体、Ground Truth 契约）、Python 脚本可解析。
 - `build-and-test`（macOS 15）：XcodeGen 生成工程 → `build-for-testing` → `test-without-building`（iPhone SE / iOS 18.5）。
+- B 层准确率报告：单独以 `-only-testing:CamCardCloneTests/VisionAccuracyTests` 运行（复用同一构建产物），
+  汇总写入 Job Summary，完整 Markdown/JSON 作为 `ocr-accuracy-report` 工件保留 30 天。
 - 失败时上传 `build/*.log` 与 `.xcresult`；同一分支新推送自动取消旧运行。
 
 ## 测试与数据

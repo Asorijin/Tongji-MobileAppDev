@@ -81,6 +81,28 @@ final class ExceptionPathUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["empty-state-title"].waitForExistence(timeout: 10))
     }
 
+    /// 识别 → 确认表单 → 保存 → 返回名片夹 → 新名片出现并可打开详情（T12 的端到端路径）。
+    /// C01 是本数据集字段最完整的样例；Vision 对它的识别能力由 `OCRServiceTests` 同时验证，
+    /// 本用例关注的是「识别结果能一路落到存档并出现在列表」。
+    func testSaveAfterRecognitionAddsCard() {
+        let app = launch(["-scanFixture", "C01"])
+        waitForList(app)
+        app.buttons["empty-state-scan"].firstMatch.tap()
+        let nameField = app.textFields["field-name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 60), "合成名片应完成 OCR 并进入确认表单")
+        XCTAssertEqual(nameField.value as? String, "朱宏明", "C01 的姓名应被识别并预填到确认表单")
+        app.buttons["edit-save"].tap()
+
+        XCTAssertTrue(app.navigationBars["名片夹"].waitForExistence(timeout: 10), "保存后应返回名片夹")
+        XCTAssertFalse(app.staticTexts["empty-state-title"].exists, "保存后不应再是空名片夹")
+        let row = app.descendants(matching: .any).matching(identifier: "card-row-朱宏明").firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "保存后新名片应出现在列表")
+        row.tap()
+        XCTAssertTrue(app.navigationBars["名片详情"].waitForExistence(timeout: 10))
+        let detailName = app.descendants(matching: .any).matching(identifier: "detail-name").firstMatch
+        XCTAssertEqual(detailName.label, "朱宏明", "详情页应显示保存后的姓名")
+    }
+
     /// 校正测试数据本身的可用性：本地图像必须能解码（防止 fixture 损坏而不自知）。
     func testFixtureImagesAreDecodable() {
         for variant in ["flat", "tilt", "rotate", "shadow"] {

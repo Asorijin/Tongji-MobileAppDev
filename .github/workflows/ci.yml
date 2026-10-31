@@ -95,7 +95,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p build
-          rm -rf build/TestResults.xcresult
+          rm -rf build/TestResults.xcresult build/AccuracyResults.xcresult
           xcodebuild build-for-testing \
             -project CamCardClone.xcodeproj \
             -scheme CamCardClone \
@@ -115,7 +115,57 @@ jobs:
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/TestResults.xcresult \
             -parallel-testing-enabled NO \
+            -skip-testing:CamCardCloneTests/VisionAccuracyTests \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/test.log
+
+      # B 层（Week 3 概率性评价）：Vision 真实识别 40 张合成名片 → 解析器 → 与 Ground Truth 比对，
+      # 产出 Markdown/JSON 报告。复用上一步的构建产物，只跑这一个用例，避免重复编译。
+      - name: OCR 端到端准确率报告（B 层）
+        if: always()
+        run: |
+          set -euo pipefail
+          if ! ls build/DerivedData/Build/Products/*.xctestrun >/dev/null 2>&1; then
+            echo "未找到 xctestrun（构建失败），跳过 B 层报告"
+            exit 0
+          fi
+          rm -rf build/AccuracyResults.xcresult
+          xcodebuild test-without-building \
+            -project CamCardClone.xcodeproj \
+            -scheme CamCardClone \
+            -configuration Debug \
+            -destination "$DESTINATION" \
+            -derivedDataPath build/DerivedData \
+            -only-testing:CamCardCloneTests/VisionAccuracyTests \
+            -resultBundlePath build/AccuracyResults.xcresult \
+            -parallel-testing-enabled NO \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/accuracy.log
+
+      - name: 准确率摘要（写入 Step Summary）
+        if: always()
+        run: |
+          if [ -f build/ocr-accuracy-report.md ]; then
+            {
+              echo "### OCR / 字段抽取端到端准确率（B 层）"
+              echo ""
+              awk '/^## 汇总/{flag=1;next}/^## /{flag=0}flag' build/ocr-accuracy-report.md
+              echo ""
+              echo "完整报告（逐张结果、错误明细、原始 OCR 文本）见工件 \`ocr-accuracy-report\`。"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -f build/accuracy.log ]; then
+            grep -E "OCR-ACCURACY|error:|TEST (SUCCEEDED|FAILED)" build/accuracy.log | tail -n 20 >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: 上传准确率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ocr-accuracy-report
+          path: |
+            build/ocr-accuracy-report.md
+            build/ocr-accuracy-report.json
+          retention-days: 30
+          if-no-files-found: ignore
 
       - name: 测试摘要
         if: always()

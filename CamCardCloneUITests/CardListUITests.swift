@@ -45,6 +45,18 @@ final class CardListUITests: XCTestCase {
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
     }
 
+    /// 打开详情页右上角的菜单并等待展开。
+    ///
+    /// iOS 18 模拟器上对 SwiftUI `Menu` 直接 `.tap()` 会先执行 AX scroll-to-visible，
+    /// 计算出的点击点为 {-1, -1} 并报 `kAXErrorCannotComplete`（菜单其实可见、可手动点击）。
+    /// 这是 XCUITest 对工具栏菜单的已知行为，因此用坐标点击绕开滚动步骤，不改被测 UI。
+    private func openCardMenu(_ app: XCUIApplication) {
+        let menu = app.buttons["detail-menu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 10), "详情页应提供菜单按钮")
+        menu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(app.buttons["编辑"].waitForExistence(timeout: 10), "详情菜单应展开")
+    }
+
     // MARK: - T01 首次启动
 
     /// 首次启动 → 名片夹 → 空状态（含扫描/手动录入入口）。
@@ -85,7 +97,7 @@ final class CardListUITests: XCTestCase {
         let app = seededApp()
         element(app, "card-row-David Chen").tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
-        app.buttons["detail-menu"].tap()
+        openCardMenu(app)
         app.buttons["编辑"].tap()
 
         let name = app.textFields["field-name"]
@@ -151,7 +163,7 @@ final class CardListUITests: XCTestCase {
         // 给赵敏添加标签
         element(app, "card-row-赵敏").tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
-        app.buttons["detail-menu"].tap()
+        openCardMenu(app)
         app.buttons["编辑"].tap()
         XCTAssertTrue(exists(app.textFields["field-name"]))
         app.buttons["Conference"].tap()
@@ -188,10 +200,17 @@ final class CardListUITests: XCTestCase {
     func testDeleteFromDetailRemovesCard() {
         let app = seededApp()
         element(app, "card-row-David Chen").tap()
-        app.buttons["detail-menu"].tap()
-        app.buttons["删除"].tap()
-        XCTAssertTrue(exists(app.alerts["删除这张名片？"]), "删除前应弹出确认")
-        app.alerts["删除这张名片？"].buttons["删除"].tap()
+        openCardMenu(app)
+        let deleteItem = app.buttons["删除"]
+        XCTAssertTrue(deleteItem.waitForExistence(timeout: 10), "详情菜单应提供删除项")
+        deleteItem.tap()
+        // iOS 16 的 .alert(_:isPresented:) 标题取自渲染时的静态参数，明确匹配标题并不可靠；
+        // 场景要求的是「删除前出现确认，且确认后才删除」，因此以弹窗与两个按钮作为判据。
+        let confirm = app.alerts.firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10), "删除前应弹出确认")
+        XCTAssertTrue(confirm.buttons["删除"].exists, "确认弹窗应提供删除按钮")
+        XCTAssertTrue(confirm.buttons["取消"].exists, "确认弹窗应提供取消按钮")
+        confirm.buttons["删除"].tap()
         XCTAssertTrue(exists(app.navigationBars["名片夹"]))
         XCTAssertFalse(exists(element(app, "card-row-David Chen"), timeout: 5), "删除后名片应从列表消失")
         XCTAssertTrue(element(app, "card-row-朱宏明").exists)
@@ -203,7 +222,7 @@ final class CardListUITests: XCTestCase {
     func testEditsSurviveRelaunch() {
         let app = seededApp()
         element(app, "card-row-David Chen").tap()
-        app.buttons["detail-menu"].tap()
+        openCardMenu(app)
         app.buttons["编辑"].tap()
         let name = app.textFields["field-name"]
         XCTAssertTrue(exists(name))
@@ -225,7 +244,7 @@ final class CardListUITests: XCTestCase {
         let app = seededApp()
         element(app, "card-row-David Chen").tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
-        app.buttons["detail-menu"].tap()
+        openCardMenu(app)
         app.buttons["导出联系人（VCF）"].tap()
 
         // 分享面板的呈现方式随 iOS 版本 / 语言不同，命中任一系统元素即视为成功。

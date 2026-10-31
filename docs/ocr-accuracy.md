@@ -96,10 +96,14 @@ swift test --filter FixtureParserTests
 4. 把每张名片的 `原始文本 / 解析字段 / Ground Truth / 判定` 写成报告（Markdown 或 JSON），上传为 CI 工件；
 5. 对判定为错的字段做人工归因（OCR 看错 / 规则错 / 数据问题），修正规则后重跑 A 层回归。
 
-> 实现状态：**B 层的自动化统计脚本尚未运行过**。当前只在模拟器上用 C01 做了 OCR 冒烟验证
-> （`OCRServiceTests.testVisionRecognizesSyntheticChineseCard` 与
-> `testRecognizedTextFlowsIntoParser`）。在第一次模拟器运行完成之前，
-> 本文档**不给出任何端到端准确率数字**，只给出方法与待记录的空表。
+> 实现状态：B 层已实现为一条可在模拟器 / CI 上运行的 XCTest：
+> `CamCardCloneTests/VisionAccuracyTests.testEndToEndVisionAccuracyReport`
+> （40 张 × 11 字段 = 440 项判定；产出 `build/ocr-accuracy-report.md` 与 `.json`，
+> 由 CI 上传为 `ocr-accuracy-report` 工件，并把汇总表写进 Step Summary）。
+> 该用例只对「40 张全部完成识别」与「虚构字段 = 0」两个硬约束做断言，
+> 准确率等概率性指标**不在测试里设阈值**，而是原样记录。
+> 截至本文当前版本，该用例已实现但**尚未在 CI 上运行完成**；
+> 在第一次真实运行完成之前，本文档**不给端到端准确率数字**，§5.2 保持「待运行」。
 
 ### 4.3 人工校正（HITL）记录方式
 
