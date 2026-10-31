@@ -298,6 +298,8 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 - `CardListUITests`：新增 `openCardMenu(_:)` 辅助函数，用
   `coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()` 绕过 AX 滚动步骤，
   并等待菜单项「编辑」出现；5 个受影响用例的后续断言保持原样。
+  另为 `testDetailShowsAllSavedFields` 增加「旧名片可能在屏幕下方」的滚动兜底
+  （`scrollToBottom` 只在目标行不可点击时执行，不断言滚动本身）。
 - `VisionAccuracyTests`：新增 `presentChecks == 248`、`absentChecks == 192` 两条结构断言。
 - `ExceptionPathUITests`：新增 `testSaveAfterRecognitionAddsCard`（T12：`-scanFixture C01` → 确认表单
   → 保存 → 列表出现 `card-row-朱宏明` → 详情显示姓名）。
@@ -309,6 +311,38 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 
 **回归**：Windows `swift test` 仍 48/48；UI 修复与 B 层报告的真实结果以第三轮 CI 运行为准，
 在运行完成前本文与 `docs/test-suite.md` 均不写「通过」。
+
+---
+
+### 2.12 CI 运行 3 的模拟器缺失与环境修复（Week 6）
+
+**Prompt**
+> CI 运行 3 在 `build-for-testing` 阶段失败，日志为
+> `Unable to find a device matching the provided destination specifier:
+> { platform:iOS Simulator, OS:18.5, name:iPhone SE (3rd generation) }`，
+> 该 scheme 的可用目的地只剩 macOS「My Mac」与两个占位符（Any iOS Device / Any iOS Simulator Device）。
+> 运行 1、2 与本轮使用同一镜像（macos-15-arm64 / 20261028.0489.1 / Xcode 16.4）且设备正常，
+> 因此这不是代码、测试或目的地写法的问题，而是镜像自带的 CoreSimulator 预置设备在部分机器上没有注册
+> （与 actions/runner-images#12948 记录的偶发现象一致）。
+> 只改 CI：构建前用 `xcrun simctl` 显式创建 iPhone SE (3rd generation) / iOS 18.5 模拟器，
+> 后续所有 xcodebuild 步骤改为按该设备 UDID 选取目标；不改 App 代码、不改测试、不调整任何断言。
+
+**TRAE 修改范围**：`.github/workflows/ci.yml`
+- env 中整条 `DESTINATION`（name + OS）改为 `SIM_RUNTIME: "18.5"`；
+- 新增「准备模拟器」步骤：`simctl list runtimes` 刷新运行版本列表 → 校验 iOS 18.5 运行版本存在
+  （缺失时显式报错，而不是等到构建阶段才失败）→
+  `xcrun simctl create "CamCardClone-CI" com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation
+  com.apple.CoreSimulator.SimRuntime.iOS-18-5` → UDID 写入 `$GITHUB_ENV`；
+- `build-for-testing`、主测试、B 层报告三处 `-destination` 统一改为 `id=$SIM_UDID`。
+
+**人工验证**：
+- 对照运行 3 日志确认失败点与可用目的地列表，排除编译与测试代码问题；
+- 确认「缺运行版本」与「缺设备」分开处理：前者属于镜像能力缺失，直接报错；后者每次运行自愈；
+- 确认没有跳过或放宽任何用例，B 层与 UI 用例的执行范围不变；
+- 本地对 workflow 做 YAML 解析与 shell 语法检查，真实效果由第四轮 CI 运行验证（不提前写「通过」）。
+
+**回归**：本机无 macOS/CoreSimulator，该修复只能由 CI 验证；`swift test` 48/48 不受影响。
+第四轮运行结果记录于 §8。
 
 ---
 
@@ -327,6 +361,7 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2.9 预检修正 | ScannerDismissal、Detail/Scanner UI、UITests、ci.yml | UI/测试/CI | 否（仅模块内修正） |
 | 2.10 准确率报告 | VisionAccuracyTests、ci.yml、run-tests.sh、ocr 文档 | 测试/CI/文档 | 否（只读调用既有接口） |
 | 2.11 CI 结果修复 | CardListUITests、ExceptionPathUITests、VisionAccuracyTests | 测试 | 否（只改测试，不动被测 UI） |
+| 2.12 CI 环境修复 | ci.yml | 测试/CI | 否（只改 CI 执行环境） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -390,7 +425,8 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2026-11-01 | 领域 32 + 扫描流程 4 + 数据 12 | `swift test`（Windows，Swift 6.4.2） | 48/48 通过 | 2.9 新增 `ScannerDismissalTests`；仍不含 Vision/UIKit 用例 |
 | 2026-10-31 | 数据集 | `python scripts/verify_test_cards.py` | 通过（41 张 / 164 图像） | — |
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | XCTest 42 + 12 通过；UI 7/12 通过（5 例失败） | 失败全部是 XCUITest 点击工具栏 `Menu` 的 AX 错误，修复见 §2.11；修复后待重跑 |
-| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件 | 待运行 | 运行 2 的提交不含 B 层步骤，工件未生成；随下一轮执行 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ❌ 未进入测试阶段 | 镜像未注册模拟器，`build-for-testing` 报找不到 iPhone SE / iOS 18.5；环境问题，修复见 §2.12 |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件 | 待运行 | 运行 2 的提交不含 B 层步骤；运行 3 构建前失败，B 层未执行；随下一轮执行 |
 | （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 待运行 | 只记录真实结果 |
 
 ---
@@ -412,12 +448,15 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | --- | --- | --- | --- | --- |
 | 1 | [41229496692](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229496692)（commit `ecb5056`） | ✅ 通过 | ❌ `build-for-testing` 失败 | 4 个编译错误：`SampleCards.install` 在非隔离上下文调用 `CardStore` 的 `@MainActor` 方法（3 处）；`CardDetailView` 误用 `ImageStore.data(for:)` 参数标签（应为 `forRelativePath:`）。修复提交 `96ab470` |
 | 2 | [41229690851](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)（commit `96ab470`） | ✅ 通过 | ❌ `test-without-building` 失败 | 编译通过。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 4/4、`CardListUITests` 3/8。5 个失败点全部是对详情页工具栏菜单 `detail-menu` 调用 `.tap()` 时 XCUITest 的 AX scroll-to-visible 报 `kAXErrorCannotComplete`（点击点 {-1, -1}），被测功能本身正常；修复提交为 §2.11 的 `openCardMenu` 坐标点击。本轮提交不含 B 层步骤（当时未提交），故无准确率工件 |
-| 3 | （待运行） | 待运行 | 待运行 | 提交 §2.11 的修复 + B 层 CI 步骤；预期验证 UI 修复，并首次产出 `ocr-accuracy-report` 工件。运行完成前不写结论 |
+| 3 | [41231201327](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)（commit `e4c805c`） | ✅ 通过 | ❌ `build-for-testing` 失败（环境） | 编译未开始：`xcodebuild: error: Unable to find a device matching the provided destination specifier: { platform:iOS Simulator, OS:18.5, name:iPhone SE (3rd generation) }`；该 scheme 的可用目的地只剩「My Mac」与两个占位符。运行 1、2 与本轮镜像与 Xcode 版本完全相同（macos-15-arm64 / `20261028.0489.1` / Xcode 16.4 `16F6`），属镜像未注册预置模拟器的偶发问题（actions/runner-images#12948）。B 层、摘要、工件步骤均因没有 xctestrun 而跳过；修复提交见 §2.12（simctl 显式创建模拟器 + 按 UDID 选取目的地） |
+| 4 | 待运行 | 待运行 | 待运行 | 提交 §2.12 的 CI 修复；预期首次执行 UI 修复后的全量测试与 B 层准确率工件。运行完成前不写结论 |
 
 记要：
 
 - 首个公开仓库 `Asorijin/Tongji-MobileAppDev` 为唯一远端；本机 SSH 22 端口在当前网络被拦截，
   改用 GitHub 官方 443 端口通道（`ssh://git@ssh.github.com:443/...`），属于网络环境问题，与仓库配置无关。
+- 运行 3 之后，CI 的模拟器设备由「准备模拟器」步骤显式创建并记录 UDID；镜像自带预置设备是否注册
+  不再影响构建与测试（设备创建失败或运行版本缺失时会显式报错，不会静默跳过）。
 - 首轮暴露的 4 个错误全部位于 **Windows 本地无法类型检查的文件**
   （`CamCardCloneApp.swift` 的 DEBUG 示例数据、`CardDetailView` 的 UIKit 图像加载）。
   本地 `swiftc -frontend -parse` 只能验证语法，不能替代 Xcode 编译——这正是 CI 的价值，

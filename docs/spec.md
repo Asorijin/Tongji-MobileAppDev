@@ -293,7 +293,7 @@ BusinessCard
 | T17 | 删除 | UI 测试 `testDeleteFromDetailRemovesCard` + `testDeleteRemovesCardAndItsImages` |
 | T18 | 持久化 | UI 测试 `testEditsSurviveRelaunch` + `testStoreReloadsFromDisk` |
 | T19 | 导出 | UI 测试 `testExportOpensShareSheet` + `VCardExporterTests`（6 例映射/转义） |
-| T20 | 异常 | `ExceptionPathUITests` 4 例 |
+| T20 | 异常 | `ExceptionPathUITests`（T20 相关 4 例；同文件另有 T12 保存用例） |
 
 ---
 

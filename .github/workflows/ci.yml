@@ -4,6 +4,8 @@
 #   - 仅在公开仓库的免费 macOS 额度内运行；推送到 main 与 PR 时触发，同一分支的旧运行自动取消。
 #   - Xcode 16.4 是 macos-15 镜像的默认版本，无需切换工具链，省去 xcode-select 的额外时间。
 #   - iPhone SE (3rd generation) 是最轻量的模拟器，UI 测试串行执行。
+#     镜像的 CoreSimulator 预置设备偶尔没有注册（actions/runner-images#12948），
+#     因此显式用 simctl 创建该型号设备，xcodebuild 只按 UDID 选取目标。
 #   - 先 build-for-testing 再 test-without-building，避免测试阶段重复编译。
 #   - XcodeGen 走缓存，未命中时从 GitHub Release 下载预编译二进制（不做 SwiftPM 编译）。
 name: CI
@@ -24,7 +26,8 @@ permissions:
 env:
   XCODEGEN_VERSION: 2.46.0
   XCODE_VERSION: "16.4"
-  DESTINATION: "platform=iOS Simulator,name=iPhone SE (3rd generation),OS=18.5"
+  # 模拟器运行版本；设备型号在「准备模拟器」步骤里固定为 iPhone SE 3rd gen。
+  SIM_RUNTIME: "18.5"
 
 jobs:
   static:
@@ -54,7 +57,7 @@ jobs:
         run: python -m py_compile scripts/make_test_cards.py scripts/verify_test_cards.py
 
   build-and-test:
-    name: iOS 构建与测试（iPhone SE / iOS 18.5）
+    name: iOS 构建与测试（iPhone SE 3rd gen / iOS ${{ env.SIM_RUNTIME }}）
     needs: static
     runs-on: macos-15
     timeout-minutes: 35
@@ -65,6 +68,24 @@ jobs:
         run: |
           sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
           xcodebuild -version
+
+      # 运行 3 的失败原因：镜像 CoreSimulator 的预置设备未注册，xcodebuild 只看到
+      # 「Any iOS Simulator Device」占位符（actions/runner-images#12948）。
+      # 这里先用 simctl 刷新设备列表，再显式创建一台固定型号的模拟器并记录其 UDID；
+      # 之后所有 xcodebuild 步骤只按 UDID 选取目标，不再依赖镜像里是否存在预置设备。
+      - name: 准备模拟器（iPhone SE 3rd gen / iOS ${{ env.SIM_RUNTIME }}）
+        run: |
+          set -euo pipefail
+          RUNTIME="com.apple.CoreSimulator.SimRuntime.iOS-${SIM_RUNTIME//./-}"
+          xcrun simctl list runtimes
+          if ! xcrun simctl list runtimes -j | grep -Fq "\"$RUNTIME\""; then
+            echo "::error::镜像缺少 iOS ${SIM_RUNTIME} 模拟器运行版本（$RUNTIME）"
+            exit 1
+          fi
+          UDID="$(xcrun simctl create "CamCardClone-CI" \
+            com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation "$RUNTIME")"
+          echo "创建的模拟器 UDID：$UDID"
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
 
       - name: 缓存 XcodeGen
         id: xcodegen-cache
@@ -100,7 +121,7 @@ jobs:
             -project CamCardClone.xcodeproj \
             -scheme CamCardClone \
             -configuration Debug \
-            -destination "$DESTINATION" \
+            -destination "id=$SIM_UDID" \
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/build.log
 
@@ -111,7 +132,7 @@ jobs:
             -project CamCardClone.xcodeproj \
             -scheme CamCardClone \
             -configuration Debug \
-            -destination "$DESTINATION" \
+            -destination "id=$SIM_UDID" \
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/TestResults.xcresult \
             -parallel-testing-enabled NO \
@@ -133,7 +154,7 @@ jobs:
             -project CamCardClone.xcodeproj \
             -scheme CamCardClone \
             -configuration Debug \
-            -destination "$DESTINATION" \
+            -destination "id=$SIM_UDID" \
             -derivedDataPath build/DerivedData \
             -only-testing:CamCardCloneTests/VisionAccuracyTests \
             -resultBundlePath build/AccuracyResults.xcresult \

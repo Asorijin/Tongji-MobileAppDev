@@ -33,8 +33,8 @@
 │   ├── Features/               # CardList / Scanner / CardDetail / CardEdit / Tags
 │   ├── Services/               # Vision OCR、图像校正、VCardExporter
 │   └── UI/                     # FlowLayout 等通用视图
-├── CamCardCloneTests/          # XCTest：解析器 23 例 + 数据集 3 例 + 导出 6 例 + 扫描规则 4 例 + Vision/校正（模拟器）
-├── CamCardCloneUITests/        # XCUITest：异常路径（T20）、权限（T03）、识别→确认→取消
+├── CamCardCloneTests/          # XCTest：解析器 23 例 + 数据集 3 例 + 导出 6 例 + 扫描规则 4 例 + Vision/校正（模拟器）+ B 层准确率报告（模拟器）
+├── CamCardCloneUITests/        # XCUITest：名片夹主路径（T01/T13–T19）、异常路径（T20）、权限（T03）、识别→确认→保存/取消
 ├── CamCardDataTests/           # 数据层 12 例（增删改查/搜索/标签/持久化/图片）
 ├── docs/
 │   ├── spec.md                 # 规格书（页面、状态、流程、字段规则、验收）
@@ -75,11 +75,14 @@ python scripts/verify_test_cards.py
 
 > 说明：`Package.swift` 仅用于本地纯 Swift 校验，同一份源码也在 Xcode 工程中编译；
 > Vision / UIKit 相关用例在非 Apple 平台上编译为空，由 CI 在 iOS 模拟器上执行。
+> 本机当前没有 macOS / Xcode，模拟器全量测试由 GitHub Actions 完成，运行记录见
+> [docs/test-suite.md](docs/test-suite.md) §5 与 [docs/ai-collaboration-log.md](docs/ai-collaboration-log.md) §8。
 
 ## CI
 
 - `static`（Ubuntu）：workflow YAML 语法、数据集完整性（41 张 × 4 变体、Ground Truth 契约）、Python 脚本可解析。
-- `build-and-test`（macOS 15）：XcodeGen 生成工程 → `build-for-testing` → `test-without-building`（iPhone SE / iOS 18.5）。
+- `build-and-test`（macOS 15）：`simctl` 创建 iPhone SE (3rd generation) / iOS 18.5 模拟器（规避镜像预置设备偶发未注册，
+  `actions/runner-images#12948`）→ XcodeGen 生成工程 → `build-for-testing` → `test-without-building`（按模拟器 UDID 选取目标）。
 - B 层准确率报告：单独以 `-only-testing:CamCardCloneTests/VisionAccuracyTests` 运行（复用同一构建产物），
   汇总写入 Job Summary，完整 Markdown/JSON 作为 `ocr-accuracy-report` 工件保留 30 天。
 - 失败时上传 `build/*.log` 与 `.xcresult`；同一分支新推送自动取消旧运行。

@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 
 /// T01 / T12–T19 的确定性 UI 路径，在 iOS 模拟器上运行。
@@ -57,11 +58,18 @@ final class CardListUITests: XCTestCase {
         XCTAssertTrue(app.buttons["编辑"].waitForExistence(timeout: 10), "详情菜单应展开")
     }
 
+    /// 滚到列表底部（最新保存的名片排在最前，旧名片在下方）。
+    private static func scrollToBottom(_ app: XCUIApplication) {
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+        let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+        for _ in 0..<3 { start.press(forDuration: 0.05, thenDragTo: end) }
+    }
+
     // MARK: - T01 首次启动
 
     /// 首次启动 → 名片夹 → 空状态（含扫描/手动录入入口）。
     func testFirstLaunchShowsEmptyState() {
-        // 用例按字母序执行，前面的用例会写入存档；显式 -resetStore 才是真正的「首次启动」。
+        // 用例按字母序执行，前面的用例会写入存档；-resetStore 才是真正的「首次启动」。
         let app = launch(["-resetStore"])
         XCTAssertTrue(exists(app.staticTexts["empty-state-title"]), "首次启动应显示空名片夹提示")
         XCTAssertTrue(app.buttons["empty-state-scan"].exists, "空状态应提供扫描入口")
@@ -74,7 +82,12 @@ final class CardListUITests: XCTestCase {
     /// 打开名片 → 正确显示全部保存字段。
     func testDetailShowsAllSavedFields() {
         let app = seededApp()
-        element(app, "card-row-朱宏明").tap()
+        // 全新存档写入顺序为 朱宏明 / 赵敏 / David Chen（头插法），旧名片在屏幕下方，
+        // 小屏设备上需要滚动才能点击。
+        let row = element(app, "card-row-朱宏明")
+        XCTAssertTrue(exists(row))
+        if !row.isHittable { Self.scrollToBottom(app) }
+        row.tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
         XCTAssertEqual(element(app, "detail-name").label, "朱宏明")
         XCTAssertTrue(element(app, "detail-mobile").label.contains("138 0000 0001"))

@@ -16,7 +16,7 @@
 | 数据层（`CardStoreTests`） | 任意 / iOS 模拟器 | 12 | ✅ 本地已通过 |
 | 扫描关闭规则（`ScannerDismissalTests`） | 任意 | 4 | ✅ 本地已通过 |
 | OCR / 区域检测（`OCRServiceTests`、`ImageCorrectionTests`） | 仅 iOS 模拟器（Vision / UIKit） | 6 | ✅ CI 运行 2 真实通过（3 + 3） |
-| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ⏳ 等待 CI 专门步骤运行（运行 2 未包含） |
+| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ⏳ 等待 CI 专门步骤运行（运行 2 未包含 B 层步骤；运行 3 构建前失败，未执行） |
 | UI 路径（`ExceptionPathUITests` + `CardListUITests`） | 仅 iOS 模拟器 | 5 + 8 | 🔶 运行 2：异常路径 4/4 + 保存用例待跑；名片夹 3/8（5 例因工具栏菜单的 AX 点击问题失败，修复后待重跑） |
 
 本地 Windows 结果（2026-11-01）：`swift test` **48/48 通过**（领域 32 + 扫描关闭规则 4 + 数据 12）；
@@ -151,7 +151,7 @@ CI 运行 2（[41229690851](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 | 断言 | 测试 |
 | --- | --- |
 | 详情页正确显示全部保存字段（手机/办公/传真/邮箱/网址/地址/邮编/部门） | ✅ `CardListUITests.testDetailShowsAllSavedFields`（CI 运行 2 通过） |
-| 空字段不显示 | ✅ 同上（示例名片无备注 → 无备注行） |
+| 空字段不显示 | 🔶 同上（注释行断言 `detail-notes` 不存在；该行在固定示例数据下成立，不是由数据变化触发的动态断言） |
 
 ### T14 — Edit
 
@@ -249,7 +249,8 @@ swift test
 bash scripts/run-tests.sh          # 或 make test
 ```
 
-- CI 的 `build-and-test`（macOS 15 / iPhone SE 3rd gen / iOS 18.5）运行 XCTest + XCUITest 全量。
+- CI 的 `build-and-test`（macOS 15）先用 `simctl` 创建 iPhone SE 3rd gen / iOS 18.5 模拟器
+  （规避镜像预置设备偶发未注册，`actions/runner-images#12948`），再运行 XCTest + XCUITest 全量。
 - UI 测试使用固定示例数据（`-seedSampleCards`）与合成名片注入（`-scanFixture`），不依赖网络与真实个人信息。
 - 失败时 CI 上传 `build/*.log` 与 `TestResults.xcresult`，可直接定位失败用例。
 
@@ -266,6 +267,8 @@ bash scripts/run-tests.sh          # 或 make test
 | 2026-10-31 | Windows 11 / Python 3.x | `python scripts/verify_test_cards.py` | 通过（41 张 / 164 图像） | 数据集一致性 |
 | 2026-11-01 | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | ✅ 通过 | 编译修复提交 `96ab470` |
 | 2026-11-01 | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | 🔶 XCTest 42+12 通过；XCUITest 7/12 通过（5 例失败） | 失败原因：XCUITest 点击工具栏菜单的 AX scroll-to-visible 错误（非功能缺陷）；修复见 `ai-collaboration-log.md` §2.11，等待重跑 |
-| 2026-11-01 | 同上 | 同上（`VisionAccuracyTests` / `ocr-accuracy-report`） | 待运行 | 运行 2 提交不含 B 层步骤 |
+| 2026-11-01 | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ✅ 通过 | 提交 `e4c805c` |
+| 2026-11-01 | GitHub Actions（macOS 15 / Xcode 16.4） | CI `build-and-test`（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ❌ `build-for-testing` 失败（环境，未编译） | 镜像未注册预置模拟器，报找不到 iPhone SE / iOS 18.5 目的地；运行 1、2 同镜像正常。修复：CI 用 `simctl` 显式创建模拟器并按 UDID 选取（`ai-collaboration-log.md` §2.12），等待重跑 |
+| 2026-11-01 | 同上 | 同上（`VisionAccuracyTests` / `ocr-accuracy-report`） | 待运行 | 运行 2 提交不含 B 层步骤；运行 3 构建前失败，B 层未执行 |
 
 > 原则：本表只写真实运行过的结果。未运行的一律写「待运行」，不用「预计通过」代替。
