@@ -202,6 +202,37 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
+      # Week 6「UI 截图对比」：UI 测试把关键页面截图以 XCTAttachment（keepAlways）写入
+      # TestResults.xcresult，这里用 Xcode 16 的 xcresulttool 导出为 PNG 并上传。
+      # 本地 scripts/run-tests.sh 执行同样的导出（build/ui-screenshots/）。
+      - name: 导出 UI 截图（Week 6 截图对比）
+        if: always()
+        run: |
+          if [ -d build/TestResults.xcresult ]; then
+            rm -rf build/ui-screenshots
+            mkdir -p build/ui-screenshots
+            if xcrun xcresulttool export attachments \
+                 --path build/TestResults.xcresult \
+                 --output-path build/ui-screenshots; then
+              ls -la build/ui-screenshots
+              echo "PNG 数量：$(find build/ui-screenshots -name '*.png' | wc -l)"
+            else
+              # 截图是周报证据而非测试结论：导出失败不把整个 job 标红，但要留下告警。
+              echo "::warning::UI 截图导出失败（不影响测试结论，见本步骤日志）"
+            fi
+          else
+            echo "没有 TestResults.xcresult（测试未运行），跳过截图导出"
+          fi
+
+      - name: 上传 UI 截图（Week 6 截图对比）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: build/ui-screenshots
+          retention-days: 30
+          if-no-files-found: ignore
+
       - name: 测试摘要
         if: always()
         run: |
@@ -220,5 +251,6 @@ jobs:
           path: |
             build/*.log
             build/TestResults.xcresult
+            build/ui-screenshots
           retention-days: 7
           if-no-files-found: ignore

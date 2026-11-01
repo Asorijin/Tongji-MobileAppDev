@@ -377,6 +377,128 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 
 ---
 
+### 2.14 CI 运行 5 的 UI 失败归因与解析器粘连标签修复（Week 6）
+
+**Prompt**
+> 运行 5 是首次跑通全链路的一轮：static ✅、编译 ✅、B 层准确率 ✅、异常路径 UI 5/5。
+> 但 `CardListUITests` 3 例失败（编辑姓名、编辑后重启保持、标签创建/筛选/删除），
+> B 层暴露 C02/C03 两个解析错误。要求：先从工件与 XCTest 日志定位真实原因再改，
+> 不允许为了让测试变绿而放宽断言；只改测试与解析器，不降低任何验证强度。
+
+**证据（全部来自运行 5 下载的工件，未推测）**：
+- 编辑类用例：XCTest 日志 19:04:51 的无障碍快照显示 `field-name` 的 value 是
+  `David Chen` 且键盘焦点在其中；19:04:52.594 的失败信息显示期望值变成了
+  `David Chen Jr.David Chen`。即**第二次 `.tap()` 落在已聚焦的输入框上**时，
+  XCUITest 先做 AX scroll-to-visible 并失败（`kAXErrorCannotComplete` 系列），
+  焦点停留在原位置，逐字符删除大部分被吞掉，新文本被追加到旧文本末尾，
+  表单最终保存了「新旧拼接」的名字。详情页忠实显示了存档中的值，**不是展示层问题**。
+- 标签用例：失败时的无障碍快照中完全没有 `Conference` 按钮，而编辑表单其他控件都在——
+  标签 Section 是表单最后一个 Section，在 iPhone SE（375×667）上位于首屏之下，
+  `.tap()` 不会自动滚动。
+- B 层：C02 的原始 OCR 是 `地址北京市海淀区中关村大街1号`、C03 是 `部门研发中心`，
+  字符全部正确，只是标签与值之间没有分隔符，旧规则把整串当成了字段值。
+
+**TRAE 修改范围**：`CamCardCloneUITests/CardListUITests.swift`、
+`CamCardClone/Domain/Parsing/BusinessCardFieldParser.swift`、
+`CamCardCloneTests/FieldParserTests.swift`
+- UI 测试新增 `replaceText(in:original:with:)`：点击一次获得焦点后，用长按拖拽**选中整段文本**
+  （短文本从左拖过行尾，长文本反向再拖一次），再键入新值——键入会替换选区；
+  不再对已聚焦输入框二次 `.tap()`。结尾用 `XCTAssertNotEqual` 兜底确认内容确实被替换。
+- UI 测试新增 `scrollToVisible(_:in:maxSwipes:)`：标签用例先滑动到标签按钮 `isHittable` 再点击。
+- 测试的**断言全部保持原样**：仍然是「详情页显示新姓名、列表出现新行、旧行消失」、
+  「重启后修改保持」、「删除标签后名片仍在」。
+- 解析器新增 `matchGluedLabel`：在显式标签阶段之后尝试切分无分隔符的「标签+值」行，
+  只对 `department` / `address` 生效，且剩余部分必须**本身满足该字段判定**；
+  姓名/公司不参与。新增 3 例单测（C02/C03 真实 OCR 文本 + `地址不详`/空剩余值的不过度切分保护）。
+
+**被否定的假设（记录在此以免重复踩坑）**：
+- 最初怀疑「iOS 18 对 `detail-name` 的无障碍快照过期」，并曾临时给编辑表单的
+  `TextField` 加 `.accessibilityLabel`；日志证据出现后**该实验已完整回退**，
+  `CardEditView` 本轮零改动。详情页展示的是存档真实值，问题在输入环节而非展示环节。
+
+**人工验证**：
+- 本地 `swift test`（Windows 11 / Swift 6.4.2，需设置 `SDKROOT` 指向 Windows.sdk）
+  51/51 通过（领域 39 + 数据 12），其中 `FieldParserTests` 26 例；
+- 用 Python 参考实现复跑 A 层数据集仍为 440/440、虚构 0；用运行 5 的真实 OCR 文本
+  离线重放新解析器，C02/C03 两处错误消失；
+- 修复未改任何被断言的界面元素标识符与文案。
+
+**回归（运行 6 真实结果）**：解析器改动只影响「无分隔符标签行」的归类，A 层 40 张数据集与全部既有单测不变；
+B 层在运行 6 中 C02/C03 两处错误消失，字段级 427→429/440、整卡 29→31/40。
+UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
+两例编辑用例仍失败——不是本轮改动引入的，而是 2.14 的拖拽选区方案在 CI 上键入前等待 App 空闲
+超过 60 s（详见 §2.16），已在下一次改动中替换输入方式。
+
+---
+
+### 2.15 Week 6「UI 截图对比」的取证与导出（Week 6）
+
+**Prompt**
+> 阶段二交付清单有一项「UI 截图对比」。要求：关键页面（空状态、详情、搜索、标签筛选、
+> 确认表单、保存后的列表、相机权限拒绝）在真实模拟器运行时留下截图作为验收证据；
+> 截图必须来自实际运行、可导出、不与被测 UI 耦合；不改任何界面代码与断言，
+> 不引入新的测试依赖。
+
+**TRAE 修改范围**：`CamCardCloneUITests/UIEvidence.swift`（新增）、
+`CamCardCloneUITests/CardListUITests.swift`、`CamCardCloneUITests/ExceptionPathUITests.swift`、
+`.github/workflows/ci.yml`、`scripts/run-tests.sh`
+- 新增 `UIEvidence.capture(_:_:)`：用 `XCTAttachment(screenshot:)` 截取当前界面，
+  `lifetime = .keepAlways` 保证**通过用例的截图也保留**（默认只在失败时保留）；
+  截图名称统一为 `S01`–`S07`（ASCII，便于导出文件名稳定）。
+- 7 处截图挂在既有用例的**已验证状态之后**（例如详情页断言完字段再截图），
+  不新增用例、不改断言、不调整元素标识符。
+- CI 新增「导出 UI 截图」步骤：`xcrun xcresulttool export attachments --path build/TestResults.xcresult
+  --output-path build/ui-screenshots`，上传工件 `ui-screenshots`（保留 30 天）；
+  失败工件 `build-logs-and-results` 同时包含截图目录。
+- 本地 `scripts/run-tests.sh` 在测试结束后执行同样的导出，输出到 `build/ui-screenshots/`。
+
+**人工验证**：
+- 本地可用 actionlint 1.7.12 校验修改后的 workflow（exit 0）；
+- 本地 `bash -n scripts/run-tests.sh` 语法检查通过；
+- 本机无 Xcode，截图内容与导出动作只能在 CI 上真实产生——完成前不写「已验证」。
+
+**回归**：仅测试侧与 CI 定义变化；真实结果由下一次 CI 运行验证（§8 第 7 行）。
+截图与用例同源，任何 UI 回归都会同时反映在断言与截图上。
+
+**运行 6 暴露的问题（§2.16 修复）**：运行 6 在本节改动提交之前就已完成排队，
+因此不含截图步骤；截图的首次真实产出与导出验证在运行 7。
+
+---
+
+### 2.16 运行 6 的编辑用例失败归因与输入方式替换（Week 6）
+
+**Prompt**
+> 运行 6：static ✅、XCTest 54/54 ✅、`ExceptionPathUITests` 5/5 ✅、
+> `testTagCreateFilterAndDelete` ✅（§2.14 的滚动修复生效），但两例编辑用例仍失败。
+> 要求：从 XCTest 日志定位真实原因；若 §2.14 的方案本身有问题就换掉它，
+> 不通过放宽断言来变绿。同时把「UI 截图导出失败会让整个 job 标红」这一 CI 风险一并处理。
+
+**证据（来自运行 6 的 job 日志，未推测）**：
+- `testEditNameUpdatesListAndDetail` 的交互记录：`t=25.31s Type 'David Chen Jr.'`，
+  直到 `t=85.35s App animations complete notification not received, will attempt to continue`
+  才合成键入事件——**键入前的「等待 App 空闲」被拖了 60 s**。两次 `press(forDuration: 1.0)` 拖拽
+  各自结束后，App 一直未报告空闲；60 s 超时后只键入了部分字符，详情页姓名与期望不符。
+- `testEditsSurviveRelaunch` 失败于同一原因（两者的输入辅助函数相同）。
+- 失败断言仍是被测功能本身的断言（详情页显示新姓名、重启后保持），未放宽。
+
+**TRAE 修改范围**：`CamCardCloneUITests/CardListUITests.swift`、`.github/workflows/ci.yml`
+- 删除 §2.14 的 `replaceText(in:original:with:)`（两次长按拖拽选区），
+  改为 `typeReplacing(_:expected:with:)`：点击一次获得焦点 → 读回 value 并断言等于保存值 →
+  **坐标点击输入框尾部**把光标放到末尾（首次点击之后不再对控件 `.tap()`，不会触发 AX
+  scroll-to-visible）→ 按字符数退格删光 → 直接键入新值。全程没有长按，不产生持续动画。
+- 搜索用例继续使用 `clearText(in:)`（运行 6 中该用例通过，不改动）。
+- CI「导出 UI 截图」步骤：`xcrun xcresulttool export attachments` 失败时输出 `::warning::`
+  并跳过，不再让证据步骤把整个 job 标红（截图是周报证据，不是测试结论）；成功时额外打印 PNG 数量。
+
+**本地验证**：
+- `actionlint` 1.7.12 校验修改后的 workflow（exit 0，见 §4）；
+- 修改只涉及测试辅助函数，不改变任何断言与界面标识符。
+
+**回归**：输入方式替换只影响两例编辑用例的「如何输入」；其余用例不经过该函数。
+真实效果由运行 7 验证（§8 第 7 行），运行完成前不写「通过」。
+
+---
+
 ## 3. 修改范围统计
 
 | 增量 | 新增/修改文件 | 涉及模块 | 是否改动既有接口 |
@@ -394,6 +516,9 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2.11 CI 结果修复 | CardListUITests、ExceptionPathUITests、VisionAccuracyTests | 测试 | 否（只改测试，不动被测 UI） |
 | 2.12 CI 环境修复 | ci.yml | 测试/CI | 否（只改 CI 执行环境） |
 | 2.13 CI 表达式修复 | ci.yml | 测试/CI | 否（只改 CI 定义） |
+| 2.14 运行 5 失败修复 | CardListUITests、BusinessCardFieldParser、FieldParserTests | 测试/Domain | 否（新增私有方法，Parse 接口不变） |
+| 2.15 UI 截图取证与导出 | UIEvidence、UITests、ci.yml、run-tests.sh | 测试/CI | 否 |
+| 2.16 运行 6 编辑用例修复 | CardListUITests、ci.yml | 测试/CI | 否（只改测试辅助函数与 CI 证据步骤） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -408,10 +533,11 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 电话展示格式 | Swift 实现 vs Ground Truth vs Python 生成器三方对照 | 通过：同一契约 |
 | 数据集虚构性 | 全量扫描姓名/公司/号码/邮箱域名 | 通过：无真实个人信息 |
 | vCard 映射 | 逐行对照 `docs/data-model.md` §5 | 通过 |
-| 取消不落库 / 手动录入取消返回名片夹 | `ScannerDismissalTests`（✅）+ `ExceptionPathUITests` | 规则单测通过；UI 端到端在 CI 运行 2 真实通过（4/4 异常路径用例） |
-| 识别失败可手动录入 | UI 测试 + 代码审查 | CI 运行 2 中 `testUnrecognizableImageOffersManualFallback` 真实通过 |
-| 识别 → 确认 → 保存 → 列表出现 | `ExceptionPathUITests.testSaveAfterRecognitionAddsCard` | 用例于 2.11 新增，等待下一轮 CI 真实运行 |
-| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；UI 用例在运行 2 因工具栏菜单点击问题失败，修复后待重跑（§8） |
+| 取消不落库 / 手动录入取消返回名片夹 | `ScannerDismissalTests`（✅）+ `ExceptionPathUITests` | 规则单测通过；UI 端到端在 CI 运行 2（4/4）与运行 5（5/5，含保存用例）均真实通过 |
+| 识别失败可手动录入 | UI 测试 + 代码审查 | `testUnrecognizableImageOffersManualFallback` 在 CI 运行 2 与运行 5 中均真实通过 |
+| 识别 → 确认 → 保存 → 列表出现 | `ExceptionPathUITests.testSaveAfterRecognitionAddsCard` | ✅ CI 运行 5 真实通过（该套件 5 例合计 64.233 s） |
+| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；UI 用例 CI 运行 6 真实通过（89.438 s，§2.14 的滚动修复生效） |
+| 编辑姓名后详情与列表一致 | `CardListUITests.testEditNameUpdatesListAndDetail` | 运行 5 因二次点击失败、运行 6 因拖拽导致键入前等待 App 空闲超时仍失败（§2.14→§2.16）；已改用「点击一次 + 退格清空 + 键入」，待运行 7 |
 
 > 「待 CI 确认」表示用例已写好且本地静态审查通过，但尚未在模拟器/CI 上真实运行过。
 > 这一类项目不标记为通过。
@@ -459,7 +585,11 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 2](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)） | XCTest 42 + 12 通过；UI 7/12 通过（5 例失败） | 失败全部是 XCUITest 点击工具栏 `Menu` 的 AX 错误，修复见 §2.11；修复后待重跑 |
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 3](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)） | ❌ 未进入测试阶段 | 镜像未注册模拟器，`build-for-testing` 报找不到 iPhone SE / iOS 18.5；环境问题，修复见 §2.12 |
 | 2026-11-01 | 全部 CI job | GitHub Actions（[运行 4](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231848508)） | ❌ 未启动任何 job | job 名称使用 `${{ env.* }}` 被 GitHub 拒绝（job 数 0，瞬时结束）；修复见 §2.13 |
-| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件 | 待运行 | 运行 2 的提交不含 B 层步骤；运行 3 构建前失败；运行 4 未启动 job；随下一轮执行 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 5](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41232174313)） | XCTest 42 + 12 通过；UI 10/13 通过（名片夹 5/8） | 3 个失败：编辑类 2 例（对已聚焦输入框二次点击导致新旧文本拼接）、标签 1 例（标签区在首屏之下）；修复见 §2.14，待运行 6 |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 5](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41232174313)） | ✅ 40/40 张完成识别；字段级 427/440 = 97.0%；召回 235/248 = 94.8%；缺失精度 192/192；虚构 0 | 13 处错误：2 处解析粘连（已修 §2.14）、11 处 OCR 侧（5 处竖排名单字未检出 + 6 处字符误识），详见 `docs/ocr-accuracy.md` §5.3 |
+| 2026-11-01 | 领域 39 + 数据 12 | `swift test`（Windows，Swift 6.4.2，`SDKROOT` 指向 Windows.sdk） | 51/51 通过 | 2.14 新增 3 例粘连标签单测；仍不含 Vision/UIKit 用例 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | XCTest 45 + 12 通过；UI 11/13 通过（名片夹 6/8） | 标签用例已通过；两例编辑用例因 `typeText` 前等待 App 空闲 60 s 超时失败（§2.16），修复待运行 7 |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | C02/C03 解析粘连已消除；剩余 11 处全为 OCR 侧（5 处竖排姓名 + 6 处字符误识），详见 `docs/ocr-accuracy.md` §5.4 |
 | （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 待运行 | 只记录真实结果 |
 
 ---
@@ -483,7 +613,9 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
 | 2 | [41229690851](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41229690851)（commit `96ab470`） | ✅ 通过 | ❌ `test-without-building` 失败 | 编译通过。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 4/4、`CardListUITests` 3/8。5 个失败点全部是对详情页工具栏菜单 `detail-menu` 调用 `.tap()` 时 XCUITest 的 AX scroll-to-visible 报 `kAXErrorCannotComplete`（点击点 {-1, -1}），被测功能本身正常；修复提交为 §2.11 的 `openCardMenu` 坐标点击。本轮提交不含 B 层步骤（当时未提交），故无准确率工件 |
 | 3 | [41231201327](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231201327)（commit `e4c805c`） | ✅ 通过 | ❌ `build-for-testing` 失败（环境） | 编译未开始：`xcodebuild: error: Unable to find a device matching the provided destination specifier: { platform:iOS Simulator, OS:18.5, name:iPhone SE (3rd generation) }`；该 scheme 的可用目的地只剩「My Mac」与两个占位符。运行 1、2 与本轮镜像与 Xcode 版本完全相同（macos-15-arm64 / `20261028.0489.1` / Xcode 16.4 `16F6`），属镜像未注册预置模拟器的偶发问题（actions/runner-images#12948）。B 层、摘要、工件步骤均因没有 xctestrun 而跳过；修复提交见 §2.12（simctl 显式创建模拟器 + 按 UDID 选取目的地） |
 | 4 | [41231848508](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231848508)（commit `047137e`） | ❌ 未运行 | ❌ 未运行 | **workflow 未被接受，0 个 job**：`created_at` 与 `updated_at` 均为 18:56:56Z。运行 3→4 的 CI 改动中唯一的结构变化是 job 名称使用了 `${{ env.SIM_RUNTIME }}`，而 `jobs.<id>.name` 不允许 `env` 上下文。本地 actionlint 1.7.12 原样复现该错误；修复提交见 §2.13（job 名称改回字面量 + static job 增加 actionlint） |
-| 5 | 待运行 | 待运行 | 待运行 | 提交 §2.13 的 CI 修复；预期首次执行 UI 修复后的全量测试与 B 层准确率工件。运行完成前不写结论 |
+| 5 | [41232174313](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41232174313)（commit `016e0e8`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 首轮全链路运行。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5（含保存用例）、`CardListUITests` 5/8。3 个失败：`testEditNameUpdatesListAndDetail`、`testEditsSurviveRelaunch`（对已聚焦输入框二次 `.tap()` 触发 AX scroll-to-visible 失败，删除被吞、新值追加），`testTagCreateFilterAndDelete`（标签区在首屏之下，`.tap()` 不滚动）。B 层步骤在测试失败后仍正常执行：40/40 张完成识别、虚构 0、字段级 427/440 = 97.0%，工件已上传。修复见 §2.14 |
+| 6 | [41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)（commit `08c1730`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 运行 5 修复后的复跑。XCTest：`CamCardCloneTests` 45/45（`FieldParserTests` 26，含新增 3 例粘连标签）、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5、`CardListUITests` 6/8（13 例中 11 例通过）。`testTagCreateFilterAndDelete` 89.438 s 通过；`testEditNameUpdatesListAndDetail`（99.747 s）、`testEditsSurviveRelaunch`（102.165 s）失败——键入选区方案中的两次 1 s 长按拖拽后，`typeText` 前等待 App 空闲 60 s 超时，只键入部分字符。B 层：40/40 张完成识别、虚构 0、字段级 429/440 = 97.5%、整卡 31/40（C02/C03 解析粘连已消除）。修复见 §2.16 |
+| 7 | 待运行 | 待运行 | 待运行 | 提交 §2.15 的截图取证与导出、§2.16 的输入方式替换，以及运行 5/6 的真实结果文档（含 `docs/ocr-accuracy.md` §5.4 与 §7）。运行完成前不写结论 |
 
 记要：
 
@@ -498,3 +630,6 @@ fixture 复制脚本、`.github/workflows/ci.yml`。
   （`CamCardCloneApp.swift` 的 DEBUG 示例数据、`CardDetailView` 的 UIKit 图像加载）。
   本地 `swiftc -frontend -parse` 只能验证语法，不能替代 Xcode 编译——这正是 CI 的价值，
   也解释了为什么本地通过不等于 CI 通过。
+- 运行 6 说明「一次修复只解决一层问题」是常态：同一个编辑用例在运行 5、6 中因**不同原因**
+  失败（二次点击 → 长按拖拽导致的空闲等待），因此每一轮都必须读日志归因，不能按「上次的原因」
+  猜修复。日志里的 `t = ...` 交互记录是 UI 测试最可靠的证据。

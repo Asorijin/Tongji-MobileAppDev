@@ -62,6 +62,7 @@ final class ExceptionPathUITests: XCTestCase {
         waitForList(app)
         app.buttons["empty-state-scan"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["camera-permission-denied"].waitForExistence(timeout: 10))
+        UIEvidence.capture(app, "S07-camera-permission-denied")
         XCTAssertFalse(app.buttons["scanner-camera"].exists, "权限拒绝时不显示拍照按钮")
         XCTAssertTrue(app.buttons["scanner-library"].exists, "仍可通过照片库导入")
         app.buttons["scanner-cancel"].tap()
@@ -91,12 +92,14 @@ final class ExceptionPathUITests: XCTestCase {
         let nameField = app.textFields["field-name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 60), "合成名片应完成 OCR 并进入确认表单")
         XCTAssertEqual(nameField.value as? String, "朱宏明", "C01 的姓名应被识别并预填到确认表单")
+        UIEvidence.capture(app, "S05-confirm-form-c01")
         app.buttons["edit-save"].tap()
 
         XCTAssertTrue(app.navigationBars["名片夹"].waitForExistence(timeout: 10), "保存后应返回名片夹")
         XCTAssertFalse(app.staticTexts["empty-state-title"].exists, "保存后不应再是空名片夹")
         let row = app.descendants(matching: .any).matching(identifier: "card-row-朱宏明").firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 10), "保存后新名片应出现在列表")
+        UIEvidence.capture(app, "S06-after-save-list")
         row.tap()
         XCTAssertTrue(app.navigationBars["名片详情"].waitForExistence(timeout: 10))
         let detailName = app.descendants(matching: .any).matching(identifier: "detail-name").firstMatch

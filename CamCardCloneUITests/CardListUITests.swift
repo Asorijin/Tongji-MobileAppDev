@@ -40,29 +40,30 @@ final class CardListUITests: XCTestCase {
         return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 
+    /// 清空搜索框（只点一次 + 退格；搜索框本来就会在首次点击时获得焦点）。
     private func clearText(in field: XCUIElement) {
         guard let value = field.value as? String, !value.isEmpty else { return }
         field.tap()
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
     }
 
-    /// 清空输入框并写入新值。
+    /// 只点一次输入框，再用退格清空（不依赖拖拽选区）。
     ///
-    /// iOS 18 模拟器上 TextField 获得键盘焦点后再次 `.tap()` 会先做 AX
-    /// scroll-to-visible 并失败（运行 5 中姓名输入框的 value 变成新旧文本拼接）。
-    /// 这里改为拖动选择再输入：选中后键入会替换选区。
-    /// 字符较少时从左向右拖过行尾即选中整段；字符较多时只会停在段落起点，
-    /// 因此第二次换方向从右向左拖；两种情况都先读回 value 确认，最后用断言兜底。
-    private func replaceText(in field: XCUIElement, original: String, with newValue: String) {
+    /// 运行 5：对已聚焦的 TextField 再 `.tap()` 会先做 AX scroll-to-visible 并失败，
+    /// 旧文本没被清掉，新文本直接拼在后面。
+    /// 运行 6：改成长按拖拽选区的方案后，拖拽虽然能选中文本，但每段 1 s 长按会留下
+    /// 未结束的动画，`typeText` 前的「等待 App 空闲」一直不返回（60 s 超时后只键入
+    /// 一部分字符，姓名最终为混合文本）。
+    /// 因此改为：点尾部让光标落在末尾 → 全量退格 → 直接输入。
+    /// （此前失败的第二次 `.tap()` 问题只出现在「已聚焦的输入框再次点击」，这里首次
+    /// 点击之后改用坐标点击定位光标，不会再触发 AX scroll-to-visible。）
+    private func typeReplacing(_ field: XCUIElement, expected: String, with newValue: String) {
         field.tap()
-        field.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
-            .press(forDuration: 1.0, thenDragTo: field.coordinate(withNormalizedOffset: CGVector(dx: -0.6, dy: 0.5)))
-        if field.value as? String == original {
-            field.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5))
-                .press(forDuration: 1.0, thenDragTo: field.coordinate(withNormalizedOffset: CGVector(dx: 1.6, dy: 0.5)))
-        }
+        let value = field.value as? String ?? ""
+        XCTAssertEqual(value, expected, "编辑前输入框应显示保存的姓名")
+        field.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
         field.typeText(newValue)
-        XCTAssertNotEqual(field.value as? String, original, "输入框内容应已被整体替换")
     }
 
     /// 把编辑表单滚动到指定元素可见（标签区在小屏上位于首屏之下）。
@@ -103,6 +104,7 @@ final class CardListUITests: XCTestCase {
         XCTAssertTrue(app.buttons["empty-state-scan"].exists, "空状态应提供扫描入口")
         XCTAssertTrue(app.buttons["empty-state-manual"].exists, "空状态应提供手动录入入口")
         XCTAssertTrue(app.buttons["scan-button"].exists, "名片夹应提供扫描入口")
+        UIEvidence.capture(app, "S01-first-launch-empty")
     }
 
     // MARK: - T13 详情
@@ -118,6 +120,7 @@ final class CardListUITests: XCTestCase {
         row.tap()
         XCTAssertTrue(exists(app.navigationBars["名片详情"]))
         XCTAssertEqual(element(app, "detail-name").label, "朱宏明")
+        UIEvidence.capture(app, "S02-card-detail")
         XCTAssertTrue(element(app, "detail-mobile").label.contains("138 0000 0001"))
         XCTAssertTrue(element(app, "detail-office").label.contains("021 6598 1234"))
         XCTAssertTrue(element(app, "detail-fax").label.contains("021 6598 1235"))
@@ -143,7 +146,7 @@ final class CardListUITests: XCTestCase {
 
         let name = app.textFields["field-name"]
         XCTAssertTrue(exists(name))
-        replaceText(in: name, original: "David Chen", with: "David Chen Jr.")
+        typeReplacing(name, expected: "David Chen", with: "David Chen Jr.")
         app.buttons["edit-save"].tap()
 
         XCTAssertTrue(waitForLabel(element(app, "detail-name"), "David Chen Jr."), "详情页应显示修改后的姓名")
@@ -168,6 +171,7 @@ final class CardListUITests: XCTestCase {
         search.typeText("ABC")
         XCTAssertTrue(exists(element(app, "card-row-David Chen")), "应能按公司名搜索")
         XCTAssertFalse(element(app, "card-row-朱宏明").exists)
+        UIEvidence.capture(app, "S03-search-company")
 
         clearText(in: search)
         search.typeText("138")
@@ -223,6 +227,7 @@ final class CardListUITests: XCTestCase {
         XCTAssertTrue(exists(app.buttons["clear-tag-filter"]), "应出现标签筛选指示")
         XCTAssertTrue(exists(element(app, "card-row-赵敏")))
         XCTAssertFalse(element(app, "card-row-朱宏明").exists, "筛选后只显示带该标签的名片")
+        UIEvidence.capture(app, "S04-tag-filter")
 
         // 清除筛选
         app.buttons["clear-tag-filter"].tap()
@@ -271,7 +276,7 @@ final class CardListUITests: XCTestCase {
         app.buttons["编辑"].tap()
         let name = app.textFields["field-name"]
         XCTAssertTrue(exists(name))
-        replaceText(in: name, original: "David Chen", with: "David Chen Sr.")
+        typeReplacing(name, expected: "David Chen", with: "David Chen Sr.")
         app.buttons["edit-save"].tap()
         XCTAssertTrue(waitForLabel(element(app, "detail-name"), "David Chen Sr."))
         app.terminate()

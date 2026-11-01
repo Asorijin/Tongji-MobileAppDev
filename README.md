@@ -33,7 +33,7 @@
 │   ├── Features/               # CardList / Scanner / CardDetail / CardEdit / Tags
 │   ├── Services/               # Vision OCR、图像校正、VCardExporter
 │   └── UI/                     # FlowLayout 等通用视图
-├── CamCardCloneTests/          # XCTest：解析器 23 例 + 数据集 3 例 + 导出 6 例 + 扫描规则 4 例 + Vision/校正（模拟器）+ B 层准确率报告（模拟器）
+├── CamCardCloneTests/          # XCTest：解析器 26 例 + 数据集 3 例 + 导出 6 例 + 扫描规则 4 例 + Vision/校正（模拟器）+ B 层准确率报告（模拟器）
 ├── CamCardCloneUITests/        # XCUITest：名片夹主路径（T01/T13–T19）、异常路径（T20）、权限（T03）、识别→确认→保存/取消
 ├── CamCardDataTests/           # 数据层 12 例（增删改查/搜索/标签/持久化/图片）
 ├── docs/
@@ -69,12 +69,13 @@ B 层报告输出到 `build/ocr-accuracy-report.md` / `.json`（逐张原始 OCR
 ### 只有 Windows / Linux（无 Xcode）
 
 ```bash
-swift test                     # 领域层解析器 + 导出 + 扫描规则 + 数据层（32 + 4 + 12 = 48 例）
+swift test                     # 领域层解析器 + 导出 + 扫描规则 + 数据层（39 + 12 = 51 例）
 python scripts/verify_test_cards.py
 ```
 
 > 说明：`Package.swift` 仅用于本地纯 Swift 校验，同一份源码也在 Xcode 工程中编译；
 > Vision / UIKit 相关用例在非 Apple 平台上编译为空，由 CI 在 iOS 模拟器上执行。
+> Windows 上运行 `swift test` 需要设置 `SDKROOT` 指向 Swift 的 `Windows.sdk`（否则找不到标准库）。
 > 本机当前没有 macOS / Xcode，模拟器全量测试由 GitHub Actions 完成，运行记录见
 > [docs/test-suite.md](docs/test-suite.md) §5 与 [docs/ai-collaboration-log.md](docs/ai-collaboration-log.md) §8。
 

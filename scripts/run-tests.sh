@@ -78,6 +78,16 @@ set -e
 echo "==> 摘要"
 grep -E "Test Suite '.*' (passed|failed)|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED)" build/test.log | tail -n 30 || true
 
+# Week 6「UI 截图对比」：UI 测试以 XCTAttachment 写入的页面截图，导出为 PNG 供人工比对。
+echo "==> 导出 UI 截图"
+rm -rf build/ui-screenshots
+mkdir -p build/ui-screenshots
+if [ -d "$RESULT_BUNDLE" ]; then
+  xcrun xcresulttool export attachments \
+    --path "$RESULT_BUNDLE" \
+    --output-path build/ui-screenshots || echo "截图导出失败（不影响测试结论）"
+fi
+
 # B 层（Week 3 概率性评价）：Vision 真实识别 → 解析器 → Ground Truth，产出 build/ocr-accuracy-report.{md,json}。
 # 与 CI 的「OCR 端到端准确率报告」步骤一致（同样 -only-testing，复用已编译产物）。
 echo "==> OCR 端到端准确率报告（B 层）"

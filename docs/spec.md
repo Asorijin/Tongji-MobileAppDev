@@ -281,7 +281,7 @@ BusinessCard
 | T04 / T05 | 拍摄 / 导入 | 模拟器无法自动化，**人工验证清单** |
 | T06 | 区域检测 | 单元测试 `ImageCorrectionTests.testDetectsTiltedCardQuad`（模拟器） |
 | T07 | OCR | 单元测试 `OCRServiceTests`（模拟器，Vision 实际识别合成名片） |
-| T08 | 字段结构化 | `FieldParserTests`（23 例）+ `FixtureParserTests`（40/40 字段准确率 100%） |
+| T08 | 字段结构化 | `FieldParserTests`（26 例）+ `FixtureParserTests`（40/40 字段准确率 100%） |
 | T09 | 缺失字段 | `FieldParserTests.testMissingWebsiteIsNotFabricated` 等 |
 | T10 | 多电话 | `FieldParserTests.testMultiplePhonesCategorizedByLabel` 等 |
 | T11 | 人工校正 | 表单逻辑 + UI 路径（T12/T14 的保存路径覆盖修改后落库） |
@@ -317,7 +317,7 @@ BusinessCard
 | 2 | 模拟器无法自动化真实拍摄、照片库选择、系统权限弹窗 | T04/T05 无法进入 CI | 人工验证清单 + 权限用启动参数模拟（T03） |
 | 3 | 无手动拖拽四角校正 UI | §7.3「手动调整」仅接口就绪 | 记录差距，作为 Week 6 可选增强 |
 | 4 | Vision 对合成图像的识别率高于真实拍摄（字体规整） | 准确率数字偏乐观 | 在 `docs/ocr-accuracy.md` 中明确声明适用边界 |
-| 5 | 竖排姓名「姓名 | Logo | 姓名」版式的合并存在已知缺口 | 极端版式可能出现姓名不完整 | 保留原文本与人工校正通道；数据集 C27–C30 覆盖常见竖排情形 |
+| 5 | 竖排姓名版式的姓名提取存在已有测量的缺口 | 运行 5 的 B 层实测：数据集 5 张 `vertical` 名片（C05/C24/C27/C28/C37）姓名 **5/5 漏提**，原因是 Vision 原始输出中没有孤立单字行，解析器无法合并不存在的文本 | 保留原文本与人工校正通道；`docs/ocr-accuracy.md` §5.3 记录归因，作为 Week 4 HITL 的典型场景 |
 | 6 | 导出为 VCF 文件分享，而非直接写入系统通讯录 | §13 允许二者之一 | 选择可自动化验证的 VCF 方案 |
 | 7 | 参考 App 版本、iOS、设备、语言、登录状态需由观察者填写锁定 | 不锁定则「等价」无从谈起 | `docs/observer-log.md` 留出锁定表待填写 |
 
