@@ -45,6 +45,8 @@
 │   ├── ocr-accuracy.md         # OCR/字段准确率评价方法（结果见 CI 报告）
 │   ├── ui-screenshot-comparison.md  # Week 6 UI 截图对比（证据来源、逐张核对、Golden Test 现状）
 │   ├── ui-screenshots/         # 运行 7 的 7 张页面截图 + manifest.json（入库证据）
+│   ├── acceptance-report.md    # Week 6 验收报告：T01–T20 逐场景证据、六维一致性、人工清单
+│   ├── sdd-archive.md          # Week 6 SDD 归档：各阶段工件位置、时间线、未完成事项
 │   └── test-cards/             # 41 张合成名片 + Ground Truth + 生成/校验脚本说明
 ├── scripts/
 │   ├── make_test_cards.py      # 生成合成名片与 Ground Truth（本地一次完成）
@@ -110,6 +112,8 @@ python scripts/verify_test_cards.py
 | [spec.md](docs/spec.md) | 复刻范围、页面与状态、交互流程、字段规则、异常与验收标准 |
 | [observer-log.md](docs/observer-log.md) | 参考环境锁定、观察记录、规格假设与待核对项 |
 | [test-suite.md](docs/test-suite.md) | T01–T20 场景 → 测试实现的对应关系 |
+| [acceptance-report.md](docs/acceptance-report.md) | Week 6 验收：逐场景真实证据、六维一致性、交付物对照、人工清单 |
+| [sdd-archive.md](docs/sdd-archive.md) | Week 6 SDD 归档：观察→规格→实现→测试→差异→回归→验收的工件总目录 |
 | [data-model.md](docs/data-model.md) | BusinessCard 字段、电话展示格式契约、vCard 映射 |
 | [ai-collaboration-log.md](docs/ai-collaboration-log.md) | 增量 Prompt、AI 修改范围、人工验证与回归结果 |
 | [ocr-accuracy.md](docs/ocr-accuracy.md) | 准确率指标定义、评价流程、结果记录方式 |

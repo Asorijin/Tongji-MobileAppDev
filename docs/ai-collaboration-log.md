@@ -548,6 +548,43 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 
 **回归**：只新增文档、截图与校验脚本，不改 App 与测试代码；CI 的改动是 static job 多编译一个
 Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本地文件检查，不增加依赖与耗时）。
+提交推送为 `e28da4b` 后触发的 CI 运行 8（[41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)）
+是本增量的独立回归：结论 success，XCTest 45 + 12、XCUITest 13/13、B 层 40/40（429/440 = 97.5%，
+与运行 7 逐卡一致），截图导出 7 张，工件已重新上传，明细见 §8。
+
+---
+
+### 2.18 Week 6「T01–T20 验收报告」与「SDD 归档」（Week 6）
+
+**Prompt**
+> 依据作业 §17「20 个 Reference Test Scenarios 必须 100% 通过」与 §18 Week 6 交付清单，
+> 把 T01–T20 逐条对应到测试用例与**真实运行证据**（运行链接、用例耗时、断言数），
+> 形成验收报告。人工清单未执行的必须写「待执行」；「100% 可观察行为等价」要写明声明边界，
+> 不得写成「与 CamCard 完全一致」。新增 docs/acceptance-report.md；同时按 SDD 流程把各阶段
+> 工件归档成一个总目录（docs/sdd-archive.md，只收录真实存在、可复查的内容），
+> 并在 README 与 test-suite.md 中引用。
+
+**TRAE 修改范围**（`docs/acceptance-report.md`、`docs/sdd-archive.md` 新建；`README.md`、
+`docs/test-suite.md`、本文件 §3/§6 与本节）：
+
+- 验收报告 8 节：验收结论 → T01–T20 逐场景表（用例名 + 运行 7 耗时 + 状态）→ 六个一致性维度
+  （UI / 交互 / 状态 / 数据 / 异常 / 流程）的证据与声明边界 → 概率性功能的 §5 要求对照 →
+  Week 6 交付物对照（作业 §18）→ 三轮回归结论 → 人工清单 0/10 与参考环境锁定表阻塞项 → 待办；
+- T01–T20 表只引用运行 7（`41279949458`）的真实耗时与断言结果，未执行的 M1–M10 全部写「待执行」；
+- 六个一致性维度的每一行都配了「不能证明的部分」，并明确对照片是本项目规格而非参考 App 截图；
+- SDD 归档按「观察 → 规格 → 架构/实现 → 测试 → 差异分析 → 修订/回归 → 验收」组织，
+  给出每个环节的工件位置与状态，未完成项（锁定表、人工清单、像素级基线、最终演示）单列 §4。
+
+**本地验证**：纯文档增量，无代码与 CI 变更；表格数字逐条取自 `docs/test-suite.md` §1/§5 与
+`docs/ui-screenshot-comparison.md` §5（已在运行 7 工件上核对）。核对 T04/T05 覆盖时审读了
+`ScannerView.swift` 与 App 内全部「重拍」出现位置（仅 `OCRService.swift:41` 的错误提示文案），
+确认拍摄后的「使用照片 / 重拍」位于系统 `UIImagePickerController` 界面、App 内无复核页，
+据此在 `docs/spec.md` §4.2 与 §9 第 9 条补记该差距；T04/T05 行、M3 步骤与 §1 边界说明同步写明。
+
+**回归**：不触及 App、测试与 CI 定义。Week 6 文档批次（§2.17 + §2.18 + 本次核对补记）在
+提交推送后由 CI 运行 8（[41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)，commit `e28da4b`）
+整体回归：结论 success，XCTest 45 + 12、XCUITest 13/13（288.092 s）、B 层 429/440 = 97.5% 且逐卡与运行 7 一致，
+明细见 §8。
 
 ---
 
@@ -572,6 +609,7 @@ Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本�
 | 2.15 UI 截图取证与导出 | UIEvidence、UITests、ci.yml、run-tests.sh | 测试/CI | 否 |
 | 2.16 运行 6 编辑用例修复 | CardListUITests、ci.yml | 测试/CI | 否（只改测试辅助函数与 CI 证据步骤） |
 | 2.17 UI 截图对比（Week 6） | ui-screenshot-comparison.md、docs/ui-screenshots/、verify_ui_screenshots.py、spec.md、test-suite.md、README | 文档/脚本 | 否（只新增证据文档与校验脚本，不动 App 与测试代码） |
+| 2.18 T01–T20 验收报告与 SDD 归档（Week 6） | acceptance-report.md、sdd-archive.md、README、test-suite.md、spec.md | 文档 | 否（纯文档增量） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -646,8 +684,10 @@ Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本�
 | 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | C02/C03 解析粘连已消除；剩余 11 处全为 OCR 侧（5 处竖排姓名 + 6 处字符误识），详见 `docs/ocr-accuracy.md` §5.4 |
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ XCTest 45 + 12 通过；UI 13/13 通过（名片夹 8/8、异常路径 5/5） | **首次全绿**（结论 success）：两例编辑用例 28.750 s / 24.658 s 通过（§2.16 生效）；导出 UI 截图 7 张并上传 `ui-screenshots` 工件（467 225 B） |
 | 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 51.344 s；40/40 张逐卡 OCR 原文与字段判定与运行 6 完全一致（测试/CI 改动未触及识别链路），详见 `docs/ocr-accuracy.md` §5.5 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 8](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)） | ✅ XCTest 45 + 12 通过；UI 13/13 通过（名片夹 8/8、异常路径 5/5）；B 层 40/40 | Week 6 文档批次的独立回归，结论 success：UI 13 例合计 288.092 s（两例编辑用例 20.570 s / 20.044 s）；截图导出 7 张，`ui-screenshots` 工件 467 054 B |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 8](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 39.442 s；与运行 7 工件逐字节比对仅生成时间戳不同，逐卡结果完全一致（错误构成同 `docs/ocr-accuracy.md` §5.5）；截图逐像素对比见 `docs/ui-screenshot-comparison.md` §7 |
 | 2026-11-01 | UI 截图结构与来源 | 本机 `python scripts/verify_ui_screenshots.py docs/ui-screenshots` | ✅ 通过（7 张齐全、来源用例一致、750×1334） | 用运行 7 的真实工件；入库副本见 `docs/ui-screenshots/` |
-| （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 自动化部分已在运行 7 全部真实通过；人工清单（M1–M10）待执行 | 只记录真实结果；汇总报告见任务「T01–T20 验收报告」 |
+| （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 自动化部分已在运行 7 全部真实通过；人工清单（M1–M10）待执行 | 只记录真实结果；汇总报告 `docs/acceptance-report.md`（2026-11-01 编写，人工项与参考环境锁定如实列为待办） |
 
 ---
 
@@ -673,6 +713,7 @@ Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本�
 | 5 | [41232174313](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41232174313)（commit `016e0e8`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 首轮全链路运行。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5（含保存用例）、`CardListUITests` 5/8。3 个失败：`testEditNameUpdatesListAndDetail`、`testEditsSurviveRelaunch`（对已聚焦输入框二次 `.tap()` 触发 AX scroll-to-visible 失败，删除被吞、新值追加），`testTagCreateFilterAndDelete`（标签区在首屏之下，`.tap()` 不滚动）。B 层步骤在测试失败后仍正常执行：40/40 张完成识别、虚构 0、字段级 427/440 = 97.0%，工件已上传。修复见 §2.14 |
 | 6 | [41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)（commit `08c1730`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 运行 5 修复后的复跑。XCTest：`CamCardCloneTests` 45/45（`FieldParserTests` 26，含新增 3 例粘连标签）、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5、`CardListUITests` 6/8（13 例中 11 例通过）。`testTagCreateFilterAndDelete` 89.438 s 通过；`testEditNameUpdatesListAndDetail`（99.747 s）、`testEditsSurviveRelaunch`（102.165 s）失败——键入选区方案中的两次 1 s 长按拖拽后，`typeText` 前等待 App 空闲 60 s 超时，只键入部分字符。B 层：40/40 张完成识别、虚构 0、字段级 429/440 = 97.5%、整卡 31/40（C02/C03 解析粘连已消除）。修复见 §2.16 |
 | 7 | [41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)（commit `c499448`） | ✅ 通过（17 个步骤） | ✅ **通过**（首次全绿） | 本轮提交 §2.15 的截图取证与导出、§2.16 的输入方式替换，以及运行 5/6 的真实结果文档。`build-for-testing` ✅、`test-without-building` ✅（06:13:31Z–06:26:39Z，结论 success）。XCTest：`CamCardCloneTests` 45/45（`FieldParserTests` 26、`FixtureParserTests` 3、`ImageCorrectionTests` 3、`OCRServiceTests` 3、`ScannerDismissalTests` 4、`VCardExporterTests` 6）、`CamCardDataTests` 12/12。XCUITest 13/13：`CardListUITests` 8/8（208.802 s；两例编辑 28.750 s / 24.658 s 通过）、`ExceptionPathUITests` 5/5（44.047 s）。B 层：40/40 张、虚构 0、字段级 429/440 = 97.5%、整卡 31/40，与运行 6 逐卡一致。UI 截图导出 `PNG 数量：       7`，工件 `ui-screenshots`（467 225 B）已上传；失败工件步骤按 `if: failure()` 跳过，属预期 |
+| 8 | [41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)（commit `e28da4b`） | ✅ 通过（全部步骤：checkout、setup-python、PyYAML、YAML 校验、actionlint、数据集校验、py_compile 预检；06:40:52Z–06:41:01Z） | ✅ 通过（06:41:03Z–06:54:43Z，结论 success） | Week 6 文档批次（§2.17 截图对比文档与截图入库、§2.18 验收报告与 SDD 归档）的独立回归。步骤：`build-for-testing` ✅（06:41:35Z–06:42:09Z）、`运行测试（test-without-building）` ✅（06:42:09Z–06:52:29Z）、`B 层` ✅（06:52:29Z–06:54:33Z）、`导出 UI 截图` ✅、`上传 UI 截图` ✅；`安装 XcodeGen` 因缓存命中跳过、失败工件步骤 `if: failure()` 跳过，均属预期。XCTest：`CamCardCloneTests` 45/45、`CamCardDataTests` 12/12。XCUITest 13/13（288.092 s）：`CardListUITests` 8/8（238.531 s：Delete 25.495 / Detail 13.806 / EditName 20.570 / EditsSurviveRelaunch 20.044 / Export 14.397 / FirstLaunch 7.716 / Search 24.307 / Tag 112.195）、`ExceptionPathUITests` 5/5（49.561 s：CameraPermissionDenied 12.106 / Cancelling 11.267 / FixtureImages 0.113 / SaveAfterRecognition 14.586 / Unrecognizable 11.490）。B 层：40/40 张、虚构 0、字段级 429/440 = 97.5%、召回 237/248、缺失精度 192/192、整卡 31/40，与运行 7 **逐卡及逐字节一致**（工件仅生成时间戳不同）。截图 `PNG 数量：       7` 并上传 `ui-screenshots`（467 054 B），结构校验通过；工件 `ocr-accuracy-report` 13 482 B |
 
 记要：
 
@@ -698,3 +739,10 @@ Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本�
   必须靠 `manifest.json` 才能追溯到来源用例。为此新增 `scripts/verify_ui_screenshots.py`
   做结构校验，并把 7 张 PNG 从 750×1334 原字节复制进 `docs/ui-screenshots/`，
   让「截图对比」文档在仓库内即可复核，而不是只存在于 30 天保留期的 CI 工件里。
+- 运行 8 验证了「纯文档增量不动被测功能」：XCTest 与 XCUITest 全绿，B 层逐卡以及整份
+  `ocr-accuracy-report` 工件与运行 7 **逐字节相同**（仅 `generatedAt` / 生成时间行不同）。
+  截图逐像素对比则暴露了另一类事实：7 张截图在两次全绿运行之间都有差异，但差异全部是
+  **时间性伪影**——状态栏时钟（每张都有）与搜索框闪烁光标（S03）——不是页面内容回归。
+  这正是 `docs/ui-screenshot-comparison.md` §7 所述「像素级基线需要固定时间与光标状态」的实据；
+  同时说明 UI 测试耗时逐轮波动明显（`CardListUITests` 208.802 s → 238.531 s，其中 Tag 112.195 s
+  比运行 7 的 47.843 s 慢一倍多），CI 计时不能当作性能回归指标。
