@@ -867,7 +867,66 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张，
 [运行 13 · 41295356550](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)
 （commit `6ce5136`）结论 **success**：XCTest 45 + 12、XCUITest 13/13（289.198 s）、
 B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
-本批次（§2.23）推送后的回归结果同样在其真实结果出来之前不写结论，出来后按 §8 的格式补记。
+本批次（§2.23）推送后触发的
+[运行 14 · 41297137634](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)
+（commit `cc97428`）同样结论 **success**：XCTest 45 + 12、XCUITest 13/13（419.040 s）、
+B 层 429/440（工件与运行 13 仅 `generatedAt` 不同）、截图 7 张，结果见 §2.24。
+
+---
+
+### 2.24 运行 14 结果落档与截图对比口径收敛（Week 6 收尾）
+
+**Prompt**
+> 运行 14（commit `cc97428`）已经全绿，把这轮的真实结果落档。按「尽快结束」的要求，
+> 不再逐轮扩增跨运行矩阵与光标采样：截图对比从此只做**相邻两次运行**的逐张比对；
+> 顺带把「作业不要求像素级对比」的口径写进截图文档，避免把自选的加严校验误读成作业门槛。
+> 只改文档，不碰 App、测试与 CI 代码，数字全部来自运行 14 的工件或本地复算脚本。
+
+**TRAE 修改范围**（全部 `docs/`，不改 App、测试与 CI 代码）：
+
+- `docs/ui-screenshot-comparison.md`：§1 补运行 14 并加入「口径说明（2026-11-01）」
+  （作业只要求 UI Golden Test / UI 截图对比，逐像素相减是自选加严校验；运行 14 起只做相邻比对）；
+  §7.3 的「三种离散状态」更正为四种（新增运行 14 = A + 18 行）并同步像素容差描述；
+  §7 的 Golden 基线行同步改为「容忍整页 ±18 px、见 §7.2–§7.7」，结构校验行补运行 13、14；
+  新增 §7.7（13 → 14 的逐张差异、S05 的第四种位置、S03 光标在运行 14 可见、运行级时间戳复核）；
+  §8 补运行 14 工件路径；
+- `docs/test-suite.md`：§1 三层状态补运行 14，新增运行 14 结果段（run 级与 step 时间一致、static
+  11 条步骤记录、XCTest 45 + 12 逐套件耗时、XCUITest 13/13 逐例耗时、B 层 46.582 s、工件 ID 与大小、
+  13 → 14 的逐像素统计），§4 补运行 14，§5 结果表补三行；
+- `docs/ai-collaboration-log.md`：§2.23 的回归占位改为运行 14 的真实结果；§3 增加本批次；
+  §5.4 两行更新为八轮 UI 耗时与九轮 B 层；§6 补运行 14 两行；§8 补运行 14 行与记要；新增本节；
+- `docs/ocr-accuracy.md`：新增 §5.12（运行 14 复跑），§7 结论改为运行 6 → 14 九次相同；
+- `docs/sdd-archive.md`：代码基线补 `git diff 6ce5136 cc97428`；文档基线更新为七次文档批次、
+  运行 14 已独立回归；复核列表补运行 14；
+- `docs/acceptance-report.md`：头部证据基线、§5 Regression 行与增量计数、§6 运行 14 行与
+  回归原则段更新为七次独立回归、八次采样。
+
+**本地验证**：
+
+- `python scripts/verify_ui_screenshots.py .tools/ci/run14-artifacts/ui-screenshots` exit 0（7 张，
+  750×1334，来源用例一致）；CI 导出步骤同样逐张 `[通过] S01`–`[通过] S07`；
+- `ocr-accuracy-report.json`（152 940 B）逐键比较，运行 14 与运行 13 除 `generatedAt`
+  （10:11:56Z → 10:45:34Z）外完全相等；Markdown 报告同为 237 行，只差「生成时间」一行；
+- 截图相邻比对（13 → 14，同一 `analyze_run10_shots.py` 口径）：S01 894 / S02 925 / S03 1 327 /
+  S04 835 / S05 169 942 / S06 919 / S07 835 px；除 S03 的 176 px（光标）与 S05 的整页位移外，
+  全部落在行 11–29 的状态栏时钟区；
+- S05 位置：白卡区间（x=40）运行 13 为 378–841 / 963–1306，运行 14 为 396–859 / 981–1324，
+  整体下移 **18 行**——八次采样中的**第四种位置**（A + 18 行，比运行 10 的 C 再低 7 行）。
+  原脚本的位移搜索只到 ±16，会在边界上给出误导性的「最优」；把搜索放宽到 −40..+40 行后，
+  强差异在 dy=+18 处降到最小值 3 426（残差 53 981 / 942 000，>64 级只有 172 px；
+  相邻候选 +17 为 31 435、+19 为 24 770），对称重叠区的暗像素 IoU（行 200–1299）为 0.9204
+  （灰度 <128）/ 0.9536（R+G+B <300）；不对齐时 dy=0 的强差异为 71 855；
+- S03 光标：运行 13 不可见、运行 14 可见（176 px、(119,180,248)、最大蓝过量 129，与运行 9 的数值相同）；
+  按「只做相邻比对」的新口径，本节记这一次事实，不再把光标采样作为逐轮扩增的序列维护；
+- 运行级时间戳：运行 14 的 run 级 `created_at` / `updated_at` 为 10:21:29Z–10:45:53Z，与 job 级、
+  19 条 step 记录及工件 `expires_at`（10:45:40Z / 10:45:46Z = 保存步骤 + 30 天）一致；
+  运行 11 的 +1 小时偏移连续三轮未复现。
+
+**回归（运行 14，已由真实结果补记）**：上一批次（§2.23）推送后触发的
+[运行 14 · 41297137634](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)
+（commit `cc97428`）结论 **success**：XCTest 45 + 12、XCUITest 13/13（419.040 s）、
+B 层 429/440（工件与运行 13 仅 `generatedAt` 不同）、截图 7 张。
+本批次（§2.24）推送后的回归结果同样在其真实结果出来之前不写结论，出来后按 §8 的格式补记。
 
 ---
 
@@ -898,6 +957,7 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
 | 2.21 运行 11 落档与 S05 离散状态更正（Week 6） | ai-collaboration-log.md、test-suite.md、ui-screenshot-comparison.md、ocr-accuracy.md、sdd-archive.md、acceptance-report.md | 文档 | 否（纯文档增量，不改代码与 CI） |
 | 2.22 运行 12 落档与光标像素口径更正（Week 6） | ai-collaboration-log.md、test-suite.md、ui-screenshot-comparison.md、ocr-accuracy.md、sdd-archive.md、acceptance-report.md | 文档 | 否（纯文档增量，不改代码与 CI） |
 | 2.23 运行 13 落档与 S03 光标第七次采样（Week 6） | ai-collaboration-log.md、test-suite.md、ui-screenshot-comparison.md、ocr-accuracy.md、sdd-archive.md、acceptance-report.md | 文档 | 否（纯文档增量，不改代码与 CI） |
+| 2.24 运行 14 落档与截图对比口径收敛（Week 6 收尾） | ai-collaboration-log.md、test-suite.md、ui-screenshot-comparison.md、ocr-accuracy.md、sdd-archive.md、acceptance-report.md | 文档 | 否（纯文档增量，不改代码与 CI） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -960,10 +1020,10 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
 | AI 能「一次成型」的部分确实一次成型 | 增量 §2.1（工程骨架）、§2.2（数据模型）在首个 CI 轮次即整体编译通过；失败集中在 UIKit 图像加载与 `@MainActor` 边界（运行 1，4 处） | 样板代码、数据模型、XcodeGen 定义只需规格清楚，人工审查标识符 |
 | AI 的启发式倾向会被真实数据打脸 | B 层 427/440 → 429/440：13 处错误里只有 2 处是规则可修的解析粘连（C02/C03，§2.14），其余 11 处是 Vision 侧字符错误，加规则无法修回 | 解析器自身在 A 层 440/440 全对，说明错误来自概率性 OCR 而非规则；受控切分（只认部门/地址）证明规则可精确收窄 |
 | AI 写 UI 测试的最初版本不稳定 | 运行 2、5、6 共 3 类失败（AX 点击、二次聚焦、长按拖拽后 60 s 空闲等待），全部由真实运行日志定位（§2.11、§2.14、§2.16），每类失败只改测试辅助函数、断言未放宽 | UI 自动化是 AI 最不擅长的部分，必须靠 `.xcresult` 日志与 `t = ...` 交互记录归因 |
-| 「断言通过」≠「界面没变」 | 运行 7 → 8：App 代码未变，7 张截图逐像素差异仍为 5 232 / 7 003 500 = 0.075%，全部来自状态栏时钟与搜索框光标（`docs/ui-screenshot-comparison.md` §7.1）；运行 8 → 9：S05 出现表单整体下垂约 5 px 的排版抖动（104 237 px = 10.4185%，内容一致）；运行 9 → 10：同一表单再下垂 6 px（相对运行 8 累计 11 px）；运行 10 → 11：回到运行 8 的基线（对齐 −11 行，强差异 8 553）；运行 8 → 11：第 60 行以下 0 px 差异（只剩状态栏时钟与 S03 光标 176 px）。七次采样里 S05 只有三种位置，运行 7、8、11、12、13 逐像素一致（运行 8 → 12、8 → 13 与 12 → 13 的 S05 第 60 行以下均为 0 px 差异；运行 8 → 13 的 7 张截图第 60 行以下也全部零差异） | 截图证据与断言互补；像素基线需要先固定时间、光标状态与模拟器排版参数，三者在当前环境均不可控。对齐的判定标准也需固定：按「不改动任何像素的差异数」最小化会选中边界位移（8 → 10 会误选 dy=+8，计 85 373 px，其中 >64 级 32 276 px 是错位双线），按 >32 灰度级像素最小化才对准元素的真实位移（8 → 10 为 dy=+11，10 → 11 为 dy=−11）——方法说明与复算脚本见 `docs/ui-screenshot-comparison.md` §7.3、§7.4 |
+| 「断言通过」≠「界面没变」 | 运行 7 → 8：App 代码未变，7 张截图逐像素差异仍为 5 232 / 7 003 500 = 0.075%，全部来自状态栏时钟与搜索框光标（`docs/ui-screenshot-comparison.md` §7.1）；运行 8 → 9：S05 出现表单整体下垂约 5 px 的排版抖动（104 237 px = 10.4185%，内容一致）；运行 9 → 10：同一表单再下垂 6 px（相对运行 8 累计 11 px）；运行 10 → 11：回到运行 8 的基线（对齐 −11 行，强差异 8 553）；运行 8 → 11：第 60 行以下 0 px 差异（只剩状态栏时钟与 S03 光标 176 px）。采样到运行 13 时 S05 只有三种位置，运行 7、8、11、12、13 逐像素一致（运行 8 → 12、8 → 13 与 12 → 13 的 S05 第 60 行以下均为 0 px 差异；运行 8 → 13 的 7 张截图第 60 行以下也全部零差异）。**运行 14 起改为只做相邻两次运行**的逐张比对：13 → 14 里 S05 出现**第四种位置 A + 18 行**（白卡区间 x=40：378–841 / 963–1306 → 396–859 / 981–1324），按对齐后的强像素最小化（dy=+18，3 426 px；残差 53 981 / 942 000，>64 级 172 px；暗像素 IoU 0.9204 灰度 / 0.9536 三通道和）判定为同一元素集整体位移，不是内容回归 | 截图证据与断言互补；像素基线需要先固定时间、光标状态与模拟器排版参数，三者在当前环境均不可控。对齐的判定标准也需固定：按「不改动任何像素的差异数」最小化会选中边界位移（8 → 10 会误选 dy=+8，计 85 373 px，其中 >64 级 32 276 px 是错位双线），按 >32 灰度级像素最小化才对准元素的真实位移（8 → 10 为 dy=+11，10 → 11 为 dy=−11）——方法说明与复算脚本见 `docs/ui-screenshot-comparison.md` §7.3、§7.4、§7.7 |
 | 云端流水线本身需要单独验证 | 运行 3（目的地缺失，§2.12）、运行 4（workflow 被拒、0 job，§2.13）、运行 8（首次在 CI 内执行截图结构校验）、运行 11（run 级时间戳比 job/step 晚 1 小时，§2.21） | 「YAML 能解析」不等于「GitHub 接受」；CI 的每一步都应有一次真实运行的验证记录。平台元数据也不能当作单一事实来源——引用步骤时间时以日志与 step 记录为准 |
-| 一致但不代表性能 | XCTest 与 XCUITest 每轮全绿时，UI 合计耗时 252.850 s（运行 7）→ 288.092 s（运行 8）→ 204.497 s（运行 9）→ 321.292 s（运行 10）→ 222.892 s（运行 11）→ 291.889 s（运行 12）→ 289.198 s（运行 13），单项最大波动 47.843 s → 112.195 s（Tag），Delete 22.538 s → 102.681 s | 模拟器调度波动大，CI 计时不能当性能回归指标；本项目的性能结论只用确定性单测 |
-| 概率性能力可复现但不可承诺 | B 层运行 6、7、8、9、10、11、12、13 八次同为 429/440（运行 7 → 8 → 9 → 10 → 11 → 12 → 13 工件除 `generatedAt` 外逐字节相同）；同一批 40 张名片上 31/40 整卡全对 | 相同环境 + 相同图像 → 相同结果；因此报告写具体环境下的实测值，不写「准确率约为…」 |
+| 一致但不代表性能 | XCTest 与 XCUITest 每轮全绿时，UI 合计耗时 252.850 s（运行 7）→ 288.092 s（运行 8）→ 204.497 s（运行 9）→ 321.292 s（运行 10）→ 222.892 s（运行 11）→ 291.889 s（运行 12）→ 289.198 s（运行 13）→ 419.040 s（运行 14），单项最大波动 47.843 s → 112.195 s（Tag），运行 14 的 EditsSurviveRelaunch 94.038 s、Export 78.183 s 也明显偏慢 | 模拟器调度波动大，CI 计时不能当性能回归指标；本项目的性能结论只用确定性单测 |
+| 概率性能力可复现但不可承诺 | B 层运行 6、7、8、9、10、11、12、13、14 九次同为 429/440（运行 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 工件除 `generatedAt` 外逐字节相同）；同一批 40 张名片上 31/40 整卡全对 | 相同环境 + 相同图像 → 相同结果；因此报告写具体环境下的实测值，不写「准确率约为…」 |
 
 **结论**：AI 在「规格清楚、可判定、可回归」的部分可以放手；在「看起来对即可」的启发式、
 平台差异、UI 自动化稳定性、以及任何未经过真实运行验证的结论上必须人工盯。本项目的做法是
@@ -1001,6 +1061,8 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
 | 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 12](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41292037678)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 56.552 s；与运行 11 工件比对仅 `generatedAt`（08:28:27Z → 09:24:54Z）不同；S05 仍为状态 A，见 `docs/ui-screenshot-comparison.md` §7.5 |
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 13](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)） | ✅ XCTest 45 + 12 通过；UI 13/13 通过（名片夹 8/8、异常路径 5/5）；B 层 40/40 | §2.22 文档批次的独立回归，结论 success（09:57:52Z–10:12:17Z，run 级与 job/step 时间一致）：准备模拟器 37 s、XcodeGen 缓存命中；UI 13 例合计 289.198 s（两例编辑用例 22.528 s / 29.670 s）；截图导出 7 张，`ui-screenshots` 工件 467 309 B；S05 与运行 8 第 60 行以下零差异，S03 光标不可见 |
 | 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 13](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 67.147 s；与运行 12 工件比对仅 `generatedAt`（09:24:54Z → 10:11:56Z）不同；S05 仍为状态 A（第七次采样），见 `docs/ui-screenshot-comparison.md` §7.6 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 14](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)） | ✅ XCTest 45 + 12 通过；UI 13/13 通过（名片夹 8/8、异常路径 5/5）；B 层 40/40 | §2.23 文档批次的独立回归，结论 success（10:21:29Z–10:45:53Z，run 级与 job/step 时间一致）：准备模拟器 62 s、XcodeGen 缓存命中；UI 13 例合计 419.040 s（最慢一轮：EditsSurviveRelaunch 94.038 s、Export 78.183 s）；截图导出 7 张，`ui-screenshots` 工件 480 727 B；S05 为第四种位置 A + 18 行，S03 光标可见（176 px，与运行 9 数值相同） |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 14](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 46.582 s；与运行 13 工件比对仅 `generatedAt`（10:11:56Z → 10:45:34Z）不同（第九次逐字节相同的复跑）；S05 第四种位置与 S03 光标见 `docs/ui-screenshot-comparison.md` §7.7 |
 | （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 自动化部分已在运行 7 全部真实通过；人工清单（M1–M10）待执行 | 只记录真实结果；汇总报告 `docs/acceptance-report.md`（2026-11-01 编写，人工项与参考环境锁定如实列为待办） |
 
 ---
@@ -1033,6 +1095,7 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
 | 11 | [41288191075](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41288191075)（commit `2827935`） | ✅ 通过（全部步骤；job 级 09:16:53Z–09:17:02Z，步骤 08:16:54Z–08:16:58Z；11 条步骤记录） | ✅ 通过（步骤 08:17:04Z–08:28:43Z，结论 success） | §2.20「运行 10 结果落档与截图差异复算口径更正」批次的独立回归（`git diff 05c20f1 2827935`：6 个 `docs/` 文件、256 增 44 删）。步骤（job 级 API，共 19 条 step 记录）：Set up job 08:17:04–06、checkout 06–08、选择 Xcode 16.4 08、`准备模拟器` ✅（08:17:08Z–08:18:18Z，70 s；UDID `210784C8-…`）、缓存 XcodeGen 18:18–19、`安装 XcodeGen` 缓存命中跳过、生成 Xcode 工程 18:19、`build-for-testing` ✅（18:19–18:46，27 s）、`运行测试（test-without-building）` ✅（08:18:46Z–08:26:38Z）、`B 层` ✅（08:26:38Z–08:28:33Z）、准确率摘要 28:33、上传准确率报告 28:33–35、导出 UI 截图 28:35–40、上传 UI 截图 28:40–41、测试摘要 28:41、失败工件步骤 `if: failure()` 跳过、Post 缓存 XcodeGen 28:41、Post checkout 28:41–42、Complete job(=33) 28:42–43。XCTest：`CamCardCloneTests` 45/45（"Executed 45 tests, with 0 failures … 4.284 (8.262) seconds"；`FieldParserTests` 26 / 0.348 s、`FixtureParserTests` 3、`ImageCorrectionTests` 3、`OCRServiceTests` 3、`ScannerDismissalTests` 4、`VCardExporterTests` 6）、`CamCardDataTests` 12/12（0.097 (0.114) s）。XCUITest 13/13（222.892 s）：`CardListUITests` 8/8（171.491 s：Delete 22.538 / Detail 14.605 / EditName 21.128 / EditsSurviveRelaunch 24.029 / Export 13.549 / FirstLaunch 5.058 / Search 26.007 / Tag 44.577）、`ExceptionPathUITests` 5/5（51.401 s：CameraPermissionDenied 8.520 / Cancelling 12.970 / FixtureImages 0.185 / SaveAfterRecognition 16.482 / Unrecognizable 13.244）。B 层：`VisionAccuracyTests` ✅（39.680 s）：40/40 张、虚构 0、错位 0、可选字段误补 0，字段级 429/440 = 97.5%、召回 237/248、缺失精度 192/192、整卡 31/40；`ocr-accuracy-report.json`（152 940 B）与运行 10 仅 `generatedAt`（07:33:25Z → 08:28:27Z）不同。截图 7 张逐张 `[通过] S01`–`[通过] S07`，「UI 截图齐全」；工件 `ui-screenshots`（id 13076521746，467 313 B）、`ocr-accuracy-report`（id 13076108296，13 483 B），保留至 2026-12-01；本地 `verify_ui_screenshots.py .tools/ci/run11-artifacts/ui-screenshots` exit 0。与运行 10 逐像素比较：S01–S04、S06、S07 只有状态栏时钟（875–1 118 px），S03 另加搜索框光标（176 px），S05 为 0–749 列、11–1 321 行的整页差异 135 059 px，按 −11 行对齐后回到运行 8 的位置（强差异 8 553、残差 60 715）；与运行 8 比较：第 60 行以下 0 px 差异（S03 只有光标 176 px） |
 | 12 | [41292037678](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41292037678)（commit `109dde4`） | ✅ 通过（全部步骤；09:11:40Z–09:11:46Z；11 条步骤记录，Complete job 为第 17 号步骤） | ✅ 通过（09:11:48Z–09:25:12Z，结论 success） | §2.21「运行 11 结果落档与 S05 离散状态更正」批次的独立回归（`git diff 2827935 109dde4`：6 个 `docs/` 文件、289 增 51 删）。run 级 `created_at` / `updated_at` 09:11:38Z–09:25:13Z 与 job/step 一致——运行 11 的 +1 小时偏移未复现。步骤（共 19 条 step 记录）：Set up job 09:11:48–49、checkout 49–51、选择 Xcode 16.4 51–52、`准备模拟器` ✅（09:11:52Z–09:12:22Z，30 s；UDID `F1A77E24-7214-4EE4-9970-AD21018C3367`）、缓存 XcodeGen 22–24、`安装 XcodeGen` 缓存命中跳过、生成 Xcode 工程 24、`build-for-testing` ✅（09:12:24Z–09:13:00Z，36 s）、`运行测试（test-without-building）` ✅（09:13:00Z–09:20:50Z）、`B 层` ✅（09:20:50Z–09:24:59Z）、准确率摘要 24:59–25:00、上传准确率报告 25:00–25:02、导出 UI 截图 25:02–25:07、上传 UI 截图 25:07–25:08、测试摘要 25:08、失败工件步骤 `if: failure()` 跳过、Post 缓存 XcodeGen 25:08、Post checkout 25:08–09、Complete job(=33) 25:09–11。XCTest：`CamCardCloneTests` 45/45（"Executed 45 tests, with 0 failures (0 unexpected) in 12.879 (19.430) seconds"；`FieldParserTests` 26 / 7.707 (8.496) s、`FixtureParserTests` 3 / 0.425 (5.001) s、`ImageCorrectionTests` 3 / 1.141 s、`OCRServiceTests` 3 / 3.598 s、`ScannerDismissalTests` 4 / 0.002 s、`VCardExporterTests` 6 / 0.007 s）、`CamCardDataTests` 12/12（0.116 (0.123) s）。XCUITest 13/13（291.889 (291.899) s）：`CardListUITests` 8/8（243.013 s：Delete 51.047 / Detail 31.927 / EditName 32.084 / EditsSurviveRelaunch 24.956 / Export 15.758 / FirstLaunch 5.890 / Search 29.788 / Tag 51.563）、`ExceptionPathUITests` 5/5（48.876 s：CameraPermissionDenied 10.012 / Cancelling 11.904 / FixtureImages 0.134 / SaveAfterRecognition 14.939 / Unrecognizable 11.887）。B 层：`VisionAccuracyTests` ✅（56.552 (56.553) s，套件 09:23:57.513Z–09:24:54.066Z）：40/40 张、虚构 0、错位 0、可选字段误补 0，字段级 429/440 = 97.5%、召回 237/248、缺失精度 192/192、整卡 31/40；`ocr-accuracy-report.json`（152 940 B）与运行 11 仅 `generatedAt`（08:28:27Z → 09:24:54Z）不同。截图 7 张逐张 `[通过] S01`–`[通过] S07`；工件 `ui-screenshots`（id 13078050790，466 693 B）、`ocr-accuracy-report`（id 13078165606，13 483 B）；本地 `verify_ui_screenshots.py .tools/ci/run12-artifacts/ui-screenshots` exit 0。与运行 11 逐像素比较：S01 1 024 / S02 1 110 / S03 1 200 / S04 1 058 / S05 441 / S06 441 / S07 542 px，除 S03 的 176 px 光标外全部在行 11–29；与运行 8 比较：第 60 行以下 0 px 差异（S03 只有光标 176 px），S05 仍为状态 A |
 | 13 | [41295356550](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)（commit `6ce5136`） | ✅ 通过（全部步骤；09:57:55Z–09:58:02Z；11 条步骤记录，Complete job 为第 17 号步骤） | ✅ 通过（09:58:05Z–10:12:17Z，结论 success） | §2.22「把运行 12 的真实回归结果落档，并更正 S03 光标的像素口径」批次的独立回归（`git diff 109dde4 6ce5136`：6 个 `docs/` 文件、272 增 50 删）。run 级 `created_at` / `updated_at` 09:57:52Z–10:12:17Z 与 job/step 一致——运行 11 的 +1 小时偏移连续两轮未复现。步骤（共 19 条 step 记录）：Set up job 09:58:05–06、checkout 06–08、选择 Xcode 16.4 08–09、`准备模拟器` ✅（09:58:09Z–09:58:46Z，37 s；UDID `896B52C8-AF4E-4F12-ABC4-305F054FFF8E`）、缓存 XcodeGen 46–47、`安装 XcodeGen` 缓存命中跳过、生成 Xcode 工程 47–48、`build-for-testing` ✅（09:58:48Z–09:59:45Z，57 s）、`运行测试（test-without-building）` ✅（09:59:45Z–10:07:35Z）、`B 层` ✅（10:07:35Z–10:12:02Z）、准确率摘要 12:02、上传准确率报告 12:02–04、导出 UI 截图 12:04–09、上传 UI 截图 12:09–10、测试摘要 12:10–11、失败工件步骤 `if: failure()` 跳过、Post 缓存 XcodeGen 12:11、Post checkout 12:11–12、Complete job(=33) 12:12–15。XCTest：`CamCardCloneTests` 45/45（"Executed 45 tests, with 0 failures (0 unexpected) in 6.705 (7.384) seconds"；`FieldParserTests` 26 / 1.320 (1.665) s、`FixtureParserTests` 3 / 0.450 (0.451) s、`ImageCorrectionTests` 3 / 1.065 (1.066) s、`OCRServiceTests` 3 / 3.859 (3.860) s、`ScannerDismissalTests` 4 / 0.003 (0.134) s、`VCardExporterTests` 6 / 0.009 (0.186) s）、`CamCardDataTests` 12/12（0.105 (0.173) s）。XCUITest 13/13（289.198 (289.209) s）：`CardListUITests` 8/8（245.460 (245.465) s：Delete 86.000 / Detail 19.566 / EditName 22.528 / EditsSurviveRelaunch 29.670 / Export 13.955 / FirstLaunch 5.447 / Search 24.815 / Tag 43.480）、`ExceptionPathUITests` 5/5（43.738 (43.740) s：CameraPermissionDenied 8.941 / Cancelling 9.832 / FixtureImages 0.186 / SaveAfterRecognition 13.346 / Unrecognizable 11.433）。B 层：`VisionAccuracyTests` ✅（67.147 s，套件 10:10:49.557Z–10:11:56.704Z）：40/40 张、虚构 0、错位 0、可选字段误补 0，字段级 429/440 = 97.5%、召回 237/248、缺失精度 192/192、整卡 31/40；`ocr-accuracy-report.json`（152 940 B）与运行 12 仅 `generatedAt`（09:24:54Z → 10:11:56Z）不同。截图 7 张逐张 `[通过] S01`–`[通过] S07`；工件 `ui-screenshots`（id 13080070079，467 309 B）、`ocr-accuracy-report`（id 13079416955，13 482 B）；本地 `verify_ui_screenshots.py .tools/ci/run13-artifacts/ui-screenshots` exit 0。与运行 12 逐像素比较：S01 1 344 / S02 1 313 / S03 1 520 / S04 1 337 / S05 1 293 / S06 1 293 / S07 1 438 px，除 S03 的 176 px 光标外全部在行 11–29；与运行 8 比较：第 60 行以下 0 px 差异（运行 13 光标不可见，连光标差异也没有），S05 仍为状态 A（第七次采样） |
+| 14 | [41297137634](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)（commit `cc97428`） | ✅ 通过（全部步骤；10:21:31Z–10:21:37Z；11 条步骤记录，Complete job 为第 17 号步骤） | ✅ 通过（10:21:40Z–10:45:53Z，结论 success） | §2.23「把运行 13 的真实回归结果落档，并更正 S03 光标的第七次采样」批次的独立回归（`git diff 6ce5136 cc97428`：6 个 `docs/` 文件、252 增 42 删）。run 级 `created_at` / `updated_at` 10:21:29Z–10:45:53Z 与 job/step、工件 `expires_at` 一致——运行 11 的 +1 小时偏移连续三轮未复现。步骤（共 19 条 step 记录）：Set up job 10:21:41–43、checkout 43–45、选择 Xcode 16.4 45、`准备模拟器` ✅（10:21:45Z–10:22:47Z，62 s；UDID `8D5A6070-EE58-4F04-822A-CC5767591DF3`）、缓存 XcodeGen 22:47–50、`安装 XcodeGen` 缓存命中跳过、生成 Xcode 工程 22:50–51、`build-for-testing` ✅（10:22:51Z–10:23:52Z，61 s）、`运行测试（test-without-building）` ✅（10:23:52Z–10:43:15Z）、`B 层` ✅（10:43:15Z–10:45:39Z）、准确率摘要 39–40、上传准确率报告 40–42、导出 UI 截图 42–45、上传 UI 截图 45–47、测试摘要 47、失败工件步骤 `if: failure()` 跳过、Post 缓存 XcodeGen 47–48、Post checkout 48、Complete job(=33) 48–51。XCTest：`CamCardCloneTests` 45/45（"Executed 45 tests, with 0 failures (0 unexpected) in 6.467 (7.387) seconds"；`FieldParserTests` 26 / 0.250 (0.594) s、`FixtureParserTests` 3 / 0.514 (0.515) s、`ImageCorrectionTests` 3 / 1.496 (1.498) s、`OCRServiceTests` 3 / 4.189 (4.191) s、`ScannerDismissalTests` 4 / 0.004 (0.532) s、`VCardExporterTests` 6 / 0.013 (0.038) s）、`CamCardDataTests` 12/12（0.117 (0.217) s）。XCUITest 13/13（419.040 (419.054) s，最慢一轮）：`CardListUITests` 8/8（368.994 (369.002) s：Delete 38.062 / Detail 20.379 / EditName 36.726 / EditsSurviveRelaunch 94.038 / Export 78.183 / FirstLaunch 6.117 / Search 43.792 / Tag 51.698）、`ExceptionPathUITests` 5/5（50.046 (50.049) s，套件 10:42:17.535–10:43:07.584：CameraPermissionDenied 10.517 / Cancelling 13.260 / FixtureImages 0.300 / SaveAfterRecognition 14.383 / Unrecognizable 11.586）。B 层：`VisionAccuracyTests` ✅（46.582 s，套件 10:44:48.251Z–10:45:34.834Z）：40/40 张、虚构 0、错位 0、可选字段误补 0，字段级 429/440 = 97.5%、召回 237/248、缺失精度 192/192、整卡 31/40；`ocr-accuracy-report.json`（152 940 B）与运行 13 仅 `generatedAt`（10:11:56Z → 10:45:34Z）不同，Markdown 报告 237 行只差「生成时间」一行。截图 7 张逐张 `[通过] S01`–`[通过] S07`；工件 `ui-screenshots`（id 13079584071，480 727 B）、`ocr-accuracy-report`（id 13080341771，13 482 B），保留至 2026-12-01；本地 `verify_ui_screenshots.py .tools/ci/run14-artifacts/ui-screenshots` exit 0。与运行 13 逐像素比较：S01 894 / S02 925 / S03 1 327 / S04 835 / S05 169 942 / S06 919 / S07 835 px，除 S03 的 176 px 光标与 S05 的整页位移外全部在行 11–29；S05 出现**第四种位置**（白卡区间 x=40 由 378–841 / 963–1306 变为 396–859 / 981–1324，整体下移 18 行；x=40 只是采样列，元素行区间随对齐整体平移）。原脚本位移搜索范围 ±16 会截断，放宽到 −40..+40 后热像素最小在 dy=+18（3 426 px，残差 53 981 / 942 000，>64 级 172 px），暗像素 IoU 0.9204（灰度 <128）/ 0.9536（三通道和 <300）；S03 光标可见（176 px、(119,180,248)、最大蓝过量 129，与运行 9 数值相同）。按 §2.24 起的新口径，截图比对只做相邻两次并归因，不再扩增跨运行矩阵 |
 
 记要：
 
@@ -1116,3 +1179,16 @@ B 层 429/440（工件与运行 12 仅 `generatedAt` 不同）、截图 7 张。
   不可见的是运行 8、10、13——既不是恒为 176 px，也不是严格交替，进一步确认光标是截图瞬间的
   渲染状态，不参与内容回归判定。运行 13 的 run 级时间（09:57:52Z–10:12:17Z）与 job/step、
   工件 `expires_at` 再次一致，运行 11 的异常已连续两轮未复现，引用口径不变。
+- 运行 14 是本项目截图取证的最后一轮，也是**口径收敛**的一轮：① S05 出现**第四种离散位置**
+  A + 18 行（白卡区间 x=40：378–841 / 963–1306 → 396–859 / 981–1324），比运行 10 的 C（A + 11）
+  还低 7 行。复核时发现原脚本的位移搜索只到 ±16 行，会把边界上的 +16 当「最优」；放宽到 −40..+40
+  后热像素在 dy=+18 取最小值 3 426（相邻候选 +17 为 31 435、+19 为 24 770，dy=0 为 71 855），
+  残差 53 981 / 942 000（>64 级仅 172 px），暗像素 IoU 0.9204 / 0.9536——与状态 B、C 的残差
+  同一量级，仍是「同一元素集整体位移」。② S03 光标在运行 14 可见（176 px、(119,180,248)，
+  最大蓝过量 129，与运行 9 的数值完全相同），可见性序列为 7、9、11、12、14 可见 / 8、10、13
+  不可见，无周期。③ 运行 14 的 run 级时间（10:21:29Z–10:45:53Z）与 job/step、工件 `expires_at`
+  一致，运行 11 的异常连续三轮未复现。从 §2.24 起，截图对比只做**相邻两次运行**的逐张比对并归因，
+  不再逐轮扩增跨运行矩阵与光标采样——按作业原文（Week 5「UI Golden Test」、Week 6「UI截图对比」），
+  验收标准是可观察行为等价，没有像素容差要求；逐像素相减是本项目自选的加严校验，
+  用于在回归中区分「App 内容回归」与「模拟器排版抖动」，不是作业门槛（口径说明见
+  `docs/ui-screenshot-comparison.md` §1）。
