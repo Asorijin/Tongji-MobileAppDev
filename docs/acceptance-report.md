@@ -7,7 +7,7 @@
 > 证据基线：[CI 运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)
 > （commit `c499448`，2026-11-01T06:13:31Z–06:26:39Z，结论 **success**）、
 > 本地 `swift test` 51/51（2026-11-01）、人工验证清单 M1–M10（**未执行**，见 §7）；
-> 其后的运行 8、9 为两次独立全绿回归（§6），确定性层与概率性层结果与基线一致。
+> 其后的运行 8、9、10 为三次独立全绿回归（§6），确定性层与概率性层结果与基线一致。
 > 本报告不给「通过」加任何前缀：要么有运行记录，要么写待执行。
 
 ---
@@ -125,10 +125,10 @@
 | OCR 错误分析 | ✅ 11 处逐项归因 | `docs/ocr-accuracy.md` §5.3–§5.5 |
 | Field Extraction 错误分析 | ✅ 解析粘连 2 处已修复（427→429）；其余为 OCR 侧 | `docs/ocr-accuracy.md` §4.4、§5.4 |
 | UI 截图对比 | 🔶 7 张截图 + 35 项核对；像素级 Golden Test 未实现 | `docs/ui-screenshot-comparison.md` |
-| Regression Test | ✅ 运行 5→6→7→8→9 五轮全量回归，每轮记录在案 | `docs/ai-collaboration-log.md` §6、§8 |
+| Regression Test | ✅ 运行 5→6→7→8→9→10 六轮全量回归，每轮记录在案 | `docs/ai-collaboration-log.md` §6、§8 |
 | 边界条件修复 | ✅ 运行 5 的三处（编辑输入、标签滚动、粘连标签）在运行 7 验证通过 | `docs/ai-collaboration-log.md` §2.14–§2.16 |
 | SDD 归档 | ✅ 归档总目录（按观察→规格→实现→测试→差异→回归→验收组织） | `docs/sdd-archive.md` |
-| AI 协作记录 | ✅ 19 个增量（§2.1–§2.19），逐个 Prompt / 修改 / 回归 | `docs/ai-collaboration-log.md` §2 |
+| AI 协作记录 | ✅ 20 个增量（§2.1–§2.20），逐个 Prompt / 修改 / 回归 | `docs/ai-collaboration-log.md` §2 |
 | AI 能力边界分析 | ✅ 定性边界（§5.1–§5.3）+ 七项实测数字表（§5.4，均注明来源运行） | `docs/ai-collaboration-log.md` §5 |
 | 最终演示 | 👤 未执行 | 计划：按本报告 §2 顺序现场演示 T01→T20 |
 
@@ -143,13 +143,16 @@
 | 运行 7（`c499448`） | ✅ **首次全绿**：UI 13/13、XCTest 45+12、B 层 429/440 且逐卡与运行 6 一致 | 输入方式替换生效；UI 截图 7 张入库 |
 | 运行 8（`e28da4b`） | ✅ 全绿复现：UI 13/13（288.092 s）、XCTest 45+12、B 层 429/440 且 `ocr-accuracy-report` 与运行 7 逐字节相同 | Week 6 文档批次的独立回归（[41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)），证明纯文档增量未动摇任何结果 |
 | 运行 9（`e24f864`） | ✅ 全绿复现：UI 13/13（204.497 s）、XCTest 45+12、B 层 429/440 且工件与运行 7 仅 `generatedAt` 不同 | §2.18 验收报告与 SDD 归档批次的独立回归（[41283224211](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)）；对比运行 8 截图，唯一的运行时差异是 S05 约 5 px 的模拟器排版抖动（内容一致，见 `docs/ui-screenshot-comparison.md` §7.2） |
+| 运行 10（`05c20f1`） | ✅ 全绿复现：UI 13/13（321.292 s）、XCTest 45+12、B 层 429/440 且工件与运行 9 仅 `generatedAt` 不同 | §2.19 文档更正批次的独立回归（[41284584464](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)）；S05 相对运行 9 再下移约 6 px（相对运行 8 累计约 11 px），其余 6 张只有状态栏与光标差异（详见 `docs/ui-screenshot-comparison.md` §7.3） |
 
 回归原则：每轮只改测试辅助函数或单条解析规则，断言一条未放宽；B 层逐卡比对证明
-识别链路未被触碰（`docs/ocr-accuracy.md` §5.5）。本报告的验收基线是运行 7；运行 8、9 是在其
-之后的两次独立回归，确定性层与概率性层结果均与基线一致。截图逐像素对比显示：运行 7 → 8 的
-差异只有状态栏时钟与搜索框光标这类时间性伪影；运行 8 → 9 另出现 S05 表单整体约 5 px 的
-竖直排版抖动（`docs/ui-screenshot-comparison.md` §7.2）——两次提交之间 `CamCardClone/`
-源码零改动（`git diff e28da4b e24f864` 仅文档），因此该差异归因于模拟器排版，不归因于 App。
+识别链路未被触碰（`docs/ocr-accuracy.md` §5.5）。本报告的验收基线是运行 7；运行 8、9、10 是在其
+之后的**三次独立回归**，确定性层与概率性层结果均与基线一致。截图逐像素对比显示：运行 7 → 8 的
+差异只有状态栏时钟与搜索框光标这类时间性伪影；运行 8 → 9 另出现 S05 表单整体下移约 5 px、
+运行 9 → 10 再下移约 6 px（相对运行 8 累计约 11 px）的竖直排版抖动
+（`docs/ui-screenshot-comparison.md` §7.2、§7.3）——三次提交之间 `CamCardClone/`
+源码零改动（`git diff e28da4b e24f864` 与 `git diff e24f864 05c20f1` 均仅文档），
+因此该差异归因于模拟器排版，不归因于 App。
 
 ---
 

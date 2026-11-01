@@ -17,9 +17,9 @@
 | vCard 导出（`VCardExporterTests`） | 任意 | 6 | ✅ 本地已通过 |
 | 数据层（`CardStoreTests`） | 任意 / iOS 模拟器 | 12 | ✅ 本地已通过 |
 | 扫描关闭规则（`ScannerDismissalTests`） | 任意 | 4 | ✅ 本地已通过 |
-| OCR / 区域检测（`OCRServiceTests`、`ImageCorrectionTests`） | 仅 iOS 模拟器（Vision / UIKit） | 6 | ✅ CI 运行 5、6、7、8、9 均真实通过（3 + 3） |
-| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ✅ CI 运行 7、8、9 真实通过（40/40 张完成识别，虚构 0，字段级 429/440 = 97.5%；运行 6、7、8、9 数字与逐卡结果相同） |
-| UI 路径（`ExceptionPathUITests` + `CardListUITests`） | 仅 iOS 模拟器 | 5 + 8 | ✅ CI 运行 7、8、9：13/13 全部通过（名片夹 8/8、异常路径 5/5） |
+| OCR / 区域检测（`OCRServiceTests`、`ImageCorrectionTests`） | 仅 iOS 模拟器（Vision / UIKit） | 6 | ✅ CI 运行 5、6、7、8、9、10 均真实通过（3 + 3） |
+| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ✅ CI 运行 7、8、9、10 真实通过（40/40 张完成识别，虚构 0，字段级 429/440 = 97.5%；运行 6、7、8、9、10 数字与逐卡结果相同） |
+| UI 路径（`ExceptionPathUITests` + `CardListUITests`） | 仅 iOS 模拟器 | 5 + 8 | ✅ CI 运行 7、8、9、10：13/13 全部通过（名片夹 8/8、异常路径 5/5） |
 
 本地 Windows 结果（2026-11-01）：`swift test` **51/51 通过**（领域 39 + 数据 12）；
 领域 39 = `FieldParserTests` 26 + `FixtureParserTests` 3 + `VCardExporterTests` 6 + `ScannerDismissalTests` 4。
@@ -148,16 +148,51 @@ CI 运行 9（[41283224211](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 - UI 截图：`导出 UI 截图` ✅（07:10:26Z–07:10:28Z），日志 `PNG 数量：       7` 且逐张 `[通过] S01`–`[通过] S07`；
   `上传 UI 截图` ✅，工件 `ui-screenshots`（480 239 B，保留至 2026-12-01）；`上传准确率报告` ✅
   （工件 `ocr-accuracy-report`，13 482 B）；失败工件步骤（`if: failure()`）跳过，属预期；
-- 与运行 8 的逐像素对比：S01–S04、S06、S07 的差异只在状态栏时间区（582–1 256 px）；
+- 与运行 8 的逐像素对比：S01、S02、S04、S06、S07 的差异只在状态栏时间区（582–1 111 px），
+  S03 为状态栏时间 + 搜索框光标（1 256 px，行列范围 11–113 行）；
   **S05 因表单整体下垂约 5 px 相差 104 237 px（10.4185%）**，内容一致，属界面记录的模拟器排版抖动
   （`docs/ui-screenshot-comparison.md` §7.2）；
 - 结论：确定性层 57 + 13 例与运行 7、8 一致全部通过，概率性层逐字节复现；本轮为纯文档增量，
   唯一变化的运行时行为是 S05 的模拟器排版抖动。
 
+CI 运行 10（[41284584464](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)，commit `05c20f1`，2026-11-01T07:23:18Z–07:33:41Z，结论 **success**）的真实结果
+（§2.19 文档更正批次——步骤口径、复核提示与运行 9 截图差异记录——的独立回归）：
+
+- `static` ✅（07:23:20Z–07:23:27Z；API 同为 **11 条步骤记录**，逐步时间：Set up job 07:23:21–22、checkout 22–23、
+  setup-python 23、安装 PyYAML 23–24、校验 workflow YAML 24、actionlint 24–25、数据集校验 25、py_compile 25、
+  Post setup-python 25、Post checkout 25、Complete job=17 号 25）；
+- `build-for-testing` ✅（07:23:58Z–07:24:21Z；此前 07:23:33Z–07:23:57Z「准备模拟器」24 s，
+  XcodeGen 2.46.0 走缓存命中、安装步骤 skipped，07:23:58Z 生成工程）、
+  `运行测试（test-without-building）` ✅（07:24:21Z–07:31:34Z）；
+- XCTest：`CamCardCloneTests` 45/45 ✅（"Executed 45 tests, with 0 failures … 3.867 s"，子套件 26 + 3 + 3 + 3 + 4 + 6）、
+  `CamCardDataTests` 12/12 ✅（0.039 s）；
+- XCUITest 13/13 ✅（321.292 s）：`CardListUITests` 8/8（267.362 s）——`testDeleteFromDetailRemovesCard`（102.681 s）、
+  `testDetailShowsAllSavedFields`（20.756 s）、`testEditNameUpdatesListAndDetail`（25.784 s）、
+  `testEditsSurviveRelaunch`（23.971 s）、`testExportOpensShareSheet`（14.907 s）、
+  `testFirstLaunchShowsEmptyState`（5.941 s）、`testSearchByNameCompanyAndPhone`（23.530 s）、
+  `testTagCreateFilterAndDelete`（49.787 s）；`ExceptionPathUITests` 5/5（53.937 s）：
+  `testCameraPermissionDeniedShowsGuidance`（15.285 s）、`testCancellingAfterRecognitionLeavesNoCard`（12.037 s）、
+  `testFixtureImagesAreDecodable`（0.271 s）、`testSaveAfterRecognitionAddsCard`（14.508 s）、
+  `testUnrecognizableImageOffersManualFallback`（11.833 s）；逐例波动同运行 8、9，属模拟器运行波动；
+- B 层：`VisionAccuracyTests` ✅（37.738 s，B 层步骤 07:31:34Z–07:33:30Z）：40/40 张完成识别，虚构 0、
+  错位 0、可选字段误补 0；字段级 429/440 = 97.5%、召回 237/248 = 95.6%、缺失精度 192/192、
+  整卡全对 31/40 = 77.5%；`ocr-accuracy-report.json`（152 940 B）与运行 9 的差异**只有** `generatedAt`
+  （07:10:20Z → 07:33:25Z），运行 6→7→8→9→10 五轮逐卡结果完全相同；
+- UI 截图：`导出 UI 截图` ✅（07:33:32Z–07:33:35Z），日志 `PNG 数量：       7` 且逐张 `[通过] S01`–`[通过] S07`；
+  `上传 UI 截图` ✅，工件 `ui-screenshots`（480 334 B，保留至 2026-12-01）；`上传准确率报告` ✅
+  （工件 `ocr-accuracy-report`，13 483 B）；失败工件步骤（`if: failure()`）跳过，属预期；
+  本地再以 `scripts/verify_ui_screenshots.py .tools/ci/run10-artifacts/ui-screenshots` 复核 exit 0；
+- 与运行 9 的逐像素对比：S01、S02、S04、S06、S07 的差异只在状态栏时间区（328–1 054 px），
+  S03 为状态栏时间 + 搜索框光标（963 px，行列范围 11–113 行）；
+  **S05 表单相对运行 9 再下垂 6 px（相对运行 8 累计 11 px），未对齐差异 100 064 px，对齐后残差 52 153 px，
+  >32 灰度级仅 5 872 px**，内容一致，属同一类模拟器排版抖动（`docs/ui-screenshot-comparison.md` §7.3）；
+- 结论：确定性层 57 + 13 例与运行 7、8、9 一致全部通过，概率性层逐字节复现；本轮仍为纯文档增量，
+  唯一变化的运行时行为仍是 S05 的模拟器排版抖动。
+
 覆盖率边界（诚实声明）：
 
 - Vision/UIKit 相关用例在 Windows 上按平台条件编译为空（`#if canImport(UIKit)`），因此本地统计只覆盖 51 例；
-  这 6 个 Vision/校正用例与 1 个 B 层用例已在 CI 模拟器上真实通过（运行 5、6、7、8、9）；13 个 UI 用例在运行 7、8、9 中均 13/13 通过。
+  这 6 个 Vision/校正用例与 1 个 B 层用例已在 CI 模拟器上真实通过（运行 5、6、7、8、9、10）；13 个 UI 用例在运行 7、8、9、10 中均 13/13 通过。
 - **无法在模拟器自动化**的场景：真实相机拍摄、系统照片库选择、系统权限弹窗、系统分享面板的最终落地动作。
   这些场景以「人工验证清单」（第 3 节）验收，自动化只覆盖其可测部分（如权限拒绝的界面分支）。
 
@@ -383,7 +418,7 @@ bash scripts/run-tests.sh          # 或 make test
   `python3 scripts/verify_ui_screenshots.py <导出目录>` 校验截图数量、来源用例与尺寸；
   逐项对比见 [docs/ui-screenshot-comparison.md](ui-screenshot-comparison.md)。
 - 失败时 CI 上传 `build/*.log`、`TestResults.xcresult` 与已导出的 `build/ui-screenshots`，可直接定位失败用例。
-  运行 7、8、9 全绿时该步骤按 `if: failure()` 跳过，属预期行为。
+  运行 7、8、9、10 全绿时该步骤按 `if: failure()` 跳过，属预期行为。
 
 ---
 
@@ -420,5 +455,8 @@ bash scripts/run-tests.sh          # 或 make test
 | 2026-11-01（运行时间 2026-11-01T07:03Z） | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 9](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)） | ✅ 通过（全部步骤） | 提交 `e24f864`；07:03:17Z–07:03:24Z；API 记为 11 条步骤记录（Complete job 为第 17 号步骤）；数据集 41 张 / 164 图像校验通过 |
 | 2026-11-01（运行时间 2026-11-01T07:03Z） | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 9](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)） | ✅ XCTest 45 + 12 通过；XCUITest 13/13 通过（204.497 s）；B 层 40/40 | 纯文档增量回归，结论 success；截图导出 7 张并上传 `ui-screenshots`（480 239 B）；逐例耗时见 §1 |
 | 2026-11-01（工件时间 2026-11-01T07:10Z） | 同上（模拟器 CamCardClone-CI / iOS 18.5） | `VisionAccuracyTests`（B 层，[运行 9](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)） | ✅ 字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；名片级全对 31/40 = 77.5% | 30.892 s；`ocr-accuracy-report` 与运行 7 的差异只有 `generatedAt`（152 940 B） |
+| 2026-11-01（运行时间 2026-11-01T07:23Z） | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 10](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)） | ✅ 通过（全部步骤） | 提交 `05c20f1`；07:23:20Z–07:23:27Z；API 记为 11 条步骤记录（Complete job 为第 17 号步骤） |
+| 2026-11-01（运行时间 2026-11-01T07:23Z） | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 10](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)） | ✅ XCTest 45 + 12 通过；XCUITest 13/13 通过（321.292 s）；B 层 40/40 | 纯文档增量回归，结论 success；准备模拟器 24 s、XcodeGen 缓存命中；截图导出 7 张并上传 `ui-screenshots`（480 334 B）；逐例耗时见 §1 |
+| 2026-11-01（工件时间 2026-11-01T07:33Z） | 同上（模拟器 CamCardClone-CI / iOS 18.5） | `VisionAccuracyTests`（B 层，[运行 10](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)） | ✅ 字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；名片级全对 31/40 = 77.5% | 37.738 s；`ocr-accuracy-report` 与运行 9 的差异只有 `generatedAt`（152 940 B） |
 
 > 原则：本表只写真实运行过的结果。未运行的一律写「待运行」，不用「预计通过」代替。
