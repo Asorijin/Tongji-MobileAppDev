@@ -153,6 +153,34 @@ jobs:
             -skip-testing:CamCardCloneTests/VisionAccuracyTests \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/test.log
 
+      # 把模拟器版 .app 打成 zip 上传：只含 App 目标本身（不含测试包），
+      # 供云 Mac 的模拟器直接安装运行（xcrun simctl install booted …）。
+      # 模拟器构建无需签名，真机无法使用。
+      - name: 上传模拟器 App 包（云 Mac 手工验收用）
+        if: always()
+        run: |
+          set -euo pipefail
+          APP_DIR="$(find build/DerivedData/Build/Products -type d -name 'CamCardClone.app' | head -1)"
+          if [ -z "$APP_DIR" ]; then
+            echo "::warning::未找到 CamCardClone.app（构建未产出），跳过 App 包上传"
+            exit 0
+          fi
+          echo "找到 App：$APP_DIR"
+          du -sh "$APP_DIR"
+          rm -rf build/app-simulator
+          mkdir -p build/app-simulator
+          cp -R "$APP_DIR" build/app-simulator/
+          (cd build/app-simulator && zip -qr CamCardClone-simulator.zip CamCardClone.app)
+
+      - name: 上传 App 包工件
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-simulator
+          path: build/app-simulator/CamCardClone-simulator.zip
+          retention-days: 30
+          if-no-files-found: ignore
+
       # B 层（Week 3 概率性评价）：Vision 真实识别 40 张合成名片 → 解析器 → 与 Ground Truth 比对，
       # 产出 Markdown/JSON 报告。复用上一步的构建产物，只跑这一个用例，避免重复编译。
       - name: OCR 端到端准确率报告（B 层）
