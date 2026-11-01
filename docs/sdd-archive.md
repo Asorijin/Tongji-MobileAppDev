@@ -11,8 +11,8 @@
 | 项目 | 值 |
 | --- | --- |
 | 归档时间 | 2026-11-01 |
-| 代码基线 | commit `c499448`（CI 运行 7 全绿：[41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)）；此后 `CamCardClone/`、测试与 CI 定义零改动（`git diff c499448 e24f864`、`git diff e24f864 05c20f1`、`git diff 05c20f1 2827935`、`git diff 2827935 109dde4`、`git diff 109dde4 6ce5136`、`git diff 6ce5136 cc97428` 与 `git diff cc97428 c9884b6` 均不含代码路径） |
-| 文档基线 | 本文件与 `docs/acceptance-report.md` 所在的提交；此前八次文档批次已分别由运行 8（[41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)，commit `e28da4b`）、运行 9（[41283224211](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)，commit `e24f864`）、运行 10（[41284584464](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)，commit `05c20f1`，2026-11-01T07:23:18Z–07:33:41Z）、运行 11（[41288191075](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41288191075)，commit `2827935`，2026-11-01T08:16:44Z–08:28:43Z，按步骤时间；API 的 run 级时间晚 1 小时，见 `ai-collaboration-log.md` §2.21）、运行 12（[41292037678](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41292037678)，commit `109dde4`，2026-11-01T09:11:38Z–09:25:13Z，run 级与步骤时间一致）、运行 13（[41295356550](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)，commit `6ce5136`，2026-11-01T09:57:52Z–10:12:17Z，run 级与步骤时间一致）、运行 14（[41297137634](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)，commit `cc97428`，2026-11-01T10:21:29Z–10:45:53Z，run 级与步骤时间一致）与运行 15（[41299729593](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41299729593)，commit `c9884b6`，2026-11-01T10:57:34Z–11:05:07Z，run 级与步骤时间一致，本项目最快的一轮）独立回归，均结论 success：XCTest 45 + 12、XCUITest 13/13（运行 11 为 222.892 s、运行 12 为 291.889 s、运行 13 为 289.198 s、运行 14 为 419.040 s，最慢的一轮、运行 15 为 186.817 s，最快的一轮，见 `test-suite.md` §1）、B 层 429/440 且工件与运行 7 仅 `generatedAt` 不同；本批（§2.25）的回归结果在推送后按同样方式补记，在此之前不写结论 |
+| 代码基线 | commit `c499448`（CI 运行 7 全绿：[41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)）；此后 `CamCardClone/`、测试与 CI 定义零改动（`git diff c499448 e24f864`、`git diff e24f864 05c20f1`、`git diff 05c20f1 2827935`、`git diff 2827935 109dde4`、`git diff 109dde4 6ce5136`、`git diff 6ce5136 cc97428`、`git diff cc97428 c9884b6` 与 `git diff c9884b6 bb10732` 均不含代码路径） |
+| 文档基线 | 本文件与 `docs/acceptance-report.md` 所在的提交；此前九次文档批次已分别由运行 8（[41281795449](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41281795449)，commit `e28da4b`）、运行 9（[41283224211](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41283224211)，commit `e24f864`）、运行 10（[41284584464](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41284584464)，commit `05c20f1`，2026-11-01T07:23:18Z–07:33:41Z）、运行 11（[41288191075](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41288191075)，commit `2827935`，2026-11-01T08:16:44Z–08:28:43Z，按步骤时间；API 的 run 级时间晚 1 小时，见 `ai-collaboration-log.md` §2.21）、运行 12（[41292037678](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41292037678)，commit `109dde4`，2026-11-01T09:11:38Z–09:25:13Z，run 级与步骤时间一致）、运行 13（[41295356550](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)，commit `6ce5136`，2026-11-01T09:57:52Z–10:12:17Z，run 级与步骤时间一致）、运行 14（[41297137634](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)，commit `cc97428`，2026-11-01T10:21:29Z–10:45:53Z，run 级与步骤时间一致）、运行 15（[41299729593](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41299729593)，commit `c9884b6`，2026-11-01T10:57:34Z–11:05:07Z，run 级与步骤时间一致，本项目最快的一轮）与运行 16（[41301338809](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41301338809)，commit `bb10732`，2026-11-01T11:18:56Z–11:34:04Z，run 级与步骤时间一致）独立回归，均结论 success：XCTest 45 + 12、XCUITest 13/13（运行 11 为 222.892 s、运行 12 为 291.889 s、运行 13 为 289.198 s、运行 14 为 419.040 s，最慢的一轮、运行 15 为 186.817 s，最快的一轮、运行 16 为 297.929 s，见 `test-suite.md` §1）、B 层 429/440（运行 15 为 30.464 s、运行 16 为 53.229 s）且工件与运行 7 仅 `generatedAt` 不同；本批（§2.26）是最后的文档批次，其回归结果在推送后只在 `ai-collaboration-log.md` §8 追记，在此之前不写结论 |
 | 仓库 | `Asorijin/Tongji-MobileAppDev`（唯一代码仓库，开发、测试、记录同仓） |
 | 确定性测试 | XCTest 45 + 12、XCUITest 13/13，全部真实通过 |
 | 概率性测试 | B 层 40/40 张，字段级 429/440 = 97.5%，虚构 0 |
@@ -29,12 +29,12 @@
 | 测试数据集 | 41 张合成名片 + Ground Truth + 生成/校验脚本说明 | `docs/test-cards/` | ✅ |
 | Architecture → Implementation | SwiftUI MVVM 分层：App / Data / Domain / Features / Services / UI | `CamCardClone/`、`project.yml` | ✅ |
 | Test（确定性） | Reference Test Suite T01–T20、测试实现与真实运行记录 | `docs/test-suite.md`、`CamCardCloneTests/`、`CamCardDataTests/`、`CamCardCloneUITests/` | ✅ |
-| Test（概率性） | 准确率评价方法、多轮复跑（运行 5→15，其中运行 6→15 十轮 429/440 且逐卡结果相同）、11 处错误归因 | `docs/ocr-accuracy.md` | ✅ |
-| UI 证据 | 运行 7 的 7 张截图 + manifest + 逐张核对；运行 7→8、8→9、9→10、10→11、11→12、12→13、13→14、14→15 逐像素差异实测（运行 14 起只做相邻两轮） | `docs/ui-screenshots/`、`docs/ui-screenshot-comparison.md` | 🔶 无像素级基线（差异数据见该文件 §7.1–§7.8；S05 的整页抖动是五个离散状态 A、A + 2、A + 5、A + 11、A + 18，其中运行 7、8、11、12、13 逐像素一致、第 60 行以下零差异；S03 光标可见时 172–176 px，运行 8、10、13 不可见） |
+| Test（概率性） | 准确率评价方法、多轮复跑（运行 5→16，其中运行 6→16 十一次 429/440 且逐卡结果相同）、11 处错误归因 | `docs/ocr-accuracy.md` | ✅ |
+| UI 证据 | 运行 7 的 7 张截图 + manifest + 逐张核对；运行 7→8、8→9、9→10、10→11、11→12、12→13、13→14、14→15、15→16 逐像素差异实测（运行 14 起只做相邻两轮） | `docs/ui-screenshots/`、`docs/ui-screenshot-comparison.md` | 🔶 无像素级基线（差异数据见该文件 §7.1–§7.9；S05 的整页抖动是六个离散状态 A、A + 2、A + 5、A + 10、A + 11、A + 18，其中运行 7、8、11、12、13 逐像素一致、第 60 行以下零差异；S03 光标可见时 172–176 px，运行 8、10、13 不可见） |
 | Difference Analysis | 缺陷与差距记录：运行 5/6 失败归因与修复、规格偏差、能力边界 | `docs/ai-collaboration-log.md` §2、`docs/spec.md` §9 | ✅ |
 | Revision → Regression | 每轮修复后全量回归的真实记录 | `docs/ai-collaboration-log.md` §6、§8 | ✅ |
 | Acceptance | T01–T20 逐场景验收、六维一致性、人工清单 | `docs/acceptance-report.md` | 🔶 人工项待执行 |
-| AI 协作记录 | 25 个增量：Prompt / 修改范围 / 验证 / 回归 | `docs/ai-collaboration-log.md` | ✅ |
+| AI 协作记录 | 26 个增量：Prompt / 修改范围 / 验证 / 回归 | `docs/ai-collaboration-log.md` | ✅ |
 | AI 能力边界 | 实测能力边界与限制 AI 的机制 | `docs/ai-collaboration-log.md` §5 | ✅ |
 | 自动化 | CI（静态检查 + macOS 构建测试 + B 层 + 截图工件）、本地脚本 | `.github/workflows/ci.yml`、`scripts/`、`Makefile` | ✅ |
 
@@ -49,7 +49,7 @@
 | Week 3 | Camera + OCR + 原始结果 + 准确率评价 | `VisionOCRService`、`CardImageCorrector`、`ocr-accuracy.md`、B 层 CI 步骤 |
 | Week 4 | 字段抽取 + HITL + 保存 | `BusinessCardFieldParser`、`CardEditView`、`FieldParserTests` |
 | Week 5 | 管理 + 持久化 + 导出 + UI Golden Test | 搜索/标签/删除/持久化/VCF（`docs/ai-collaboration-log.md` §2.7）、Golden Test 现状见 `ui-screenshot-comparison.md` §7 |
-| Week 6 | Acceptance + Regression + 归档 + 演示 | 本文件、`acceptance-report.md`、运行 7 全绿、运行 5→15 回归记录（运行 7 起连续全绿九次） |
+| Week 6 | Acceptance + Regression + 归档 + 演示 | 本文件、`acceptance-report.md`、运行 7 全绿、运行 5→16 回归记录（运行 7 起连续全绿十次） |
 
 ---
 
@@ -87,7 +87,8 @@ bash scripts/run-tests.sh      # 或 make test
   [运行 11](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41288191075)、
   [运行 12](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41292037678)、
   [运行 13](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41295356550)、
-  [运行 14](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634) 与
-  [运行 15](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41299729593)（八次文档批次的独立回归），
+  [运行 14](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41297137634)、
+  [运行 15](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41299729593) 与
+  [运行 16](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41301338809)（九次文档批次的独立回归），
   逐个 job 核对步骤结论、测试摘要与工件（`ocr-accuracy-report`、`ui-screenshots`）；
 - 文档复核：`docs/` 下每个数字都能追溯到运行链接或本地命令输出；未运行的项目一律写「待运行 / 待执行」。
