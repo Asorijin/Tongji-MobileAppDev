@@ -275,9 +275,9 @@ BusinessCard
 
 | 编号 | 场景 | 验收方式 |
 | --- | --- | --- |
-| T01 | 首次启动空状态 | UI 测试 `CardListUITests.testFirstLaunchShowsEmptyState` |
-| T02 | 进入扫描 | UI 测试（选择页）+ 规格偏差说明 |
-| T03 | 相机权限 | UI 测试 `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance` |
+| T01 | 首次启动空状态 | UI 测试 `CardListUITests.testFirstLaunchShowsEmptyState`；截图证据 `docs/ui-screenshot-comparison.md` S01 |
+| T02 | 进入扫描 | UI 测试（选择页）+ 规格偏差说明；截图证据 S07（同一页面） |
+| T03 | 相机权限 | UI 测试 `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`；截图证据 S07 |
 | T04 / T05 | 拍摄 / 导入 | 模拟器无法自动化，**人工验证清单** |
 | T06 | 区域检测 | 单元测试 `ImageCorrectionTests.testDetectsTiltedCardQuad`（模拟器） |
 | T07 | OCR | 单元测试 `OCRServiceTests`（模拟器，Vision 实际识别合成名片） |
@@ -285,11 +285,11 @@ BusinessCard
 | T09 | 缺失字段 | `FieldParserTests.testMissingWebsiteIsNotFabricated` 等 |
 | T10 | 多电话 | `FieldParserTests.testMultiplePhonesCategorizedByLabel` 等 |
 | T11 | 人工校正 | 表单逻辑 + UI 路径（T12/T14 的保存路径覆盖修改后落库） |
-| T12 | 保存 | UI 测试 + `CardStoreTests` + 识别→确认→保存端到端 UI 测试 |
-| T13 | 详情 | UI 测试 `testDetailShowsAllSavedFields` |
+| T12 | 保存 | UI 测试 + `CardStoreTests` + 识别→确认→保存端到端 UI 测试；截图证据 S05 → S06 |
+| T13 | 详情 | UI 测试 `testDetailShowsAllSavedFields`；截图证据 S02 |
 | T14 | 编辑 | UI 测试 `testEditNameUpdatesListAndDetail` + 数据层测试 |
-| T15 | 搜索 | UI 测试 `testSearchByNameCompanyAndPhone` + `testSearchAcross...` |
-| T16 | 标签 | UI 测试 `testTagCreateFilterAndDelete` + `testTagLifecycle` |
+| T15 | 搜索 | UI 测试 `testSearchByNameCompanyAndPhone` + `testSearchAcross...`；截图证据 S03 |
+| T16 | 标签 | UI 测试 `testTagCreateFilterAndDelete` + `testTagLifecycle`；截图证据 S04 |
 | T17 | 删除 | UI 测试 `testDeleteFromDetailRemovesCard` + `testDeleteRemovesCardAndItsImages` |
 | T18 | 持久化 | UI 测试 `testEditsSurviveRelaunch` + `testStoreReloadsFromDisk` |
 | T19 | 导出 | UI 测试 `testExportOpensShareSheet` + `VCardExporterTests`（6 例映射/转义） |
@@ -320,6 +320,7 @@ BusinessCard
 | 5 | 竖排姓名版式的姓名提取存在已有测量的缺口 | 运行 5 的 B 层实测：数据集 5 张 `vertical` 名片（C05/C24/C27/C28/C37）姓名 **5/5 漏提**，原因是 Vision 原始输出中没有孤立单字行，解析器无法合并不存在的文本 | 保留原文本与人工校正通道；`docs/ocr-accuracy.md` §5.3 记录归因，作为 Week 4 HITL 的典型场景 |
 | 6 | 导出为 VCF 文件分享，而非直接写入系统通讯录 | §13 允许二者之一 | 选择可自动化验证的 VCF 方案 |
 | 7 | 参考 App 版本、iOS、设备、语言、登录状态需由观察者填写锁定 | 不锁定则「等价」无从谈起 | `docs/observer-log.md` 留出锁定表待填写 |
+| 8 | Week 5 功能清单的「UI Golden Test」目前是运行时截图取证 + 结构校验 + 人工规格对比，未实现像素级基线 | 页面布局的细微回归不会被自动发现（文案/元素/流程回归仍由 XCUITest 断言覆盖） | 证据与差距说明见 `docs/ui-screenshot-comparison.md` §7；像素级基线（固定模拟器环境、状态栏遮罩、容差阈值）列为后续增强 |
 
 ---
 

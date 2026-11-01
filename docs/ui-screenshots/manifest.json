@@ -1,0 +1,101 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "C52FCB89-2EE1-45CA-8253-AEBA997E742A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S02-card-detail_0_E279B266-80EA-41E3-8308-9A88ADA6E757.png",
+        "timestamp" : 1793514036.585
+      }
+    ],
+    "testIdentifier" : "CardListUITests/testDetailShowsAllSavedFields()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/CardListUITests/testDetailShowsAllSavedFields"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "ABB0872A-D41A-42F5-A335-187374AC4AA2.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S01-first-launch-empty_0_2DCDA6E6-96E5-48B9-8CDF-5A6743265426.png",
+        "timestamp" : 1793514123.296
+      }
+    ],
+    "testIdentifier" : "CardListUITests/testFirstLaunchShowsEmptyState()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/CardListUITests/testFirstLaunchShowsEmptyState"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "6BDFF79A-962A-415E-A1B5-E8EE145A092D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S03-search-company_0_978D19A9-AA6A-41E6-9906-4845137E38D9.png",
+        "timestamp" : 1793514137.561
+      }
+    ],
+    "testIdentifier" : "CardListUITests/testSearchByNameCompanyAndPhone()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/CardListUITests/testSearchByNameCompanyAndPhone"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "4C27BDEF-95E3-49F1-BB8E-C49A10F7C584.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S04-tag-filter_0_D0AB019C-199A-4245-8F43-63B0B8130399.png",
+        "timestamp" : 1793514183.68
+      }
+    ],
+    "testIdentifier" : "CardListUITests/testTagCreateFilterAndDelete()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/CardListUITests/testTagCreateFilterAndDelete"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "6E514A3E-D997-49F1-9F1D-20D62548847C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S07-camera-permission-denied_0_688B5896-431A-4C56-BFB6-AE12F58DBDAB.png",
+        "timestamp" : 1793514203.645
+      }
+    ],
+    "testIdentifier" : "ExceptionPathUITests/testCameraPermissionDeniedShowsGuidance()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/ExceptionPathUITests/testCameraPermissionDeniedShowsGuidance"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "89F6AAF5-D7F2-42F5-B778-2518A458B402.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S06-after-save-list_0_468BE06B-E99E-4141-9637-A72493CD7366.png",
+        "timestamp" : 1793514227.358
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "F69F0C09-EB67-415E-A98C-7EB9E373A0ED",
+        "deviceName" : "CamCardClone-CI",
+        "exportedFileName" : "9A2F44EC-3044-48C6-97AB-19AA465E2EE7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "S05-confirm-form-c01_0_DCBA9268-D77C-424C-A431-0D96C1D41480.png",
+        "timestamp" : 1793514224.127
+      }
+    ],
+    "testIdentifier" : "ExceptionPathUITests/testSaveAfterRecognitionAddsCard()",
+    "testIdentifierURL" : "test://com.apple.xcode/CamCardClone/CamCardCloneUITests/ExceptionPathUITests/testSaveAfterRecognitionAddsCard"
+  }
+]

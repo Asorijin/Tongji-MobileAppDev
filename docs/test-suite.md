@@ -15,9 +15,9 @@
 | vCard 导出（`VCardExporterTests`） | 任意 | 6 | ✅ 本地已通过 |
 | 数据层（`CardStoreTests`） | 任意 / iOS 模拟器 | 12 | ✅ 本地已通过 |
 | 扫描关闭规则（`ScannerDismissalTests`） | 任意 | 4 | ✅ 本地已通过 |
-| OCR / 区域检测（`OCRServiceTests`、`ImageCorrectionTests`） | 仅 iOS 模拟器（Vision / UIKit） | 6 | ✅ CI 运行 5、6 均真实通过（3 + 3） |
-| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ✅ CI 运行 6 真实通过（40/40 张完成识别，虚构 0，字段级 429/440 = 97.5%） |
-| UI 路径（`ExceptionPathUITests` + `CardListUITests`） | 仅 iOS 模拟器 | 5 + 8 | 🔶 运行 6：异常路径 5/5 ✅；名片夹 6/8（两例编辑用例因键入前等待 App 空闲超时失败，已替换输入方式，待运行 7） |
+| OCR / 区域检测（`OCRServiceTests`、`ImageCorrectionTests`） | 仅 iOS 模拟器（Vision / UIKit） | 6 | ✅ CI 运行 5、6、7 均真实通过（3 + 3） |
+| OCR 端到端准确率（`VisionAccuracyTests`，B 层） | 仅 iOS 模拟器（Vision） | 1（40 张 × 11 字段） | ✅ CI 运行 7 真实通过（40/40 张完成识别，虚构 0，字段级 429/440 = 97.5%；运行 6 数字相同） |
+| UI 路径（`ExceptionPathUITests` + `CardListUITests`） | 仅 iOS 模拟器 | 5 + 8 | ✅ CI 运行 7：13/13 全部通过（名片夹 8/8、异常路径 5/5） |
 
 本地 Windows 结果（2026-11-01）：`swift test` **51/51 通过**（领域 39 + 数据 12）；
 领域 39 = `FieldParserTests` 26 + `FixtureParserTests` 3 + `VCardExporterTests` 6 + `ScannerDismissalTests` 4。
@@ -68,11 +68,34 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
   整卡全对 31/40 = 77.5%）；`ocr-accuracy-report` 工件已生成并上传；
 - 结论：该轮仍判定失败，失败点全部在 UI 测试的输入辅助函数；被测功能与解析器改动均按预期工作。
 
+CI 运行 7（[41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)，commit `c499448`，2026-11-01T06:13:31Z–06:26:39Z，结论 **success**）的真实结果：
+
+- `static` ✅（17 个步骤）；
+- `build-for-testing` ✅、`test-without-building` ✅（首次全绿）；
+- XCTest：`CamCardCloneTests` 45/45 ✅（`FieldParserTests` 26、`FixtureParserTests` 3、
+  `ImageCorrectionTests` 3、`OCRServiceTests` 3、`ScannerDismissalTests` 4、`VCardExporterTests` 6）、
+  `CamCardDataTests` 12/12 ✅；
+- XCUITest：`ExceptionPathUITests` 5/5 ✅（44.047 s）；`CardListUITests` 8/8 ✅（208.802 s，合计 208.811 s）——
+  `testFirstLaunchShowsEmptyState`（6.750 s）、`testDetailShowsAllSavedFields`（33.538 s）、
+  `testEditNameUpdatesListAndDetail`（28.750 s，§2.16 的输入方式替换生效）、
+  `testEditsSurviveRelaunch`（24.658 s，同样生效）、`testSearchByNameCompanyAndPhone`（24.594 s）、
+  `testTagCreateFilterAndDelete`（47.843 s）、`testDeleteFromDetailRemovesCard`（27.384 s）、
+  `testExportOpensShareSheet`（15.286 s）；
+  `ExceptionPathUITests` 逐例：`testCameraPermissionDeniedShowsGuidance`（9.755 s）、
+  `testCancellingAfterRecognitionLeavesNoCard`（10.227 s）、`testFixtureImagesAreDecodable`（0.109 s）、
+  `testSaveAfterRecognitionAddsCard`（13.292 s）、`testUnrecognizableImageOffersManualFallback`（10.665 s）；
+  UI 总计 13 例、252.850 s；
+- B 层：`VisionAccuracyTests` ✅（51.344 s，40/40 张完成识别，虚构 0，字段级 429/440 = 97.5%，
+  召回 237/248 = 95.6%，整卡全对 31/40 = 77.5%，与运行 6 逐卡结果完全一致）；
+- UI 截图：`导出 UI 截图（Week 6 截图对比）` 步骤日志 `PNG 数量：       7`，
+  工件 `ui-screenshots`（467 225 B）已上传；7 张截图与规格的逐项对比见
+  [docs/ui-screenshot-comparison.md](ui-screenshot-comparison.md)；
+- 结论：T01–T20 中可自动化的部分在运行 7 全部真实通过；人工清单（§3）未执行，仍为待填写。
+
 覆盖率边界（诚实声明）：
 
 - Vision/UIKit 相关用例在 Windows 上按平台条件编译为空（`#if canImport(UIKit)`），因此本地统计只覆盖 51 例；
-  这 6 个 Vision/校正用例与 1 个 B 层用例已在 CI 模拟器上真实通过；13 个 UI 用例中 11 个通过、
-  2 个（编辑类）的输入方式已替换，待运行 7 验证。
+  这 6 个 Vision/校正用例与 1 个 B 层用例已在 CI 模拟器上真实通过（运行 5、6、7）；13 个 UI 用例在运行 7 中 13/13 通过。
 - **无法在模拟器自动化**的场景：真实相机拍摄、系统照片库选择、系统权限弹窗、系统分享面板的最终落地动作。
   这些场景以「人工验证清单」（第 3 节）验收，自动化只覆盖其可测部分（如权限拒绝的界面分支）。
 
@@ -81,8 +104,8 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 ## 2. 场景 → 测试映射
 
 约定：
-- ✅ = 已在本地真实运行并通过（Windows `swift test` 或数据集校验）；
-- ⏳ = 已写好自动化用例，但尚未在模拟器/CI 上真实运行过（首次运行后改为 ✅ 或修复）；
+- ✅ = 已在本地真实运行并通过（Windows `swift test` 或数据集校验），或在 CI 上真实运行并通过（注明确切轮次）；
+- ⏳ = 已写好自动化用例，但尚未在模拟器/CI 上真实运行过（首次运行后改为 ✅ 或修复）——截至运行 7 已无此项；
 - 🔶 = 部分自动化（关键路径自动、人工补充）；
 - 👤 = 人工验证。
 
@@ -90,20 +113,20 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 首次启动进入名片夹；空状态提示与扫描/手动录入入口可见 | ✅ `CardListUITests.testFirstLaunchShowsEmptyState`（CI 运行 5 已通过） |
+| 首次启动进入名片夹；空状态提示与扫描/手动录入入口可见 | ✅ `CardListUITests.testFirstLaunchShowsEmptyState`（CI 运行 5、6、7 均通过） |
 
 ### T02 — Enter Scanner
 
 | 断言 | 测试 |
 | --- | --- |
-| 名片夹 → 扫描入口 → 进入扫描页（拍照/照片库入口、取消） | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5 已通过，扫描页可见） |
+| 名片夹 → 扫描入口 → 进入扫描页（拍照/照片库入口、取消） | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5、6、7 均通过，扫描页可见） |
 | 规格偏差：进入的是「拍摄/导入选择页」，不是原生相机页 | 📄 见 `docs/spec.md` §4.2、§9 第 1 条；真机相机页由 §3 人工清单覆盖 |
 
 ### T03 — Permission
 
 | 断言 | 测试 |
 | --- | --- |
-| 相机权限被拒 → 说明文字 + 照片库导入；不显示拍照按钮 | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5 已通过） |
+| 相机权限被拒 → 说明文字 + 照片库导入；不显示拍照按钮 | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5、6、7 均通过） |
 | 系统权限弹窗本身（首次请求） | 👤 人工清单 |
 
 ### T04 — Capture
@@ -111,7 +134,7 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 | 断言 | 测试 |
 | --- | --- |
 | 拍摄 → 进入识别流程 | 👤 人工清单（模拟器无相机） |
-| 识别流程本身（校正 → OCR → 确认表单项） | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5 已通过，注入图像走同一识别链路） |
+| 识别流程本身（校正 → OCR → 确认表单项） | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5、6、7 均通过，注入图像走同一识别链路） |
 
 ### T05 — Import
 
@@ -119,24 +142,24 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 | --- | --- |
 | 从相册导入 → 进入识别流程 | 👤 人工清单（系统照片选择器） |
 | 照片库取消 | 👤 人工清单 |
-| 导入图像的解码与校正 | ✅ `ImageCorrectionTests`（CI 运行 5，3/3）、`ExceptionPathUITests.testFixtureImagesAreDecodable`（CI 运行 5 已通过） |
+| 导入图像的解码与校正 | ✅ `ImageCorrectionTests`（CI 运行 5、6、7，3/3）、`ExceptionPathUITests.testFixtureImagesAreDecodable`（CI 运行 5、6、7 均通过） |
 
 ### T06 — Card Boundary Detection
 
 | 断言 | 测试 |
 | --- | --- |
-| 倾斜名片（C03_tilt）能检测到名片四边形（非整图回退） | ✅ `ImageCorrectionTests.testDetectsTiltedCardQuad`（CI 运行 5 已通过） |
-| 模拟器支持的 UIKit 方向归一 | ✅ `ImageCorrectionTests.testOrientedImageIsNormalized`（CI 运行 5 已通过） |
-| 无法解码输入的错误处理 | ✅ `ImageCorrectionTests.testUnreadableDataThrows`（CI 运行 5 已通过） |
+| 倾斜名片（C03_tilt）能检测到名片四边形（非整图回退） | ✅ `ImageCorrectionTests.testDetectsTiltedCardQuad`（CI 运行 5、6、7 均通过） |
+| 模拟器支持的 UIKit 方向归一 | ✅ `ImageCorrectionTests.testOrientedImageIsNormalized`（CI 运行 5、6、7 均通过） |
+| 无法解码输入的错误处理 | ✅ `ImageCorrectionTests.testUnreadableDataThrows`（CI 运行 5、6、7 均通过） |
 | 在 UI 中「显示检测结果」 | 复刻实现不单独展示边界框（自动校正后直接识别），差距记录于 `docs/spec.md` §9 第 3 条 |
 
 ### T07 — OCR
 
 | 断言 | 测试 |
 | --- | --- |
-| 合成中文名片（C01_flat）→ Vision 产生原始文本，包含「朱宏明」「同济大学」 | ✅ `OCRServiceTests.testVisionRecognizesSyntheticChineseCard`（CI 运行 5 已通过） |
-| OCR 文本流入解析器 → 姓名/公司/手机正确 | ✅ `OCRServiceTests.testRecognizedTextFlowsIntoParser`（CI 运行 5 已通过） |
-| 非图像数据 → 错误而非崩溃 | ✅ `OCRServiceTests.testUnreadableImageThrows`（CI 运行 5 已通过） |
+| 合成中文名片（C01_flat）→ Vision 产生原始文本，包含「朱宏明」「同济大学」 | ✅ `OCRServiceTests.testVisionRecognizesSyntheticChineseCard`（CI 运行 5、6、7 均通过） |
+| OCR 文本流入解析器 → 姓名/公司/手机正确 | ✅ `OCRServiceTests.testRecognizedTextFlowsIntoParser`（CI 运行 5、6、7 均通过） |
+| 非图像数据 → 错误而非崩溃 | ✅ `OCRServiceTests.testUnreadableImageThrows`（CI 运行 5、6、7 均通过） |
 
 ### T08 — Structured Extraction
 
@@ -170,8 +193,8 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 确认表单可编辑全部字段；修改后保存落库 | 🔶 ⏳ `CardListUITests.testEditNameUpdatesListAndDetail`（编辑保存路径；运行 5 因二次点击、运行 6 因拖拽后等待 App 空闲超时而失败，输入方式已替换，见 `ai-collaboration-log.md` §2.14/§2.16，待运行 7）+ ✅ `CardStoreTests.testUpdateKeepsIdentityAndMovesValues` |
-| 空字段保持为空、不误填 | ✅ `ExceptionPathUITests.testUnrecognizableImageOffersManualFallback`（CI 运行 5 已通过） |
+| 确认表单可编辑全部字段；修改后保存落库 | ✅ `CardListUITests.testEditNameUpdatesListAndDetail`（CI 运行 7 真实通过，28.750 s；运行 5/6 的两轮失败与修复见 `ai-collaboration-log.md` §2.14/§2.16）+ ✅ `CardStoreTests.testUpdateKeepsIdentityAndMovesValues` |
+| 空字段保持为空、不误填 | ✅ `ExceptionPathUITests.testUnrecognizableImageOffersManualFallback`（CI 运行 5、6、7 均通过） |
 | 多值字段按行编辑并拆分 | 🔶 表单规则在 `CardEditView`（代码审查通过）；数据层多值断言 ✅ |
 | 实际识别错误的逐项人工修改 | 👤 人工清单（Week 4 HITL 演示） |
 
@@ -180,28 +203,28 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 | 断言 | 测试 |
 | --- | --- |
 | 写入逻辑：新名片插入顶部并持久化 | ✅ `CardStoreTests.testAddInsertsAtTopAndPersists` |
-| 识别 → 确认表单 → 保存 → 返回名片夹 → 新名片出现 | ✅ `ExceptionPathUITests.testSaveAfterRecognitionAddsCard`（CI 运行 5 已通过，`-scanFixture C01` 端到端；该套件 5 例合计 64.233 s） |
-| 保存前取消不写入任何数据 | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5 已通过，反向路径） |
+| 识别 → 确认表单 → 保存 → 返回名片夹 → 新名片出现 | ✅ `ExceptionPathUITests.testSaveAfterRecognitionAddsCard`（CI 运行 5、6、7 均通过；`-scanFixture C01` 端到端；运行 5 该套件 5 例合计 64.233 s，运行 7 该用例 13.292 s） |
+| 保存前取消不写入任何数据 | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5、6、7 均通过，反向路径） |
 
 ### T13 — Detail
 
 | 断言 | 测试 |
 | --- | --- |
-| 详情页正确显示全部保存字段（手机/办公/传真/邮箱/网址/地址/邮编/部门） | ✅ `CardListUITests.testDetailShowsAllSavedFields`（CI 运行 5 已通过） |
+| 详情页正确显示全部保存字段（手机/办公/传真/邮箱/网址/地址/邮编/部门） | ✅ `CardListUITests.testDetailShowsAllSavedFields`（CI 运行 5、6、7 均通过）；页面见 `ui-screenshot-comparison.md` S02 |
 | 空字段不显示 | 🔶 同上（注释行断言 `detail-notes` 不存在；该行在固定示例数据下成立，不是由数据变化触发的动态断言） |
 
 ### T14 — Edit
 
 | 断言 | 测试 |
 | --- | --- |
-| 编辑姓名 → 保存 → 详情与列表更新 | ⏳ `CardListUITests.testEditNameUpdatesListAndDetail`（运行 5/6 两轮失败原因不同，见 §2.14/§2.16；输入方式已替换，待运行 7） |
+| 编辑姓名 → 保存 → 详情与列表更新 | ✅ `CardListUITests.testEditNameUpdatesListAndDetail`（CI 运行 7 真实通过，28.750 s；运行 5/6 的失败与修复见 §2.14/§2.16）；界面状态见 `ui-screenshot-comparison.md` S02 |
 | 更新保持 id、替换字段、持久化 | ✅ `CardStoreTests.testUpdateKeepsIdentityAndMovesValues`、`testUpdateIgnoresUnknownCard` |
 
 ### T15 — Search
 
 | 断言 | 测试 |
 | --- | --- |
-| 按姓名 / 公司 / 电话搜索并过滤 | ✅ `CardListUITests.testSearchByNameCompanyAndPhone`（CI 运行 5 已通过） |
+| 按姓名 / 公司 / 电话搜索并过滤 | ✅ `CardListUITests.testSearchByNameCompanyAndPhone`（CI 运行 5、6、7 均通过） |
 | 无结果提示；清空后恢复 | ✅ 同上 |
 | 跨字段搜索（姓名/公司/职位/电话/邮箱/传真/地址/部门） | ✅ `CardStoreTests.testSearchAcrossNameCompanyTitlePhoneEmail` |
 | 正则字符按字面量处理 | ✅ `CardStoreTests.testSearchTreatsRegexCharactersLiterally` |
@@ -210,7 +233,7 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 新建标签 → 添加到名片 → 按标签筛选 → 删除标签 | ✅ `CardListUITests.testTagCreateFilterAndDelete`（CI 运行 6 真实通过，89.438 s；§2.14 的滚动修复生效） |
+| 新建标签 → 添加到名片 → 按标签筛选 → 删除标签 | ✅ `CardListUITests.testTagCreateFilterAndDelete`（CI 运行 6 真实通过 89.438 s、运行 7 47.843 s；§2.14 的滚动修复生效）；筛选状态见 `ui-screenshot-comparison.md` S04 |
 | 标签生命周期（去重、创建、删除解除关联） | ✅ `CardStoreTests.testTagLifecycle` |
 | 标签与关联在重启后保持 | ✅ `CardStoreTests.testTagsAndCardsSurviveReload` |
 
@@ -218,7 +241,7 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 详情页删除（含确认弹窗）→ 列表不再出现 | ✅ `CardListUITests.testDeleteFromDetailRemovesCard`（CI 运行 5 已通过） |
+| 详情页删除（含确认弹窗）→ 列表不再出现 | ✅ `CardListUITests.testDeleteFromDetailRemovesCard`（CI 运行 5、6、7 均通过） |
 | 删除同时清理图像文件 | ✅ `CardStoreTests.testDeleteRemovesCardAndItsImages` |
 | 删除确认取消 | 👤 人工清单（Alert 取消按钮；自动化路径已覆盖确认后的结果） |
 
@@ -226,7 +249,7 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 编辑保存 → Kill App → 重启 → 修改保持 | ⏳ `CardListUITests.testEditsSurviveRelaunch`（与 T14 同一输入辅助函数；运行 6 失败原因见 §2.16，输入方式已替换，待运行 7） |
+| 编辑保存 → Kill App → 重启 → 修改保持 | ✅ `CardListUITests.testEditsSurviveRelaunch`（CI 运行 7 真实通过，24.658 s；运行 6 失败原因见 §2.16） |
 | 存档重载（断言写盘→新实例读取） | ✅ `CardStoreTests.testStoreReloadsFromDisk` |
 | 标签与关联重启后保持 | ✅ `CardStoreTests.testTagsAndCardsSurviveReload` |
 | 损坏存档不崩溃 | ✅ `CardStoreTests.testCorruptedStoreFileIsIgnoredGracefully` |
@@ -236,7 +259,7 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 详情 → 导出 → 系统分享面板出现 | ✅ `CardListUITests.testExportOpensShareSheet`（CI 运行 5 已通过） |
+| 详情 → 导出 → 系统分享面板出现 | ✅ `CardListUITests.testExportOpensShareSheet`（CI 运行 5、6、7 均通过） |
 | 姓名/公司/职位/电话/Email/地址映射正确 | ✅ `VCardExporterTests.testCoreFieldsAreMapped` |
 | 仅公司时 FN 兜底；特殊字符转义；NOTE 回退原文；空名片拒绝；批量导出 | ✅ `VCardExporterTests`（其余 5 例） |
 | 在系统联系人 App 中导入 VCF 的结果 | 👤 人工清单（模拟器可「存储到文件」，不安装第三方通讯录） |
@@ -245,11 +268,11 @@ CI 运行 6（[41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/acti
 
 | 断言 | 测试 |
 | --- | --- |
-| 空白名片 → 无法识别 → 手动录入 → 空表单不可保存 → 取消后仍为空 | ✅ `ExceptionPathUITests.testUnrecognizableImageOffersManualFallback`（CI 运行 5 已通过） |
-| 扫描页关闭规则：识别成功 / 手动录入取消都回名片夹，识别失败且无表单时保留扫描页 | ✅ `ScannerDismissalTests`（4 例）；UI 端到端 ✅ `testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5 已通过） |
-| 相机权限拒绝 → 说明 + 替代入口 → 取消返回 | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5 已通过） |
-| 识别成功但取消 → 不落库 | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5 已通过） |
-| fixture 图像完整可解码 | ✅ `ExceptionPathUITests.testFixtureImagesAreDecodable`（CI 运行 5 已通过） |
+| 空白名片 → 无法识别 → 手动录入 → 空表单不可保存 → 取消后仍为空 | ✅ `ExceptionPathUITests.testUnrecognizableImageOffersManualFallback`（CI 运行 5、6、7 均通过） |
+| 扫描页关闭规则：识别成功 / 手动录入取消都回名片夹，识别失败且无表单时保留扫描页 | ✅ `ScannerDismissalTests`（4 例）；UI 端到端 ✅ `testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5、6、7 均通过） |
+| 相机权限拒绝 → 说明 + 替代入口 → 取消返回 | ✅ `ExceptionPathUITests.testCameraPermissionDeniedShowsGuidance`（CI 运行 5、6、7 均通过） |
+| 识别成功但取消 → 不落库 | ✅ `ExceptionPathUITests.testCancellingAfterRecognitionLeavesNoCard`（CI 运行 5、6、7 均通过） |
+| fixture 图像完整可解码 | ✅ `ExceptionPathUITests.testFixtureImagesAreDecodable`（CI 运行 5、6、7 均通过） |
 | 相册取消、扫描中途退出、删除取消、空搜索 | 🔶 UI 路径存在但未逐项写成测试；相册取消 👤 人工清单 |
 
 ---
@@ -291,7 +314,12 @@ bash scripts/run-tests.sh          # 或 make test
 - CI 的 `static`（Ubuntu）在 YAML 解析之后运行 actionlint，校验 GitHub Actions 表达式与语义
   （YAML 语法正确但表达式上下文非法时，workflow 会在启动 job 前被拒绝且没有日志，见运行 4）。
 - UI 测试使用固定示例数据（`-seedSampleCards`）与合成名片注入（`-scanFixture`），不依赖网络与真实个人信息。
-- 失败时 CI 上传 `build/*.log` 与 `TestResults.xcresult`，可直接定位失败用例。
+- 通过时 CI 上传 `ui-screenshots` 工件（UI 测试导出的页面截图，Week 6 截图对比的证据），
+  本地 `scripts/run-tests.sh` 同样导出到 `build/ui-screenshots/`；
+  `python3 scripts/verify_ui_screenshots.py <导出目录>` 校验截图数量、来源用例与尺寸；
+  逐项对比见 [docs/ui-screenshot-comparison.md](ui-screenshot-comparison.md)。
+- 失败时 CI 上传 `build/*.log`、`TestResults.xcresult` 与已导出的 `build/ui-screenshots`，可直接定位失败用例。
+  运行 7 全绿时该步骤按 `if: failure()` 跳过，属预期行为。
 
 ---
 
@@ -317,5 +345,9 @@ bash scripts/run-tests.sh          # 或 make test
 | 2026-11-01（运行时间 2026-10-31T19:26Z） | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | ✅ 通过（17 个步骤） | 提交 `08c1730` |
 | 2026-11-01（运行时间 2026-10-31T19:26Z） | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | 🔶 XCTest 45+12 通过；XCUITest 11/13 通过（名片夹 6/8）；B 层 40/40 | 标签用例已通过；两例编辑用例因键入前等待 App 空闲超时失败（§2.16），待运行 7 |
 | 2026-11-01（工件时间 2026-10-31T19:46Z） | 同上（模拟器 iPhone14,6 / iOS 18.5 22F77） | `VisionAccuracyTests`（B 层，[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | ✅ 字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；名片级全对 31/40 = 77.5% | C02/C03 解析粘连已消除；工件 `ocr-accuracy-report`；明细见 `docs/ocr-accuracy.md` §5.4 |
+| 2026-11-01（运行时间 2026-11-01T06:13Z） | GitHub Actions（Ubuntu 24.04） | CI `static` job（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ 通过（17 个步骤） | 提交 `c499448` |
+| 2026-11-01（运行时间 2026-11-01T06:13Z） | GitHub Actions（macOS 15 / Xcode 16.4 / iPhone SE 3rd / iOS 18.5） | CI `build-and-test`（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ XCTest 45 + 12 通过；XCUITest 13/13 通过；B 层 40/40 | 首次全绿：两例编辑用例通过（28.750 s / 24.658 s），截图导出 7 张；`ui-screenshots` 工件已上传 |
+| 2026-11-01（工件时间 2026-11-01T06:26Z） | 同上（模拟器 iPhone14,6 / iOS 18.5 22F77） | `VisionAccuracyTests`（B 层，[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ 字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；名片级全对 31/40 = 77.5% | 51.344 s；逐卡结果与运行 6 完全一致（40/40 张的 OCR 原文与字段判定相同）；明细见 `docs/ocr-accuracy.md` §5.5 |
+| 2026-11-01 | Windows 11 / Python 3.9 + PyYAML | `python scripts/verify_ui_screenshots.py .tools/ci/run7-artifacts/ui-screenshots` | ✅ 通过（7 张，来源用例与尺寸符合清单） | 用运行 7 的真实导出工件验证；脚本见 `scripts/verify_ui_screenshots.py` |
 
 > 原则：本表只写真实运行过的结果。未运行的一律写「待运行」，不用「预计通过」代替。

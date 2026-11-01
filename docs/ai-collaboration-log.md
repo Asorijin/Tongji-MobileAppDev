@@ -463,6 +463,18 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 **运行 6 暴露的问题（§2.16 修复）**：运行 6 在本节改动提交之前就已完成排队，
 因此不含截图步骤；截图的首次真实产出与导出验证在运行 7。
 
+**运行 7 的真实结果**（[41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)，commit `c499448`）：
+- 「导出 UI 截图」步骤日志 `PNG 数量：       7`，工件 `ui-screenshots` 已上传
+  （artifact ID `13073381577`，467 225 B，保留 30 天）；
+- 7 张截图全部来自**通过**的 UI 用例（13/13 全绿），来源用例与截图编号的对应关系见
+  `docs/ui-screenshot-comparison.md` §2 的清单表（`manifest.json` 保留导出的 UUID 文件名）；
+- 逐张目视核对 35 项：30 ✅、5 ⚠️（均为「静态截图看不到」的说明）、0 ❌；
+- 7 张 PNG 与 `manifest.json` 已按原字节复制进 `docs/ui-screenshots/`，新增
+  `scripts/verify_ui_screenshots.py` 做结构校验（7 张齐全、来源用例一致、750×1334），
+  已在本机用运行 7 的工件真实运行通过（exit 0）；
+- 对比文档：`docs/ui-screenshot-comparison.md`（含「截图能证明什么、不能证明什么」
+  与 UI Golden Test 现状：运行时取证 + 结构校验 + 人工对比已做，像素级基线未实现）。
+
 ---
 
 ### 2.16 运行 6 的编辑用例失败归因与输入方式替换（Week 6）
@@ -497,6 +509,46 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 **回归**：输入方式替换只影响两例编辑用例的「如何输入」；其余用例不经过该函数。
 真实效果由运行 7 验证（§8 第 7 行），运行完成前不写「通过」。
 
+**运行 7 的真实结果**（[41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)，commit `c499448`，
+结论 **success**，首次全绿）：
+- `testEditNameUpdatesListAndDetail` ✅ 28.750 s（运行 5：25.639 s 失败，运行 6：99.747 s 失败）；
+- `testEditsSurviveRelaunch` ✅ 24.658 s（运行 5：22.710 s 失败，运行 6：102.165 s 失败）；
+- 用例时长从约 100 s 回落到约 25 s，说明「等待 App 空闲 60 s」的超时不再发生；
+- 同一轮 `CardListUITests` 8/8（208.802 s）、`ExceptionPathUITests` 5/5（44.047 s），
+  XCTest 45 + 12 全部通过，断言一条未改。
+
+---
+
+### 2.17 Week 6「UI 截图对比」文档与截图入库（Week 6）
+
+**Prompt**
+> 运行 7 已导出 7 张截图。把这些截图整理成可验收的「UI 截图对比」交付物：
+> 说明每张截图来自哪次运行、哪个用例、对照哪条规格；写清楚截图能证明什么、不能证明什么；
+> 截图文件入库以便复核；用脚本做结构校验；不要声称实现了像素级 Golden Test。
+
+**TRAE 修改范围**（`docs/ai-collaboration-log.md` 本身除外）：
+- 新增 `docs/ui-screenshot-comparison.md`：证据来源、截图清单（UUID → 用例 → 规格）、
+  六个一致性维度的证据表、逐张核对（35 项：30 ✅ / 5 ⚠️ / 0 ❌）、与参考 App 的对比边界、
+  UI Golden Test 现状（像素级基线未实现，列为差距）；
+- 新增 `docs/ui-screenshots/`：运行 7 的 7 张 PNG（原字节重命名）+ `manifest.json`（保留导出 UUID 文件名）；
+- 新增 `scripts/verify_ui_screenshots.py`：校验 7 张截图齐全、来源用例与清单一致、PNG 有效且 750×1334；
+- 更新 `docs/spec.md`（§7 截图证据引用、§9 第 8 条 UI Golden Test 差距）、
+  `docs/test-suite.md`（运行 7 结果、T 行截图引用、§5 结果表）、`docs/ocr-accuracy.md`（§5.5 运行 7 复跑）、
+  `README.md`（文档导航）；
+- 更新 `scripts/run-tests.sh`（导出后调用结构校验，失败只告警）与 `.github/workflows/ci.yml`
+  （把新脚本纳入 `py_compile` 预检；导出步骤在打印 PNG 数量后同样调用结构校验，失败输出
+  `::warning::` 而不把 job 标红）。
+
+**本地验证**：
+- `python scripts/verify_ui_screenshots.py .tools/ci/run7-artifacts/ui-screenshots` → exit 0；
+- `python scripts/verify_ui_screenshots.py docs/ui-screenshots` → exit 0（重命名后的入库副本同样可解析）；
+- `python -m py_compile scripts/verify_ui_screenshots.py`、`bash -n scripts/run-tests.sh`、
+  `actionlint` 1.7.12 对修改后的 workflow 均通过（exit 0）；
+- 7 张截图逐张目视核对，核对项与结果全部写入 `docs/ui-screenshot-comparison.md` §5–§6。
+
+**回归**：只新增文档、截图与校验脚本，不改 App 与测试代码；CI 的改动是 static job 多编译一个
+Python 文件、build-and-test 的导出步骤多跑一次结构校验（纯本地文件检查，不增加依赖与耗时）。
+
 ---
 
 ## 3. 修改范围统计
@@ -519,6 +571,7 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 | 2.14 运行 5 失败修复 | CardListUITests、BusinessCardFieldParser、FieldParserTests | 测试/Domain | 否（新增私有方法，Parse 接口不变） |
 | 2.15 UI 截图取证与导出 | UIEvidence、UITests、ci.yml、run-tests.sh | 测试/CI | 否 |
 | 2.16 运行 6 编辑用例修复 | CardListUITests、ci.yml | 测试/CI | 否（只改测试辅助函数与 CI 证据步骤） |
+| 2.17 UI 截图对比（Week 6） | ui-screenshot-comparison.md、docs/ui-screenshots/、verify_ui_screenshots.py、spec.md、test-suite.md、README | 文档/脚本 | 否（只新增证据文档与校验脚本，不动 App 与测试代码） |
 
 > 关键点：所有增量都是**追加**或**在模块内修改**，没有出现「AI 顺手重构整个工程」的情况。
 > 唯一一次接口级改动（vCard 文件名规则）先改规格、再加用例，然后才改实现。
@@ -535,9 +588,10 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 | vCard 映射 | 逐行对照 `docs/data-model.md` §5 | 通过 |
 | 取消不落库 / 手动录入取消返回名片夹 | `ScannerDismissalTests`（✅）+ `ExceptionPathUITests` | 规则单测通过；UI 端到端在 CI 运行 2（4/4）与运行 5（5/5，含保存用例）均真实通过 |
 | 识别失败可手动录入 | UI 测试 + 代码审查 | `testUnrecognizableImageOffersManualFallback` 在 CI 运行 2 与运行 5 中均真实通过 |
-| 识别 → 确认 → 保存 → 列表出现 | `ExceptionPathUITests.testSaveAfterRecognitionAddsCard` | ✅ CI 运行 5 真实通过（该套件 5 例合计 64.233 s） |
-| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；UI 用例 CI 运行 6 真实通过（89.438 s，§2.14 的滚动修复生效） |
-| 编辑姓名后详情与列表一致 | `CardListUITests.testEditNameUpdatesListAndDetail` | 运行 5 因二次点击失败、运行 6 因拖拽导致键入前等待 App 空闲超时仍失败（§2.14→§2.16）；已改用「点击一次 + 退格清空 + 键入」，待运行 7 |
+| 识别 → 确认 → 保存 → 列表出现 | `ExceptionPathUITests.testSaveAfterRecognitionAddsCard` | ✅ CI 运行 7 真实通过（13.292 s；运行 5 该套件 5 例合计 64.233 s） |
+| 删除标签不删名片 | UI 测试 + 单测 | 单测通过；UI 用例 CI 运行 6 真实通过（89.438 s，§2.14 的滚动修复生效），运行 7 复跑 47.843 s 通过 |
+| 编辑姓名后详情与列表一致 | `CardListUITests.testEditNameUpdatesListAndDetail` | ✅ CI 运行 7 真实通过（28.750 s）；运行 5 因二次点击失败、运行 6 因拖拽导致键入前等待 App 空闲超时仍失败（§2.14→§2.16），§2.16 的输入方式替换生效 |
+| UI 截图证据可用 | `scripts/verify_ui_screenshots.py` + 逐张目视核对 | ✅ 运行 7 导出 7 张 PNG（工件 467 225 B）；结构校验 exit 0；逐张核对 35 项：30 ✅ / 5 ⚠️ / 0 ❌（`docs/ui-screenshot-comparison.md`） |
 
 > 「待 CI 确认」表示用例已写好且本地静态审查通过，但尚未在模拟器/CI 上真实运行过。
 > 这一类项目不标记为通过。
@@ -590,7 +644,10 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 | 2026-11-01 | 领域 39 + 数据 12 | `swift test`（Windows，Swift 6.4.2，`SDKROOT` 指向 Windows.sdk） | 51/51 通过 | 2.14 新增 3 例粘连标签单测；仍不含 Vision/UIKit 用例 |
 | 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | XCTest 45 + 12 通过；UI 11/13 通过（名片夹 6/8） | 标签用例已通过；两例编辑用例因 `typeText` 前等待 App 空闲 60 s 超时失败（§2.16），修复待运行 7 |
 | 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 6](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | C02/C03 解析粘连已消除；剩余 11 处全为 OCR 侧（5 处竖排姓名 + 6 处字符误识），详见 `docs/ocr-accuracy.md` §5.4 |
-| （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 待运行 | 只记录真实结果 |
+| 2026-11-01 | XCTest + XCUITest（iOS 模拟器） | GitHub Actions `build-and-test`（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ XCTest 45 + 12 通过；UI 13/13 通过（名片夹 8/8、异常路径 5/5） | **首次全绿**（结论 success）：两例编辑用例 28.750 s / 24.658 s 通过（§2.16 生效）；导出 UI 截图 7 张并上传 `ui-screenshots` 工件（467 225 B） |
+| 2026-11-01 | B 层端到端准确率 | CI `ocr-accuracy-report` 工件（[运行 7](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)） | ✅ 40/40 张完成识别；字段级 429/440 = 97.5%；召回 237/248 = 95.6%；缺失精度 192/192；虚构 0；整卡 31/40 = 77.5% | 51.344 s；40/40 张逐卡 OCR 原文与字段判定与运行 6 完全一致（测试/CI 改动未触及识别链路），详见 `docs/ocr-accuracy.md` §5.5 |
+| 2026-11-01 | UI 截图结构与来源 | 本机 `python scripts/verify_ui_screenshots.py docs/ui-screenshots` | ✅ 通过（7 张齐全、来源用例一致、750×1334） | 用运行 7 的真实工件；入库副本见 `docs/ui-screenshots/` |
+| （Week 6 验收） | T01–T20 | `docs/test-suite.md` 全量 | 自动化部分已在运行 7 全部真实通过；人工清单（M1–M10）待执行 | 只记录真实结果；汇总报告见任务「T01–T20 验收报告」 |
 
 ---
 
@@ -615,7 +672,7 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 | 4 | [41231848508](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41231848508)（commit `047137e`） | ❌ 未运行 | ❌ 未运行 | **workflow 未被接受，0 个 job**：`created_at` 与 `updated_at` 均为 18:56:56Z。运行 3→4 的 CI 改动中唯一的结构变化是 job 名称使用了 `${{ env.SIM_RUNTIME }}`，而 `jobs.<id>.name` 不允许 `env` 上下文。本地 actionlint 1.7.12 原样复现该错误；修复提交见 §2.13（job 名称改回字面量 + static job 增加 actionlint） |
 | 5 | [41232174313](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41232174313)（commit `016e0e8`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 首轮全链路运行。XCTest：`CamCardCloneTests` 42/42、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5（含保存用例）、`CardListUITests` 5/8。3 个失败：`testEditNameUpdatesListAndDetail`、`testEditsSurviveRelaunch`（对已聚焦输入框二次 `.tap()` 触发 AX scroll-to-visible 失败，删除被吞、新值追加），`testTagCreateFilterAndDelete`（标签区在首屏之下，`.tap()` 不滚动）。B 层步骤在测试失败后仍正常执行：40/40 张完成识别、虚构 0、字段级 427/440 = 97.0%，工件已上传。修复见 §2.14 |
 | 6 | [41234214941](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41234214941)（commit `08c1730`） | ✅ 通过（17 个步骤） | ❌ `test-without-building` 失败 | 运行 5 修复后的复跑。XCTest：`CamCardCloneTests` 45/45（`FieldParserTests` 26，含新增 3 例粘连标签）、`CamCardDataTests` 12/12；XCUITest：`ExceptionPathUITests` 5/5、`CardListUITests` 6/8（13 例中 11 例通过）。`testTagCreateFilterAndDelete` 89.438 s 通过；`testEditNameUpdatesListAndDetail`（99.747 s）、`testEditsSurviveRelaunch`（102.165 s）失败——键入选区方案中的两次 1 s 长按拖拽后，`typeText` 前等待 App 空闲 60 s 超时，只键入部分字符。B 层：40/40 张完成识别、虚构 0、字段级 429/440 = 97.5%、整卡 31/40（C02/C03 解析粘连已消除）。修复见 §2.16 |
-| 7 | 待运行 | 待运行 | 待运行 | 提交 §2.15 的截图取证与导出、§2.16 的输入方式替换，以及运行 5/6 的真实结果文档（含 `docs/ocr-accuracy.md` §5.4 与 §7）。运行完成前不写结论 |
+| 7 | [41279949458](https://github.com/Asorijin/Tongji-MobileAppDev/actions/runs/41279949458)（commit `c499448`） | ✅ 通过（17 个步骤） | ✅ **通过**（首次全绿） | 本轮提交 §2.15 的截图取证与导出、§2.16 的输入方式替换，以及运行 5/6 的真实结果文档。`build-for-testing` ✅、`test-without-building` ✅（06:13:31Z–06:26:39Z，结论 success）。XCTest：`CamCardCloneTests` 45/45（`FieldParserTests` 26、`FixtureParserTests` 3、`ImageCorrectionTests` 3、`OCRServiceTests` 3、`ScannerDismissalTests` 4、`VCardExporterTests` 6）、`CamCardDataTests` 12/12。XCUITest 13/13：`CardListUITests` 8/8（208.802 s；两例编辑 28.750 s / 24.658 s 通过）、`ExceptionPathUITests` 5/5（44.047 s）。B 层：40/40 张、虚构 0、字段级 429/440 = 97.5%、整卡 31/40，与运行 6 逐卡一致。UI 截图导出 `PNG 数量：       7`，工件 `ui-screenshots`（467 225 B）已上传；失败工件步骤按 `if: failure()` 跳过，属预期 |
 
 记要：
 
@@ -633,3 +690,11 @@ UI 侧：`testTagCreateFilterAndDelete` 运行 6 通过（89.438 s）；
 - 运行 6 说明「一次修复只解决一层问题」是常态：同一个编辑用例在运行 5、6 中因**不同原因**
   失败（二次点击 → 长按拖拽导致的空闲等待），因此每一轮都必须读日志归因，不能按「上次的原因」
   猜修复。日志里的 `t = ...` 交互记录是 UI 测试最可靠的证据。
+- 运行 7 是首轮全绿：确定性层（54 个 XCTest + 13 个 XCUITest）全部通过的同时，概率性层
+  （B 层 429/440 = 97.5%）与运行 6 **逐卡完全相同**——说明测试输入方式与 CI 截图步骤的改动
+  没有副作用，这两类改动本来就只在测试与 CI 层。截图证据的成功导出与失败工件步骤的跳过
+  （`if: failure()`）也在同一轮得到验证。
+- 运行 7 的截图同时暴露了一个文档层面的问题：`xcresulttool` 导出的文件名是 UUID，
+  必须靠 `manifest.json` 才能追溯到来源用例。为此新增 `scripts/verify_ui_screenshots.py`
+  做结构校验，并把 7 张 PNG 从 750×1334 原字节复制进 `docs/ui-screenshots/`，
+  让「截图对比」文档在仓库内即可复核，而不是只存在于 30 天保留期的 CI 工件里。

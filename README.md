@@ -43,10 +43,13 @@
 │   ├── data-model.md           # BusinessCard Schema 与 vCard 映射
 │   ├── ai-collaboration-log.md # 与 TRAE 的增量协作记录（Prompt / 修改 / 回归）
 │   ├── ocr-accuracy.md         # OCR/字段准确率评价方法（结果见 CI 报告）
+│   ├── ui-screenshot-comparison.md  # Week 6 UI 截图对比（证据来源、逐张核对、Golden Test 现状）
+│   ├── ui-screenshots/         # 运行 7 的 7 张页面截图 + manifest.json（入库证据）
 │   └── test-cards/             # 41 张合成名片 + Ground Truth + 生成/校验脚本说明
 ├── scripts/
 │   ├── make_test_cards.py      # 生成合成名片与 Ground Truth（本地一次完成）
 │   ├── verify_test_cards.py    # 数据集静态校验（CI 与本地共用）
+│   ├── verify_ui_screenshots.py # UI 截图结构校验（7 张 / 来源用例 / 尺寸）
 │   └── run-tests.sh            # 与 CI 一致的本地测试入口
 ├── Package.swift               # 纯 Swift 校验包（Domain/Export/Data，Windows 可跑）
 ├── project.yml                 # XcodeGen 工程定义
@@ -87,7 +90,10 @@ python scripts/verify_test_cards.py
   `actions/runner-images#12948`）→ XcodeGen 生成工程 → `build-for-testing` → `test-without-building`（按模拟器 UDID 选取目标）。
 - B 层准确率报告：单独以 `-only-testing:CamCardCloneTests/VisionAccuracyTests` 运行（复用同一构建产物），
   汇总写入 Job Summary，完整 Markdown/JSON 作为 `ocr-accuracy-report` 工件保留 30 天。
-- 失败时上传 `build/*.log` 与 `.xcresult`；同一分支新推送自动取消旧运行。
+- UI 截图证据：UI 测试把关键页面截图写入 `.xcresult`（`XCTAttachment`，`keepAlways`），
+  测试后由 `xcresulttool export attachments` 导出为 PNG，作为 `ui-screenshots` 工件保留 30 天；
+  逐张对比与结论见 [docs/ui-screenshot-comparison.md](docs/ui-screenshot-comparison.md)。
+- 失败时上传 `build/*.log`、`.xcresult` 与已导出的 `build/ui-screenshots`；同一分支新推送自动取消旧运行。
 
 ## 测试与数据
 
@@ -107,3 +113,4 @@ python scripts/verify_test_cards.py
 | [data-model.md](docs/data-model.md) | BusinessCard 字段、电话展示格式契约、vCard 映射 |
 | [ai-collaboration-log.md](docs/ai-collaboration-log.md) | 增量 Prompt、AI 修改范围、人工验证与回归结果 |
 | [ocr-accuracy.md](docs/ocr-accuracy.md) | 准确率指标定义、评价流程、结果记录方式 |
+| [ui-screenshot-comparison.md](docs/ui-screenshot-comparison.md) | Week 6 截图对比：证据来源、逐张核对、UI Golden Test 现状与差距 |

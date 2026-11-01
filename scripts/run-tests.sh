@@ -86,6 +86,12 @@ if [ -d "$RESULT_BUNDLE" ]; then
   xcrun xcresulttool export attachments \
     --path "$RESULT_BUNDLE" \
     --output-path build/ui-screenshots || echo "截图导出失败（不影响测试结论）"
+  # 结构校验：7 张齐全、来源用例与 docs/ui-screenshot-comparison.md 清单一致、尺寸 750×1334。
+  # 证据问题只告警，不改变测试结论（与 CI 的 ::warning:: 口径一致）。
+  if [ -f build/ui-screenshots/manifest.json ]; then
+    python3 scripts/verify_ui_screenshots.py build/ui-screenshots \
+      || echo "截图结构校验未通过（不影响测试结论，见上）"
+  fi
 fi
 
 # B 层（Week 3 概率性评价）：Vision 真实识别 → 解析器 → Ground Truth，产出 build/ocr-accuracy-report.{md,json}。
